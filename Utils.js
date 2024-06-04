@@ -1,15 +1,27 @@
 export default function checkKc(bossName, killCount, playerName) {
+  const theBoys = [
+    'LSX SWAP',
+    'MOOREI',
+    'GOUT HAVER',
+    'GLASSFACE',
+    'Z4M',
+    'Z4M I',
+    'THEMILDEST1',
+    'BG S',
+  ];
   const bossMap = new Map([
     ['TZKAL-ZUK', 5],
     ['SOL HEREDIT', 5],
-    ['THEATRE OF BLOOD HARD MORE', 10],
+    ['THEATRE OF BLOOD HARD MODE', 10],
     ['CHAMBERS OF XERIC CHALLENGE MODE', 10],
-    ['SARACHNIS', 1], //! Remove after testing
+    ["PHOSANI'S NIGHTMARE", 25],
+    ['THE NIGHTMARE', 25],
+    ['CORPOREAL BEAST', 50],
   ]);
   const bossInterval = bossMap.get(bossName.toUpperCase());
 
   // if KC is noteable
-  if (bossMap.has(bossName.toUpperCase()) && bossInterval % killCount === 0)
+  if (bossMap.has(bossName.toUpperCase()) && killCount % bossInterval === 0)
     return true;
 
   // base bossInterval of 100
@@ -17,10 +29,15 @@ export default function checkKc(bossName, killCount, playerName) {
 
   // special occasion
   if (
-    (playerName === 'Gout Haver' &&
-      bossName === 'SOL HEREDIT' &&
+    (theBoys.includes(playerName.toUpperCase()) &&
+      bossName.toUpperCase() === 'SOL HEREDIT' &&
       killCount === 1) ||
-    (playerName === 'bg s' && bossName === 'TZKAL-ZUK' && killCount === 1)
+    (theBoys.includes(playerName.toUpperCase()) &&
+      bossName.toUpperCase() === 'TZKAL-ZUK' &&
+      killCount === 1) ||
+    (theBoys.includes(playerName.toUpperCase()) &&
+      bossName.toUpperCase() === 'TZTOK-JAD' &&
+      killCount === 1)
   ) {
     return true;
   }

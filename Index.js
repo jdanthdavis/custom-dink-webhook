@@ -1,26 +1,26 @@
-//TODO: Consider sending PB to different Webhook if wanted
 import checkKc from './utils.js';
 export default {
-  async fetch(request, env, ctx) {
-    const WH_URL = env.URL;
+  async fetch(request, env) {
+    const { KC_URL, PB_URL } = env;
 
-    //TODO: uncomment once done with Postman testing
-    // if (!isValidAgent(request.headers.get('User-Agent'))) {
-    //   return new Response();
-    // }
+    if (!isValidAgent(request.headers.get('User-Agent'))) {
+      return new Response();
+    }
 
-    const form = await request.formData();
+    const form = await request.clone().formData();
     const payload = JSON.parse(form.get('payload_json'));
     const extra = payload.extra;
     const bossName = extra.boss;
     const killCount = extra.count;
-    const playerName = extra.playerName;
+    const isPb = extra.isPersonalBest && killCount !== 1;
+    const playerName = payload.playerName;
 
     if (
-      payload.type === 'KILL_COUNT' &&
-      checkKc(bossName, killCount, playerName)
+      (payload.type === 'KILL_COUNT' &&
+        checkKc(bossName, killCount, playerName)) ||
+      (payload.type === 'KILL_COUNT' && isPb)
     ) {
-      return Response.redirect(WH_URL, 307);
+      return await fetch(!isPb ? KC_URL : PB_URL, request);
     }
     return new Response();
   },
@@ -28,6 +28,8 @@ export default {
 
 function isValidAgent(ua) {
   if (typeof ua !== 'string') return false;
+
   if (!ua.startsWith('RuneLite/') && !ua.startsWith('HDOS/')) return false;
+
   return ua.includes('Dink/');
 }

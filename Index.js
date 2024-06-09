@@ -1,26 +1,44 @@
-import checkKc from './utils.js';
+import { checkKc, createFormData } from './utils.js';
 export default {
   async fetch(request, env) {
-    const { KC_URL, PB_URL } = env;
-
     if (!isValidAgent(request.headers.get('User-Agent'))) {
       return new Response();
     }
 
     const form = await request.clone().formData();
     const payload = JSON.parse(form.get('payload_json'));
+    const file = form.get('file');
     const extra = payload.extra;
+    const playerName = payload.playerName;
     const bossName = extra.boss;
     const killCount = extra.count;
-    const isPb = extra.isPersonalBest && killCount !== 1;
-    const playerName = payload.playerName;
+    const time = extra.time;
+    const isPb = extra.isPersonalBest;
 
     if (
-      (payload.type === 'KILL_COUNT' &&
-        checkKc(bossName, killCount, playerName)) ||
-      (payload.type === 'KILL_COUNT' && isPb)
+      payload.type === 'KILL_COUNT' &&
+      checkKc(bossName, killCount, playerName)
     ) {
-      return await fetch(!isPb ? KC_URL : PB_URL, request);
+      let msgMap = createFormData(
+        bossName,
+        killCount,
+        playerName,
+        time,
+        isPb,
+        env
+      );
+
+      for (const [url, msg] of msgMap.entries()) {
+        let formData = new FormData();
+        formData.append('payload_json', JSON.stringify({ content: msg }));
+        // since the screenshots would be taken so close to each other we are fine with sending the first one twice
+        formData.append('file', file);
+
+        await fetch(url, {
+          method: 'post',
+          body: formData,
+        });
+      }
     }
     return new Response();
   },

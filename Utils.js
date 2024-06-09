@@ -27,7 +27,7 @@ export function checkKc(bossName, killCount, playerName) {
   ]);
   const bossInterval = bossMap.get(bossName.toUpperCase());
 
-  // if KC is notable
+  // if KC is noteable
   if (bossMap.has(bossName.toUpperCase()) && killCount % bossInterval === 0)
     return true;
 
@@ -71,18 +71,25 @@ export function createFormData(
 ) {
   const { KC_URL, PB_URL } = env;
   let msgMap = new Map();
+  const regex = /[A-Za-z]+/gi;
+  let sanitizedTime = time
+    .replace('PT', '')
+    .replace('S', '')
+    .replaceAll(regex, ':');
 
   if (isPb) {
     msgMap.set(
       PB_URL,
-      `**${playerName}** has defeated **${bossName}** with a new personal best of **${time}**`
+      `**${playerName}** has defeated **${bossName}** with a new personal best of **${sanitizedTime}**`
     );
   }
 
-  msgMap.set(
-    KC_URL,
-    `**${playerName}** has defeated **${bossName}** with a completion count of **${killCount}**`
-  );
+  if (checkKc(bossName, killCount, playerName)) {
+    msgMap.set(
+      KC_URL,
+      `**${playerName}** has defeated **${bossName}** with a completion count of **${killCount}**`
+    );
+  }
 
   return msgMap;
 }

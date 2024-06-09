@@ -27,7 +27,7 @@ export function checkKc(bossName, killCount, playerName) {
   ]);
   const bossInterval = bossMap.get(bossName.toUpperCase());
 
-  // if KC is noteable
+  // if KC is notable
   if (bossMap.has(bossName.toUpperCase()) && killCount % bossInterval === 0)
     return true;
 

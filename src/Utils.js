@@ -73,9 +73,9 @@ export function createFormData(
   let msgMap = new Map();
   const regex = /[A-Za-z]+/gi;
   let sanitizedTime = time
-    .replace('PT', '')
-    .replace('S', '')
-    .replaceAll(regex, ':');
+    ?.replace('PT', '')
+    ?.replace('S', '')
+    ?.replaceAll(regex, ':');
 
   if (isPb) {
     msgMap.set(

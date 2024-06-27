@@ -1,3 +1,14 @@
+const theBoys = [
+  'LSX SWAP',
+  'MOOREI',
+  'GOUT HAVER',
+  'GLASSFACE',
+  'Z4M',
+  'Z4M I',
+  'THEMILDEST1',
+  'BG S',
+];
+
 /**
  *
  * @param bossName
@@ -6,16 +17,8 @@
  * @returns
  */
 export function checkKc(bossName, killCount, playerName) {
-  const theBoys = [
-    'LSX SWAP',
-    'MOOREI',
-    'GOUT HAVER',
-    'GLASSFACE',
-    'Z4M',
-    'Z4M I',
-    'THEMILDEST1',
-    'BG S',
-  ];
+  console.log('would run checkKC');
+
   const bossMap = new Map([
     ['TZKAL-ZUK', 5],
     ['SOL HEREDIT', 5],
@@ -25,10 +28,10 @@ export function checkKc(bossName, killCount, playerName) {
     ['THE NIGHTMARE', 25],
     ['CORPOREAL BEAST', 50],
   ]);
-  const bossInterval = bossMap.get(bossName.toUpperCase());
+  const bossInterval = bossMap.get(bossName?.toUpperCase());
 
-  // if KC is notable
-  if (bossMap.has(bossName.toUpperCase()) && killCount % bossInterval === 0)
+  // if KC is noteable
+  if (bossMap.has(bossName?.toUpperCase()) && killCount % bossInterval === 0)
     return true;
 
   // base bossInterval of 100
@@ -36,14 +39,14 @@ export function checkKc(bossName, killCount, playerName) {
 
   // special occasion
   if (
-    (theBoys.includes(playerName.toUpperCase()) &&
-      bossName.toUpperCase() === 'SOL HEREDIT' &&
+    (theBoys.includes(playerName?.toUpperCase()) &&
+      bossName?.toUpperCase() === 'SOL HEREDIT' &&
       killCount === 1) ||
-    (theBoys.includes(playerName.toUpperCase()) &&
-      bossName.toUpperCase() === 'TZKAL-ZUK' &&
+    (theBoys.includes(playerName?.toUpperCase()) &&
+      bossName?.toUpperCase() === 'TZKAL-ZUK' &&
       killCount === 1) ||
-    (theBoys.includes(playerName.toUpperCase()) &&
-      bossName.toUpperCase() === 'TZTOK-JAD' &&
+    (theBoys.includes(playerName?.toUpperCase()) &&
+      bossName?.toUpperCase() === 'TZTOK-JAD' &&
       killCount === 1)
   ) {
     return true;
@@ -67,9 +70,10 @@ export function createFormData(
   playerName,
   time,
   isPb,
+  isChatting,
   env
 ) {
-  const { KC_URL, PB_URL } = env;
+  const { KC_URL, PB_URL, CHAT_URL } = env;
   let msgMap = new Map();
   const regex = /[A-Za-z]+/gi;
   let sanitizedTime = time
@@ -77,11 +81,25 @@ export function createFormData(
     ?.replace('S', '')
     ?.replaceAll(regex, ':');
 
+  if (sanitizedTime?.includes('.')) {
+    const miliSeconds = sanitizedTime.split('.')[1];
+    if (miliSeconds.length < 2 && miliSeconds.charAt(1) !== 0) {
+      sanitizedTime = sanitizedTime + 0;
+    }
+  }
+
+  console.log('TIME - ', time);
+  console.log('SANITIZEDTIME - ', sanitizedTime);
+
   if (isPb) {
     msgMap.set(
       PB_URL,
       `**${playerName}** has defeated **${bossName}** with a new personal best of **${sanitizedTime}**`
     );
+  }
+
+  if (isChatting && theBoys.includes(playerName?.toUpperCase())) {
+    msgMap.set(CHAT_URL, `**${playerName}** just balled someone!`);
   }
 
   if (checkKc(bossName, killCount, playerName)) {

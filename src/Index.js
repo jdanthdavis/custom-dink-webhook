@@ -9,15 +9,24 @@ export default {
     const payload = JSON.parse(form.get('payload_json'));
     const file = form.get('file');
     const extra = payload.extra;
-    const playerName = payload.playerName;
+    const playerName = payload.playerName ? payload.playerName : payload.source;
     const bossName = extra.boss;
     const killCount = extra.count;
     const time = extra.time;
     const isPb = extra.isPersonalBest;
+    const isChatting = payload.type === 'CHAT';
     let msgMap;
 
-    if (payload.type === 'KILL_COUNT') {
-      msgMap = createFormData(bossName, killCount, playerName, time, isPb, env);
+    if (payload.type === 'KILL_COUNT' || payload.type === 'CHAT') {
+      msgMap = createFormData(
+        bossName,
+        killCount,
+        playerName,
+        time,
+        isPb,
+        isChatting,
+        env
+      );
 
       for (const [url, msg] of msgMap.entries()) {
         let formData = new FormData();

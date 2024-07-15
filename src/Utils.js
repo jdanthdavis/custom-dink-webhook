@@ -17,13 +17,11 @@ const theBoys = [
  * @returns
  */
 export function checkKc(bossName, killCount, playerName) {
-  console.log('would run checkKC');
-
   const bossMap = new Map([
     ['TZKAL-ZUK', 5],
     ['SOL HEREDIT', 5],
-    ['THEATRE OF BLOOD HARD MODE', 10],
-    ['CHAMBERS OF XERIC CHALLENGE MODE', 10],
+    ['THEATRE OF BLOOD: HARD MODE', 10],
+    ['CHAMBERS OF XERIC: CHALLENGE MODE', 10],
     ["PHOSANI'S NIGHTMARE", 25],
     ['THE NIGHTMARE', 25],
     ['CORPOREAL BEAST', 50],
@@ -87,9 +85,6 @@ export function createFormData(
       sanitizedTime = sanitizedTime + 0;
     }
   }
-
-  console.log('TIME - ', time);
-  console.log('SANITIZEDTIME - ', sanitizedTime);
 
   if (isPb) {
     msgMap.set(

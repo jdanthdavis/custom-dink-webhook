@@ -17,6 +17,8 @@ export default {
     const isChatting = payload.type === 'CHAT';
     let msgMap;
 
+    console.log('payload - ', payload);
+
     if (payload.type === 'KILL_COUNT' || payload.type === 'CHAT') {
       msgMap = createFormData(
         bossName,

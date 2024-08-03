@@ -62,42 +62,78 @@ export function checkKc(bossName, killCount, playerName) {
  * @param env
  * @returns
  */
-export function createFormData(
-  bossName,
-  killCount,
-  playerName,
-  time,
-  isPb,
-  isChatting,
-  env
-) {
-  const { KC_URL, PB_URL, CHAT_URL } = env;
+export function createFormData(extra, payloadType, playerName, env) {
+  const { KC_URL, PB_URL, CHAT_URL, COLLECTION_URL, PET_URL } = env;
+  const bossName = extra.boss;
+  const killCount = extra.count;
   let msgMap = new Map();
-  const regex = /[A-Za-z]+/gi;
-  let sanitizedTime = time
-    ?.replace('PT', '')
-    ?.replace('S', '')
-    ?.replaceAll(regex, ':');
 
-  if (sanitizedTime?.includes('.')) {
-    const miliSeconds = sanitizedTime.split('.')[1];
-    if (miliSeconds.length < 2 && miliSeconds.charAt(1) !== 0) {
-      sanitizedTime = sanitizedTime + 0;
+  if (payloadType === 'PET') {
+    const petName = extra.petName;
+    const milestone = extra.milestone;
+    const isDuplicate = extra.duplicate;
+
+    if (isDuplicate) {
+      msgMap.set(
+        PET_URL,
+        `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
+      );
+    } else {
+      msgMap.set(
+        PET_URL,
+        `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`
+      );
     }
   }
 
-  if (isPb) {
+  if (payloadType === 'COLLECTION') {
+    const totalEntries = extra.totalEntries;
+    const completedEntries = extra.completedEntries;
+    const itemName = extra.itemName;
+    const percentageCompleted = (completedEntries / totalEntries) * 100;
+    let leftHandSize = percentageCompleted.toString().split('.')[0];
+
+    if (leftHandSize.length === 1) {
+      leftHandSize = percentageCompleted.toString().slice(0, 4);
+    } else if (leftHandSize.length === 2 || leftHandSize.length === 3) {
+      leftHandSize = percentageCompleted.toString().slice(0, 5);
+    }
+
+    msgMap.set(
+      COLLECTION_URL,
+      `**${playerName}** has added a new item to their collection log: **${itemName}** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
+    );
+  }
+
+  if (extra?.isPersonalBest) {
+    const regex = /[A-Za-z]+/gi;
+    const time = extra.time;
+    let sanitizedTime = time
+      ?.replace('PT', '')
+      ?.replace('S', '')
+      ?.replaceAll(regex, ':');
+
+    if (sanitizedTime?.includes('.')) {
+      const miliSeconds = sanitizedTime.split('.')[1];
+      if (miliSeconds.length < 2 && miliSeconds.charAt(1) !== 0) {
+        sanitizedTime = sanitizedTime + 0;
+      }
+    }
+
     msgMap.set(
       PB_URL,
       `**${playerName}** has defeated **${bossName}** with a new personal best of **${sanitizedTime}**`
     );
   }
 
-  if (isChatting && theBoys.includes(playerName?.toUpperCase())) {
+  if (payloadType === 'CHAT' && theBoys.includes(playerName?.toUpperCase())) {
     msgMap.set(CHAT_URL, `**${playerName}** just balled someone!`);
   }
 
-  if (checkKc(bossName, killCount, playerName)) {
+  if (
+    payloadType === 'KILL_COUNT' &&
+    checkKc(bossName, killCount, playerName)
+  ) {
     msgMap.set(
       KC_URL,
       `**${playerName}** has defeated **${bossName}** with a completion count of **${killCount}**`

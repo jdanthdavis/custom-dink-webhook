@@ -11,9 +11,9 @@ const theBoys = [
 
 /**
  *
- * @param bossName
- * @param killCount
- * @param playerName
+ * @param {*} bossName
+ * @param {*} killCount
+ * @param {*} playerName
  * @returns
  */
 export function checkKc(bossName, killCount, playerName) {
@@ -54,12 +54,10 @@ export function checkKc(bossName, killCount, playerName) {
 
 /**
  *
- * @param bossName
- * @param killCount
- * @param playerName
- * @param time
- * @param isPb
- * @param env
+ * @param {*} extra
+ * @param {*} payloadType
+ * @param {*} playerName
+ * @param {*} env
  * @returns
  */
 export function createFormData(extra, payloadType, playerName, env) {

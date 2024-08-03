@@ -7,6 +7,7 @@ const theBoys = [
   'Z4M I',
   'THEMILDEST1',
   'BG S',
+  'FROSTY DAD',
 ];
 
 /**

@@ -7,14 +7,15 @@ const theBoys = [
   'Z4M I',
   'THEMILDEST1',
   'BG S',
+  'MOOREI',
   'FROSTY DAD',
 ];
 
 /**
  *
- * @param {*} bossName
- * @param {*} killCount
- * @param {*} playerName
+ * @param bossName
+ * @param killCount
+ * @param playerName
  * @returns
  */
 export function checkKc(bossName, killCount, playerName) {
@@ -29,7 +30,7 @@ export function checkKc(bossName, killCount, playerName) {
   ]);
   const bossInterval = bossMap.get(bossName?.toUpperCase());
 
-  // if KC is noteable
+  // if KC is notable
   if (bossMap.has(bossName?.toUpperCase()) && killCount % bossInterval === 0)
     return true;
 
@@ -55,10 +56,12 @@ export function checkKc(bossName, killCount, playerName) {
 
 /**
  *
- * @param {*} extra
- * @param {*} payloadType
- * @param {*} playerName
- * @param {*} env
+ * @param bossName
+ * @param killCount
+ * @param playerName
+ * @param time
+ * @param isPb
+ * @param env
  * @returns
  */
 export function createFormData(extra, payloadType, playerName, env) {
@@ -98,10 +101,18 @@ export function createFormData(extra, payloadType, playerName, env) {
       leftHandSize = percentageCompleted.toString().slice(0, 5);
     }
 
-    msgMap.set(
-      COLLECTION_URL,
-      `**${playerName}** has added a new item to their collection log: **${itemName}** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
-    );
+    if (totalEntries === undefined || completedEntries === undefined) {
+      msgMap.set(
+        COLLECTION_URL,
+        `**${playerName}** has added a new item to their collection log: **${itemName}**`
+      );
+      console.log('Unable to fetch totalEntries/completedEntries - ', extra);
+    } else {
+      msgMap.set(
+        COLLECTION_URL,
+        `**${playerName}** has added a new item to their collection log: **${itemName}** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
+      );
+    }
   }
 
   if (extra?.isPersonalBest) {

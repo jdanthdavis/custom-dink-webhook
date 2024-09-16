@@ -6,7 +6,7 @@ const theBoys = [
   'Z4M',
   'Z4M I',
   'THEMILDEST1',
-  'BG S',
+  'can it worm',
   'MOOREI',
   'FROSTY DAD',
 ];
@@ -30,7 +30,7 @@ export function checkKc(bossName, killCount, playerName) {
   ]);
   const bossInterval = bossMap.get(bossName?.toUpperCase());
 
-  // if KC is notable
+  // if KC is noteable
   if (bossMap.has(bossName?.toUpperCase()) && killCount % bossInterval === 0)
     return true;
 
@@ -65,7 +65,15 @@ export function checkKc(bossName, killCount, playerName) {
  * @returns
  */
 export function createFormData(extra, payloadType, playerName, env) {
-  const { KC_URL, PB_URL, CHAT_URL, COLLECTION_URL, PET_URL } = env;
+  const {
+    KC_URL,
+    PB_URL,
+    CHAT_URL,
+    COLLECTION_URL,
+    PET_URL,
+    LEVEL_URL,
+    TEST_URL,
+  } = env;
   const bossName = extra.boss;
   const killCount = extra.count;
   let msgMap = new Map();
@@ -77,12 +85,12 @@ export function createFormData(extra, payloadType, playerName, env) {
 
     if (isDuplicate) {
       msgMap.set(
-        PET_URL,
+        { ID: 'PET', URL: PET_URL },
         `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
       );
     } else {
       msgMap.set(
-        PET_URL,
+        { ID: 'PET', URL: PET_URL },
         `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`
       );
     }
@@ -103,13 +111,13 @@ export function createFormData(extra, payloadType, playerName, env) {
 
     if (totalEntries === undefined || completedEntries === undefined) {
       msgMap.set(
-        COLLECTION_URL,
+        { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
         `**${playerName}** has added a new item to their collection log: **${itemName}**`
       );
       console.log('Unable to fetch totalEntries/completedEntries - ', extra);
     } else {
       msgMap.set(
-        COLLECTION_URL,
+        { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
         `**${playerName}** has added a new item to their collection log: **${itemName}** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
       );
     }
@@ -131,13 +139,16 @@ export function createFormData(extra, payloadType, playerName, env) {
     }
 
     msgMap.set(
-      PB_URL,
+      { ID: 'PB', URL: PB_URL },
       `**${playerName}** has defeated **${bossName}** with a new personal best of **${sanitizedTime}**`
     );
   }
 
   if (payloadType === 'CHAT' && theBoys.includes(playerName?.toUpperCase())) {
-    msgMap.set(CHAT_URL, `**${playerName}** just balled someone!`);
+    msgMap.set(
+      { ID: 'CHAT', URL: CHAT_URL },
+      `**${playerName}** just balled someone!`
+    );
   }
 
   if (
@@ -145,10 +156,27 @@ export function createFormData(extra, payloadType, playerName, env) {
     checkKc(bossName, killCount, playerName)
   ) {
     msgMap.set(
-      KC_URL,
+      { ID: 'KILL_COUNT', URL: KC_URL },
       `**${playerName}** has defeated **${bossName}** with a completion count of **${killCount}**`
     );
   }
 
-  return msgMap;
+  if (payloadType === 'LEVEL') {
+    const levelName = extra.levelledSkills;
+
+    for (const [key, value] of Object.entries(levelName)) {
+      if (key === 'Fishing') {
+        msgMap.set(
+          { ID: key, URL: LEVEL_URL },
+          `**${playerName}** has levelled **${key} to ${value}** <:fishh:1285367875531575306>`
+        );
+      } else {
+        msgMap.set(
+          { ID: key, URL: LEVEL_URL },
+          `**${playerName}** has levelled **${key} to ${value}**!`
+        );
+      }
+    }
+    return msgMap;
+  }
 }

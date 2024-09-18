@@ -20,7 +20,7 @@ export default {
     const playerName = payload.playerName ? payload.playerName : payload.source;
     let msgMap;
 
-    // console.log('payload - ', payload);
+    console.log('payload - ', payload);
 
     if (acceptedPayloads.includes(payloadType)) {
       msgMap = createFormData(extra, payloadType, playerName, env);

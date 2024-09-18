@@ -6,7 +6,7 @@ const theBoys = [
   'Z4M',
   'Z4M I',
   'THEMILDEST1',
-  'can it worm',
+  'CAN IT WORM',
   'MOOREI',
   'FROSTY DAD',
 ];
@@ -155,9 +155,10 @@ export function createFormData(extra, payloadType, playerName, env) {
     payloadType === 'KILL_COUNT' &&
     checkKc(bossName, killCount, playerName)
   ) {
+    const formattedKC = extra.gameMessage.split(': ')[1]?.replace('.', '!');
     msgMap.set(
       { ID: 'KILL_COUNT', URL: KC_URL },
-      `**${playerName}** has defeated **${bossName}** with a completion count of **${killCount}**`
+      `**${playerName}** has defeated **${bossName}** with a completion count of **${formattedKC}**`
     );
   }
 
@@ -177,6 +178,6 @@ export function createFormData(extra, payloadType, playerName, env) {
         );
       }
     }
-    return msgMap;
   }
+  return msgMap;
 }

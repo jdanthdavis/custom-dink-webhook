@@ -18,7 +18,7 @@ const theBoys = [
  * @param playerName
  * @returns
  */
-export function checkKc(bossName, killCount, playerName) {
+function checkKc(bossName, killCount, playerName) {
   const bossMap = new Map([
     ['TZKAL-ZUK', 5],
     ['SOL HEREDIT', 5],
@@ -27,6 +27,7 @@ export function checkKc(bossName, killCount, playerName) {
     ["PHOSANI'S NIGHTMARE", 25],
     ['THE NIGHTMARE', 25],
     ['CORPOREAL BEAST', 50],
+    ['TEST', 1],
   ]);
   const bossInterval = bossMap.get(bossName?.toUpperCase());
 
@@ -52,6 +53,35 @@ export function checkKc(bossName, killCount, playerName) {
     return true;
   }
   return false;
+}
+
+/**
+ *
+ * @param {*} time
+ * @returns
+ */
+function sanitizedTime(time) {
+  let cleanedTime = time.replace('PT', '');
+
+  if (cleanedTime.includes('M') && !cleanedTime.includes('S')) {
+    // PB that has no seconds
+    cleanedTime = cleanedTime.replace('M', ':00');
+  } else if (!cleanedTime.includes('M') && cleanedTime.includes('S')) {
+    // PB that is only seconds
+    cleanedTime = `${cleanedTime.replace('S', '')}s`;
+  } else {
+    // PB that has both minutes and seconds
+    cleanedTime = cleanedTime.replace('M', ':').replace('S', '');
+
+    if (
+      cleanedTime.split(':')[1].length === 1 ||
+      cleanedTime.split(':').pop().split('.')[0].length === 1
+    ) {
+      // PB that also has milliseconds
+      cleanedTime = cleanedTime.replace(':', ':0');
+    }
+  }
+  return cleanedTime;
 }
 
 /**
@@ -124,23 +154,11 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (extra?.isPersonalBest) {
-    const regex = /[A-Za-z]+/gi;
-    const time = extra.time;
-    let sanitizedTime = time
-      ?.replace('PT', '')
-      ?.replace('S', '')
-      ?.replaceAll(regex, ':');
-
-    if (sanitizedTime?.includes('.')) {
-      const miliSeconds = sanitizedTime.split('.')[1];
-      if (miliSeconds.length < 2 && miliSeconds.charAt(1) !== 0) {
-        sanitizedTime = sanitizedTime + 0;
-      }
-    }
+    const time = sanitizedTime(extra.time);
 
     msgMap.set(
       { ID: 'PB', URL: PB_URL },
-      `**${playerName}** has defeated **${bossName}** with a new personal best of **${sanitizedTime}**`
+      `**${playerName}** has defeated **${bossName}** with a new personal best of **${time}**`
     );
   }
 
@@ -166,7 +184,12 @@ export function createFormData(extra, payloadType, playerName, env) {
     const levelName = extra.levelledSkills;
 
     for (const [key, value] of Object.entries(levelName)) {
-      if (key === 'Fishing') {
+      if (value === 99) {
+        msgMap.set(
+          { ID: key, URL: LEVEL_URL },
+          `<a:danse:1281063902557241408> @everyone **${playerName}** has levelled **${key} to ${value}** <a:danse:1281063902557241408>`
+        );
+      } else if (key === 'Fishing') {
         msgMap.set(
           { ID: key, URL: LEVEL_URL },
           `**${playerName}** has levelled **${key} to ${value}** <:fishh:1285367875531575306>`

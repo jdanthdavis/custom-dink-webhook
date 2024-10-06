@@ -1,4 +1,6 @@
 import { createFormData } from './utils.js';
+import { acceptedPayloads } from './constants.js';
+
 export default {
   async fetch(request, env) {
     if (!isValidAgent(request.headers.get('User-Agent'))) {
@@ -8,13 +10,6 @@ export default {
     const form = await request.clone().formData();
     const payload = JSON.parse(form.get('payload_json'));
     const file = form.get('file');
-    const acceptedPayloads = [
-      'KILL_COUNT',
-      'CHAT',
-      'COLLECTION',
-      'PET',
-      'LEVEL',
-    ];
     const extra = payload.extra;
     const payloadType = payload.type;
     const playerName = payload.playerName ? payload.playerName : payload.source;

@@ -1,15 +1,4 @@
-const theBoys = [
-  'LSX SWAP',
-  'MOOREI',
-  'GOUT HAVER',
-  'GLASSFACE',
-  'Z4M',
-  'Z4M I',
-  'THEMILDEST1',
-  'CAN IT WORM',
-  'MOOREI',
-  'FROSTY DAD',
-];
+import * as Constants from './constants.js';
 
 /**
  *
@@ -19,20 +8,13 @@ const theBoys = [
  * @returns
  */
 function checkKc(bossName, killCount, playerName) {
-  const bossMap = new Map([
-    ['TZKAL-ZUK', 5],
-    ['SOL HEREDIT', 5],
-    ['THEATRE OF BLOOD: HARD MODE', 10],
-    ['CHAMBERS OF XERIC: CHALLENGE MODE', 10],
-    ["PHOSANI'S NIGHTMARE", 25],
-    ['THE NIGHTMARE', 25],
-    ['CORPOREAL BEAST', 50],
-    ['TEST', 1],
-  ]);
-  const bossInterval = bossMap.get(bossName?.toUpperCase());
+  const bossInterval = Constants.bossMap.get(bossName?.toUpperCase());
 
   // if KC is noteable
-  if (bossMap.has(bossName?.toUpperCase()) && killCount % bossInterval === 0)
+  if (
+    Constants.bossMap.has(bossName?.toUpperCase()) &&
+    killCount % bossInterval === 0
+  )
     return true;
 
   // base bossInterval of 100
@@ -40,13 +22,13 @@ function checkKc(bossName, killCount, playerName) {
 
   // special occasion
   if (
-    (theBoys.includes(playerName?.toUpperCase()) &&
+    (Constants.theBoys.includes(playerName?.toUpperCase()) &&
       bossName?.toUpperCase() === 'SOL HEREDIT' &&
       killCount === 1) ||
-    (theBoys.includes(playerName?.toUpperCase()) &&
+    (Constants.theBoys.includes(playerName?.toUpperCase()) &&
       bossName?.toUpperCase() === 'TZKAL-ZUK' &&
       killCount === 1) ||
-    (theBoys.includes(playerName?.toUpperCase()) &&
+    (Constants.theBoys.includes(playerName?.toUpperCase()) &&
       bossName?.toUpperCase() === 'TZTOK-JAD' &&
       killCount === 1)
   ) {
@@ -108,25 +90,33 @@ export function createFormData(extra, payloadType, playerName, env) {
   const killCount = extra.count;
   let msgMap = new Map();
 
-  if (payloadType === 'PET') {
+  if (payloadType === Constants.PET) {
     const petName = extra.petName;
     const milestone = extra.milestone;
     const isDuplicate = extra.duplicate;
 
-    if (isDuplicate) {
+    if (!petName || !milestone) {
+      // Need this fallback in case the game broadcast doesn't include the pet name or milestone
       msgMap.set(
         { ID: 'PET', URL: PET_URL },
-        `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
+        `**${playerName}** has a funny feeling like they would have been followed!\n-# Unable to fetch pet name and milestone!`
       );
     } else {
-      msgMap.set(
-        { ID: 'PET', URL: PET_URL },
-        `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`
-      );
+      if (isDuplicate) {
+        msgMap.set(
+          { ID: 'PET', URL: PET_URL },
+          `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
+        );
+      } else {
+        msgMap.set(
+          { ID: 'PET', URL: PET_URL },
+          `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`
+        );
+      }
     }
   }
 
-  if (payloadType === 'COLLECTION') {
+  if (payloadType === Constants.COLLECTION) {
     const totalEntries = extra.totalEntries;
     const completedEntries = extra.completedEntries;
     const itemName = extra.itemName;
@@ -139,12 +129,12 @@ export function createFormData(extra, payloadType, playerName, env) {
       leftHandSize = percentageCompleted.toString().slice(0, 5);
     }
 
-    if (totalEntries === undefined || completedEntries === undefined) {
+    if (!totalEntries || !completedEntries) {
       msgMap.set(
         { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
-        `**${playerName}** has added a new item to their collection log: **${itemName}**`
+        `**${playerName}** has added a new item to their collection log: **${itemName}**\n-# Unable to fetch total and completed entries. Cycle through all tabs in your collection log to fix this!
+        `
       );
-      console.log('Unable to fetch totalEntries/completedEntries - ', extra);
     } else {
       msgMap.set(
         { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
@@ -162,15 +152,8 @@ export function createFormData(extra, payloadType, playerName, env) {
     );
   }
 
-  if (payloadType === 'CHAT' && theBoys.includes(playerName?.toUpperCase())) {
-    msgMap.set(
-      { ID: 'CHAT', URL: CHAT_URL },
-      `**${playerName}** just balled someone!`
-    );
-  }
-
   if (
-    payloadType === 'KILL_COUNT' &&
+    payloadType === Constants.KILL_COUNT &&
     checkKc(bossName, killCount, playerName)
   ) {
     const formattedKC = extra.gameMessage.split(': ')[1]?.replace('.', '!');
@@ -180,7 +163,7 @@ export function createFormData(extra, payloadType, playerName, env) {
     );
   }
 
-  if (payloadType === 'LEVEL') {
+  if (payloadType === Constants.LEVEL) {
     const levelName = extra.levelledSkills;
 
     for (const [key, value] of Object.entries(levelName)) {

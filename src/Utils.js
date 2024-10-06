@@ -22,15 +22,8 @@ function checkKc(bossName, killCount, playerName) {
 
   // special occasion
   if (
-    (Constants.theBoys.includes(playerName?.toUpperCase()) &&
-      bossName?.toUpperCase() === 'SOL HEREDIT' &&
-      killCount === 1) ||
-    (Constants.theBoys.includes(playerName?.toUpperCase()) &&
-      bossName?.toUpperCase() === 'TZKAL-ZUK' &&
-      killCount === 1) ||
-    (Constants.theBoys.includes(playerName?.toUpperCase()) &&
-      bossName?.toUpperCase() === 'TZTOK-JAD' &&
-      killCount === 1)
+    Constants.theBoys.includes(playerName?.toUpperCase()) &&
+    Constants.specialKills.includes(bossName.toUpperCase())
   ) {
     return true;
   }
@@ -77,15 +70,7 @@ function sanitizedTime(time) {
  * @returns
  */
 export function createFormData(extra, payloadType, playerName, env) {
-  const {
-    KC_URL,
-    PB_URL,
-    CHAT_URL,
-    COLLECTION_URL,
-    PET_URL,
-    LEVEL_URL,
-    TEST_URL,
-  } = env;
+  const { KC_URL, PB_URL, COLLECTION_URL, PET_URL, LEVEL_URL, TEST_URL } = env;
   const bossName = extra.boss;
   const killCount = extra.count;
   let msgMap = new Map();
@@ -156,7 +141,7 @@ export function createFormData(extra, payloadType, playerName, env) {
     payloadType === Constants.KILL_COUNT &&
     checkKc(bossName, killCount, playerName)
   ) {
-    const formattedKC = extra.gameMessage.split(': ')[1]?.replace('.', '!');
+    const formattedKC = extra.gameMessage?.split(': ')[1]?.replace('.', '!');
     msgMap.set(
       { ID: 'KILL_COUNT', URL: KC_URL },
       `**${playerName}** has defeated **${bossName}** with a completion count of **${formattedKC}**`

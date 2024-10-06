@@ -27,6 +27,8 @@ export const bossMap = new Map([
   ['TEST', 1],
 ]);
 
+export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
+
 export const acceptedPayloads = [
   'KILL_COUNT',
   'CHAT',

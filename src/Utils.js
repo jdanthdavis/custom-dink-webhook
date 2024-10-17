@@ -167,7 +167,7 @@ export function createFormData(extra, payloadType, playerName, env) {
     if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
       return msgMap.set(
         { ID: 'MAX_TOTAL_LEVEL', URL: LEVEL_URL },
-        `**${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${levelledInfo.level}** in **${levelledInfo.skillName}!**`
+        `@everyone <a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${levelledInfo.level}** in **${levelledInfo.skillName}!** <a:danseParty:1281063903933104160>`
       );
     } else if (
       levelledInfo.level === 99 &&

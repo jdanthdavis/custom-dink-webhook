@@ -149,25 +149,44 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.LEVEL) {
-    const levelName = extra.levelledSkills;
+    const levelledInfo = {
+      skillName: '',
+      level: 0,
+    };
+    let totalLevel = 0;
 
-    for (const [key, value] of Object.entries(levelName)) {
-      if (value === 99) {
-        msgMap.set(
-          { ID: key, URL: LEVEL_URL },
-          `<a:danse:1281063902557241408> @everyone **${playerName}** has levelled **${key} to ${value}** <a:danse:1281063902557241408>`
-        );
-      } else if (key === 'Fishing') {
-        msgMap.set(
-          { ID: key, URL: LEVEL_URL },
-          `**${playerName}** has levelled **${key} to ${value}** <:fishh:1285367875531575306>`
-        );
-      } else {
-        msgMap.set(
-          { ID: key, URL: LEVEL_URL },
-          `**${playerName}** has levelled **${key} to ${value}**!`
-        );
-      }
+    for (const [key, value] of Object.entries(extra.allSkills)) {
+      totalLevel = totalLevel + value;
+    }
+
+    for (const [key, value] of Object.entries(extra.levelledSkills)) {
+      levelledInfo.skillName = key;
+      levelledInfo.level = value;
+    }
+
+    if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
+      return msgMap.set(
+        { ID: 'MAX_TOTAL_LEVEL', URL: LEVEL_URL },
+        `**${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${levelledInfo.level}** in **${levelledInfo.skillName}!**`
+      );
+    } else if (
+      levelledInfo.level === 99 &&
+      levelledInfo.skillName !== 'Fishing'
+    ) {
+      msgMap.set(
+        { ID: levelledInfo.skillName, URL: LEVEL_URL },
+        `@everyone <a:danse:1281063902557241408> **${playerName}** has levelled **${levelledInfo.skillName} to ${levelledInfo.level}** <a:danse:1281063902557241408>`
+      );
+    } else if (levelledInfo.skillName === 'Fishing') {
+      msgMap.set(
+        { ID: levelledInfo.skillName, URL: LEVEL_URL },
+        `**${playerName}** has levelled **${levelledInfo.skillName} to ${levelledInfo.level}** <:fishh:1285367875531575306>`
+      );
+    } else {
+      msgMap.set(
+        { ID: levelledInfo.skillName, URL: LEVEL_URL },
+        `**${playerName}** has levelled **${levelledInfo.skillName} to ${levelledInfo.level}**!`
+      );
     }
   }
   return msgMap;

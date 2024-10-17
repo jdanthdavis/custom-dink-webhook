@@ -2,6 +2,7 @@ export const COLLECTION = 'COLLECTION';
 export const PET = 'PET';
 export const KILL_COUNT = 'KILL_COUNT';
 export const LEVEL = 'LEVEL';
+export const MAX_TOTAL_LEVEL = 2277;
 
 export const theBoys = [
   'LSX SWAP',

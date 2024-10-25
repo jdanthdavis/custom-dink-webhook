@@ -62,6 +62,21 @@ function sanitizedTime(time) {
 }
 
 /**
+ * Always check for the grumbler
+ * @param {*} name
+ * @returns
+ */
+function grumblerCheck(name) {
+  if (
+    name.toUpperCase() === Constants.PHANTOM_MUSPAH ||
+    name.toUpperCase() === Constants.MUPHIN
+  ) {
+    return Constants.THE_GRUMBLER;
+  }
+  return false;
+}
+
+/**
  * Creates the formData payload to send to a URL
  * @param {*} extra
  * @param {*} payloadType
@@ -94,12 +109,16 @@ export function createFormData(extra, payloadType, playerName, env) {
       if (isDuplicate) {
         msgMap.set(
           { ID: 'PET', URL: PET_URL },
-          `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
+          `**${playerName}** has a funny feeling like they would have been followed by **${
+            grumblerCheck(petName) ? grumblerCheck(petName) : petName
+          }**! | **${milestone}**`
         );
       } else {
         msgMap.set(
           { ID: 'PET', URL: PET_URL },
-          `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`
+          `**${playerName}** has a funny feeling like they're being followed by **${
+            grumblerCheck(petName) ? grumblerCheck(petName) : petName
+          }**! | **${milestone}**`
         );
       }
     }
@@ -110,11 +129,11 @@ export function createFormData(extra, payloadType, playerName, env) {
     const completedEntries = extra.completedEntries;
     const itemName = extra.itemName;
     const percentageCompleted = (completedEntries / totalEntries) * 100;
-    let leftHandSize = percentageCompleted.toString().split('.')[0]?.length;
+    let leftHandSize = percentageCompleted.toString().split('.')[0];
 
-    if (leftHandSize === 1) {
+    if (leftHandSize?.length === 1) {
       leftHandSize = percentageCompleted.toString().slice(0, 4);
-    } else if (leftHandSize === 2 || leftHandSize === 3) {
+    } else if (leftHandSize?.length === 2 || leftHandSize?.length === 3) {
       leftHandSize = percentageCompleted.toString().slice(0, 5);
     }
 
@@ -122,13 +141,17 @@ export function createFormData(extra, payloadType, playerName, env) {
       // If the user hasn't cycled their collection log we will use this fallback to prevent errors
       msgMap.set(
         { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
-        `**${playerName}** has added a new item to their collection log: **${itemName}**\n-# Unable to fetch total and completed entries. Cycle through all tabs in your collection log to fix this!
+        `**${playerName}** has added a new item to their collection log: **${
+          grumblerCheck(itemName) ? grumblerCheck(itemName) : itemName
+        }**\n-# Unable to fetch total and completed entries. Cycle through all tabs in your collection log to fix this!
         `
       );
     } else {
       msgMap.set(
         { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
-        `**${playerName}** has added a new item to their collection log: **${itemName}** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
+        `**${playerName}** has added a new item to their collection log: **${
+          grumblerCheck(itemName) ? grumblerCheck(itemName) : itemName
+        }** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
       );
     }
   }
@@ -138,7 +161,9 @@ export function createFormData(extra, payloadType, playerName, env) {
 
     msgMap.set(
       { ID: 'PB', URL: PB_URL },
-      `**${playerName}** has defeated **${bossName}** with a new personal best of **${time}**`
+      `**${playerName}** has defeated **${
+        grumblerCheck(bossName) ? Constants.THE_GRUMBLER : bossName
+      }** with a new personal best of **${time}**`
     );
   }
 
@@ -149,17 +174,12 @@ export function createFormData(extra, payloadType, playerName, env) {
     // Pulls the killCount from the actual game message and formats the message
     const formattedKC = extra.gameMessage?.split(': ')[1]?.replace('.', '!');
 
-    if (bossName.toUpperCase() === Constants.PHANTOM_MUSPAH) {
-      msgMap.set(
-        { ID: 'KILL_COUNT', URL: KC_URL },
-        `**${playerName}** has defeated **${Constants.THE_GRUMBLER}** with a completion count of **${formattedKC}**`
-      );
-    } else {
-      msgMap.set(
-        { ID: 'KILL_COUNT', URL: KC_URL },
-        `**${playerName}** has defeated **${bossName}** with a completion count of **${formattedKC}**`
-      );
-    }
+    msgMap.set(
+      { ID: 'KILL_COUNT', URL: KC_URL },
+      `**${playerName}** has defeated **${
+        grumblerCheck(bossName) ? Constants.THE_GRUMBLER : bossName
+      }** with a completion count of **${formattedKC}**`
+    );
   }
 
   if (payloadType === Constants.LEVEL) {

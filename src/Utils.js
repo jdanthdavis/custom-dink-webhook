@@ -1,8 +1,7 @@
 import * as Constants from './constants.js';
 
 /**
- * Check if the current killCount is divisible by 100.
- * If it's not but it is in specialKills then allow the notification.
+ *
  * @param bossName
  * @param killCount
  * @param playerName
@@ -11,17 +10,17 @@ import * as Constants from './constants.js';
 function checkKc(bossName, killCount, playerName) {
   const bossInterval = Constants.bossMap.get(bossName?.toUpperCase());
 
-  // If KC is noteable
+  // if KC is noteable
   if (
     Constants.bossMap.has(bossName?.toUpperCase()) &&
     killCount % bossInterval === 0
   )
     return true;
 
-  // Base bossInterval of 100
+  // base bossInterval of 100
   if (killCount % 100 === 0) return true;
 
-  // Special occasion
+  // special occasion
   if (
     Constants.theBoys.includes(playerName?.toUpperCase()) &&
     Constants.specialKills.includes(bossName.toUpperCase())
@@ -32,12 +31,11 @@ function checkKc(bossName, killCount, playerName) {
 }
 
 /**
- * Time comes in ISO-8601 duration so we need to reformat the time
+ *
  * @param {*} time
  * @returns
  */
 function sanitizedTime(time) {
-  // Remove the leading PT
   let cleanedTime = time.replace('PT', '');
 
   if (cleanedTime.includes('M') && !cleanedTime.includes('S')) {
@@ -62,11 +60,13 @@ function sanitizedTime(time) {
 }
 
 /**
- * Creates the formData payload to send to a URL
- * @param {*} extra
- * @param {*} payloadType
- * @param {*} playerName
- * @param {*} env
+ *
+ * @param bossName
+ * @param killCount
+ * @param playerName
+ * @param time
+ * @param isPb
+ * @param env
  * @returns
  */
 export function createFormData(extra, payloadType, playerName, env) {
@@ -106,16 +106,15 @@ export function createFormData(extra, payloadType, playerName, env) {
     const completedEntries = extra.completedEntries;
     const itemName = extra.itemName;
     const percentageCompleted = (completedEntries / totalEntries) * 100;
-    let leftHandSize = percentageCompleted.toString().split('.')[0]?.length;
+    let leftHandSize = percentageCompleted.toString().split('.')[0];
 
-    if (leftHandSize === 1) {
+    if (leftHandSize.length === 1) {
       leftHandSize = percentageCompleted.toString().slice(0, 4);
-    } else if (leftHandSize === 2 || leftHandSize === 3) {
+    } else if (leftHandSize.length === 2 || leftHandSize.length === 3) {
       leftHandSize = percentageCompleted.toString().slice(0, 5);
     }
 
     if (!totalEntries || !completedEntries) {
-      // If the user hasn't cycled their collection log we will use this fallback to prevent errors
       msgMap.set(
         { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
         `**${playerName}** has added a new item to their collection log: **${itemName}**\n-# Unable to fetch total and completed entries. Cycle through all tabs in your collection log to fix this!
@@ -142,12 +141,19 @@ export function createFormData(extra, payloadType, playerName, env) {
     payloadType === Constants.KILL_COUNT &&
     checkKc(bossName, killCount, playerName)
   ) {
-    // Pulls the killCount from the actual game message and formats the message
     const formattedKC = extra.gameMessage?.split(': ')[1]?.replace('.', '!');
-    msgMap.set(
-      { ID: 'KILL_COUNT', URL: KC_URL },
-      `**${playerName}** has defeated **${bossName}** with a completion count of **${formattedKC}**`
-    );
+
+    if (bossName.toUpperCase() === Constants.PHANTOM_MUSPAH) {
+      msgMap.set(
+        { ID: 'KILL_COUNT', URL: KC_URL },
+        `**${playerName}** has defeated **${Constants.THE_GRUMBLER}** with a completion count of **${formattedKC}**`
+      );
+    } else {
+      msgMap.set(
+        { ID: 'KILL_COUNT', URL: KC_URL },
+        `**${playerName}** has defeated **${bossName}** with a completion count of **${formattedKC}**`
+      );
+    }
   }
 
   if (payloadType === Constants.LEVEL) {
@@ -157,12 +163,10 @@ export function createFormData(extra, payloadType, playerName, env) {
     };
     let totalLevel = 0;
 
-    // Get the total level of the account
     for (const [key, value] of Object.entries(extra.allSkills)) {
       totalLevel = totalLevel + value;
     }
 
-    // Grab skill's information that triggered the notification
     for (const [key, value] of Object.entries(extra.levelledSkills)) {
       levelledInfo.skillName = key;
       levelledInfo.level = value;

@@ -3,6 +3,8 @@ export const PET = 'PET';
 export const KILL_COUNT = 'KILL_COUNT';
 export const LEVEL = 'LEVEL';
 export const MAX_TOTAL_LEVEL = 2277;
+export const THE_GRUMBLER = 'The Grumbler';
+export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 
 export const theBoys = [
   'LSX SWAP',

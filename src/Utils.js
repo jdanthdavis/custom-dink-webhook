@@ -11,17 +11,17 @@ import * as Constants from './constants.js';
 function checkKc(bossName, killCount, playerName) {
   const bossInterval = Constants.bossMap.get(bossName?.toUpperCase());
 
-  // If KC is noteable
+  // if KC is noteable
   if (
     Constants.bossMap.has(bossName?.toUpperCase()) &&
     killCount % bossInterval === 0
   )
     return true;
 
-  // Base bossInterval of 100
+  // base bossInterval of 100
   if (killCount % 100 === 0) return true;
 
-  // Special occasion
+  // special occasion
   if (
     Constants.theBoys.includes(playerName?.toUpperCase()) &&
     Constants.specialKills.includes(bossName.toUpperCase())
@@ -63,6 +63,10 @@ function sanitizedTime(time) {
 
 /**
  * Creates the formData payload to send to a URL
+ * @param {*} extra
+ * @param {*} payloadType
+ * @param {*} playerName
+ * @param {*} env
  * @param {*} extra
  * @param {*} payloadType
  * @param {*} playerName
@@ -144,10 +148,18 @@ export function createFormData(extra, payloadType, playerName, env) {
   ) {
     // Pulls the killCount from the actual game message and formats the message
     const formattedKC = extra.gameMessage?.split(': ')[1]?.replace('.', '!');
-    msgMap.set(
-      { ID: 'KILL_COUNT', URL: KC_URL },
-      `**${playerName}** has defeated **${bossName}** with a completion count of **${formattedKC}**`
-    );
+
+    if (bossName.toUpperCase() === Constants.PHANTOM_MUSPAH) {
+      msgMap.set(
+        { ID: 'KILL_COUNT', URL: KC_URL },
+        `**${playerName}** has defeated **${Constants.THE_GRUMBLER}** with a completion count of **${formattedKC}**`
+      );
+    } else {
+      msgMap.set(
+        { ID: 'KILL_COUNT', URL: KC_URL },
+        `**${playerName}** has defeated **${bossName}** with a completion count of **${formattedKC}**`
+      );
+    }
   }
 
   if (payloadType === Constants.LEVEL) {

@@ -7,10 +7,6 @@ import { checkKc, grumblerCheck, sanitizedTime } from './utils/Index.js';
  * @param {*} payloadType
  * @param {*} playerName
  * @param {*} env
- * @param {*} extra
- * @param {*} payloadType
- * @param {*} playerName
- * @param {*} env
  * @returns
  */
 export function createFormData(extra, payloadType, playerName, env) {

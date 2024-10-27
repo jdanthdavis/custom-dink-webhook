@@ -1,5 +1,5 @@
 import * as Constants from './constants.js';
-import { checkKc, grumblerCheck, sanitizedTime } from './utils/checkKc.js';
+import { checkKc, grumblerCheck, sanitizedTime } from './utils/Index.js';
 
 /**
  * Creates the formData payload to send to a URL
@@ -33,7 +33,7 @@ export function createFormData(extra, payloadType, playerName, env) {
     } else {
       if (isDuplicate) {
         msgMap.set(
-          { ID: 'PET', URL: PET_URL },
+          { ID: 'PET', URL: TEST_URL },
           `**${playerName}** has a funny feeling like they would have been followed by **${grumblerCheck(
             petName
           )}**! | **${milestone}**`

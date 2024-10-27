@@ -24,6 +24,7 @@ function checkKc(bossName, killCount, playerName) {
   // special occasion
   if (
     Constants.theBoys.includes(playerName?.toUpperCase()) &&
+    killCount === 1 &&
     Constants.specialKills.includes(bossName.toUpperCase())
   ) {
     return true;

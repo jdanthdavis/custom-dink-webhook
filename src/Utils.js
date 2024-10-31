@@ -1,7 +1,9 @@
 import * as Constants from './constants.js';
 import {
   checkKc,
+  collectionLogCheck,
   grumblerCheck,
+  petCheck,
   sanitizedTime,
   totalLevelCheck,
 } from './utils/Index.js';
@@ -16,70 +18,19 @@ import {
  */
 export function createFormData(extra, payloadType, playerName, env) {
   const { KC_URL, PB_URL, COLLECTION_URL, PET_URL, LEVEL_URL, TEST_URL } = env;
-  const bossName = extra?.boss;
-  const killCount = extra?.count;
+  const { boss: bossName, count: killCount } = extra || {};
   let msgMap = new Map();
 
   if (payloadType === Constants.PET) {
-    const petName = extra?.petName;
-    const milestone = extra?.milestone;
-    const isDuplicate = extra?.duplicate;
-
-    if (!petName || !milestone) {
-      // Need this fallback in case the game broadcast doesn't include the pet name or milestone
-      msgMap.set(
-        { ID: 'PET', URL: PET_URL },
-        `**${playerName}** has a funny feeling like they would have been followed!\n-# Unable to fetch pet name and milestone!`
-      );
-    } else {
-      if (isDuplicate) {
-        msgMap.set(
-          { ID: 'PET', URL: TEST_URL },
-          `**${playerName}** has a funny feeling like they would have been followed by **${grumblerCheck(
-            petName
-          )}**! | **${milestone}**`
-        );
-      } else {
-        msgMap.set(
-          { ID: 'PET', URL: PET_URL },
-          `**${playerName}** has a funny feeling like they're being followed by **${grumblerCheck(
-            petName
-          )}**! | **${milestone}**`
-        );
-      }
-    }
+    petCheck(msgMap, playerName, extra, TEST_URL);
   }
 
   if (payloadType === Constants.COLLECTION) {
-    const totalEntries = extra?.totalEntries;
-    const completedEntries = extra?.completedEntries;
-    const itemName = extra?.itemName;
-    const percentageCompleted = (completedEntries / totalEntries) * 100;
-    let leftHandSize = percentageCompleted.toString().split('.')[0];
+    collectionLogCheck(msgMap, playerName, extra, COLLECTION_URL);
+  }
 
-    if (leftHandSize?.length === 1) {
-      leftHandSize = percentageCompleted.toString().slice(0, 4);
-    } else if (leftHandSize?.length === 2 || leftHandSize?.length === 3) {
-      leftHandSize = percentageCompleted.toString().slice(0, 5);
-    }
-
-    if (!totalEntries || !completedEntries) {
-      // If the user hasn't cycled their collection log we will use this fallback to prevent errors
-      msgMap.set(
-        { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
-        `**${playerName}** has added a new item to their collection log: **${grumblerCheck(
-          itemName
-        )}**\n-# Unable to fetch total and completed entries. Cycle through all tabs in your collection log to fix this!
-        `
-      );
-    } else {
-      msgMap.set(
-        { ID: 'COLLECTION_LOG', URL: COLLECTION_URL },
-        `**${playerName}** has added a new item to their collection log: **${grumblerCheck(
-          itemName
-        )}** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
-      );
-    }
+  if (payloadType === Constants.LEVEL) {
+    totalLevelCheck(msgMap, playerName, extra, LEVEL_URL);
   }
 
   if (extra?.isPersonalBest) {
@@ -106,10 +57,6 @@ export function createFormData(extra, payloadType, playerName, env) {
         bossName
       )}** with a completion count of **${formattedKC}**`
     );
-  }
-
-  if (payloadType === Constants.LEVEL) {
-    totalLevelCheck(msgMap, extra?.allSkills, extra?.levelledSkills);
   }
   return msgMap;
 }

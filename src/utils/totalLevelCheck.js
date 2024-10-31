@@ -1,6 +1,10 @@
 import * as Constants from '../constants.js';
 
-export default function totalLevelCheck(msgMap, allSkills, levelledSkills) {
+export default function totalLevelCheck(msgMap, playerName, extra, URL) {
+  const {
+    allSkills = extra?.allSkills,
+    levelledSkills = extra?.levelledSkills,
+  } = extra || {};
   const levelledInfo = {
     skillName: '',
     level: 0,
@@ -20,7 +24,7 @@ export default function totalLevelCheck(msgMap, allSkills, levelledSkills) {
 
   if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
     return msgMap.set(
-      { ID: 'MAX_TOTAL_LEVEL', URL: LEVEL_URL },
+      { ID: 'MAX_TOTAL_LEVEL', URL: URL },
       `@everyone <a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${levelledInfo.level}** in **${levelledInfo.skillName}!** <a:danseParty:1281063903933104160>`
     );
   } else if (
@@ -28,17 +32,17 @@ export default function totalLevelCheck(msgMap, allSkills, levelledSkills) {
     levelledInfo.skillName !== 'Fishing'
   ) {
     msgMap.set(
-      { ID: levelledInfo.skillName, URL: LEVEL_URL },
+      { ID: levelledInfo.skillName, URL: URL },
       `@everyone <a:danse:1281063902557241408> **${playerName}** has levelled **${levelledInfo.skillName} to ${levelledInfo.level}** <a:danse:1281063902557241408>`
     );
   } else if (levelledInfo.skillName === 'Fishing') {
     msgMap.set(
-      { ID: levelledInfo.skillName, URL: LEVEL_URL },
+      { ID: levelledInfo.skillName, URL: URL },
       `**${playerName}** has levelled **${levelledInfo.skillName} to ${levelledInfo.level}** <:fishh:1285367875531575306>`
     );
   } else {
     msgMap.set(
-      { ID: levelledInfo.skillName, URL: LEVEL_URL },
+      { ID: levelledInfo.skillName, URL: URL },
       `**${playerName}** has levelled **${levelledInfo.skillName} to ${levelledInfo.level}**!`
     );
   }

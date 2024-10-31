@@ -1,4 +1,5 @@
 import * as Constants from '../constants.js';
+
 /**
  * Check if the current killCount is divisible by 100.
  * If it's not but it is in specialKills then allow the notification.

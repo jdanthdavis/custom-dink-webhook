@@ -27,6 +27,11 @@ export default function totalLevelCheck(msgMap, playerName, extra, URL) {
       { ID: 'MAX_TOTAL_LEVEL', URL: URL },
       `@everyone <a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${levelledInfo.level}** in **${levelledInfo.skillName}!** <a:danseParty:1281063903933104160>`
     );
+  } else if (totalLevel % 25 === 0) {
+    msgMap.set(
+      { ID: 'NEW_TOTAL_LEVEL', URL: URL },
+      `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${levelledInfo.level}** in **${levelledInfo.skillName}!**`
+    );
   } else if (
     levelledInfo.level === 99 &&
     levelledInfo.skillName !== 'Fishing'

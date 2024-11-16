@@ -50,6 +50,8 @@ export default {
 function isValidAgent(ua) {
   if (typeof ua !== 'string') return false;
 
+  if (ua.includes('PostmanRuntime/')) return true;
+
   if (!ua.startsWith('RuneLite/') && !ua.startsWith('HDOS/')) return false;
 
   return ua.includes('Dink/');

@@ -7,7 +7,7 @@ import grumblerCheck from './grumblerCheck.js';
  * @param {*} extra
  * @param {*} URL
  */
-export default function petCheck(msgMap, playerName, extra, URL) {
+function petCheck(msgMap, playerName, extra, URL) {
   const { petName, milestone, duplicate: isDuplicate } = extra;
 
   if (!petName || !milestone) {
@@ -34,3 +34,5 @@ export default function petCheck(msgMap, playerName, extra, URL) {
     }
   }
 }
+
+export default petCheck;

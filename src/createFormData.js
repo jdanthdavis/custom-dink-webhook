@@ -1,12 +1,12 @@
 import * as Constants from './constants.js';
 import {
   checkKc,
-  collectionLogCheck,
-  checkCAProgress,
   grumblerCheck,
-  petCheck,
-  sanitizedTime,
+  sanitizeTime,
   totalLevelCheck,
+  collectionLogCheck,
+  petCheck,
+  checkCAProgress,
 } from './utils/Index.js';
 
 /**
@@ -47,7 +47,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (extra?.isPersonalBest) {
-    const time = sanitizedTime(extra?.time);
+    const time = sanitizeTime(extra?.time);
 
     msgMap.set(
       { ID: 'PB', URL: PB_URL },

@@ -3,7 +3,7 @@
  * @param {*} percentage
  * @returns
  */
-export default function formatPercentage(percentage) {
+function formatAsPercentage(percentage) {
   const percentSize = percentage.toString().split('.')[0];
 
   if (percentSize?.length === 1) {
@@ -12,3 +12,5 @@ export default function formatPercentage(percentage) {
     return percentage.toString().slice(0, 5);
   }
 }
+
+export default formatAsPercentage;

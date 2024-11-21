@@ -8,7 +8,7 @@ import * as Constants from '../constants.js';
  * @param playerName
  * @returns
  */
-export default function checkKc(bossName, killCount, playerName) {
+function checkKc(bossName, killCount, playerName) {
   const bossInterval = Constants.bossMap.get(bossName?.toUpperCase());
 
   // if KC is noteable
@@ -31,3 +31,5 @@ export default function checkKc(bossName, killCount, playerName) {
   }
   return false;
 }
+
+export default checkKc;

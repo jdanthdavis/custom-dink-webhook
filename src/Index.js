@@ -1,4 +1,4 @@
-import { createFormData } from './utils.js';
+import { createFormData } from './createFormData.js';
 import { acceptedPayloads } from './constants.js';
 
 export default {

@@ -1,5 +1,5 @@
 import * as Constants from './constants.js';
-import { pet } from './utils/index.js';
+import { pet } from './utils/Index.js';
 // import {
 //   checkKc,
 //   collectionLogCheck,

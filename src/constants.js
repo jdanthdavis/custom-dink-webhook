@@ -39,4 +39,5 @@ export const acceptedPayloads = [
   'COLLECTION',
   'PET',
   'LEVEL',
+  'COMBAT_ACHIEVEMENT',
 ];

@@ -1,5 +1,5 @@
 import * as Constants from './constants.js';
-import { pet } from './utils/Index.js';
+import { petCheck } from './utils/Index.js';
 // import {
 //   checkKc,
 //   collectionLogCheck,
@@ -31,7 +31,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   let msgMap = new Map();
 
   if (payloadType === Constants.PET) {
-    pet(msgMap, playerName, extra, TEST_URL);
+    petCheck(msgMap, playerName, extra, TEST_URL);
   }
 
   // if (payloadType === Constants.COLLECTION) {

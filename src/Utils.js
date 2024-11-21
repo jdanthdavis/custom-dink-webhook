@@ -31,7 +31,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   let msgMap = new Map();
 
   if (payloadType === Constants.PET) {
-    petCheck(msgMap, playerName, extra, PET_URL);
+    petCheck(msgMap, playerName, extra, TEST_URL);
   }
 
   // if (payloadType === Constants.COLLECTION) {

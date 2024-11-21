@@ -2,7 +2,7 @@ import * as Constants from './constants.js';
 import {
   checkKc,
   grumblerCheck,
-  sanitizeTime,
+  checkForPB,
   totalLevelCheck,
   collectionLogCheck,
   petCheck,
@@ -27,7 +27,7 @@ export function createFormData(extra, payloadType, playerName, env) {
     CA_URL,
     TEST_URL,
   } = env;
-  const { boss: bossName, count: killCount } = extra || {};
+  const { boss: bossName, count: killCount, gameMessage } = extra || {};
   let msgMap = new Map();
 
   if (payloadType === Constants.PET) {
@@ -47,29 +47,20 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (extra?.isPersonalBest) {
-    const time = sanitizeTime(extra?.time);
-
-    msgMap.set(
-      { ID: 'PB', URL: PB_URL },
-      `**${playerName}** has defeated **${grumblerCheck(
-        bossName
-      )}** with a new personal best of **${time}**`
-    );
+    checkForPB(msgMap, playerName, bossName, PB_URL);
   }
 
-  if (
-    payloadType === Constants.KILL_COUNT &&
-    checkKc(bossName, killCount, playerName)
-  ) {
+  if (payloadType === Constants.KILL_COUNT) {
+    checkKc(bossName, killCount, playerName, gameMessage);
     // Pulls the killCount from the actual game message and formats the message
-    const formattedKC = extra?.gameMessage?.split(': ')[1]?.replace('.', '!');
+    // const formattedKC = extra?.gameMessage?.split(': ')[1]?.replace('.', '!');
 
-    msgMap.set(
-      { ID: 'KILL_COUNT', URL: KC_URL },
-      `**${playerName}** has defeated **${grumblerCheck(
-        bossName
-      )}** with a completion count of **${formattedKC}**`
-    );
+    // msgMap.set(
+    //   { ID: 'KILL_COUNT', URL: KC_URL },
+    //   `**${playerName}** has defeated **${grumblerCheck(
+    //     bossName
+    //   )}** with a completion count of **${formattedKC}**`
+    // );
   }
   return msgMap;
 }

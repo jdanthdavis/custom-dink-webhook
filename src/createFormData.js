@@ -51,7 +51,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.KILL_COUNT) {
-    checkKc(msgMap, bossName, killCount, playerName, gameMessage);
+    checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL);
     // Pulls the killCount from the actual game message and formats the message
     // const formattedKC = extra?.gameMessage?.split(': ')[1]?.replace('.', '!');
 

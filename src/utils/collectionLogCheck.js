@@ -1,4 +1,5 @@
 import grumblerCheck from './grumblerCheck.js';
+import formatPercentage from './formatPercentage.js';
 
 /**
  * Gathers the collection log item and builds the accounts total collection log entries
@@ -10,14 +11,16 @@ import grumblerCheck from './grumblerCheck.js';
  */
 export default function collectionLogCheck(msgMap, playerName, extra, URL) {
   const { totalEntries, completedEntries, itemName } = extra || {};
-  const percentageCompleted = (completedEntries / totalEntries) * 100;
-  let leftHandSize = percentageCompleted.toString().split('.')[0];
+  const percentageCompleted = formatPercentage(
+    (completedEntries / totalEntries) * 100
+  );
+  // let leftHandSize = percentageCompleted.toString().split('.')[0];
 
-  if (leftHandSize?.length === 1) {
-    leftHandSize = percentageCompleted.toString().slice(0, 4);
-  } else if (leftHandSize?.length === 2 || leftHandSize?.length === 3) {
-    leftHandSize = percentageCompleted.toString().slice(0, 5);
-  }
+  // if (leftHandSize?.length === 1) {
+  //   leftHandSize = percentageCompleted.toString().slice(0, 4);
+  // } else if (leftHandSize?.length === 2 || leftHandSize?.length === 3) {
+  //   leftHandSize = percentageCompleted.toString().slice(0, 5);
+  // }
 
   if (!totalEntries || !completedEntries) {
     // If the user hasn't cycled their collection log we will use this fallback to prevent errors
@@ -33,7 +36,7 @@ export default function collectionLogCheck(msgMap, playerName, extra, URL) {
       { ID: 'COLLECTION_LOG', URL: URL },
       `**${playerName}** has added a new item to their collection log: **${grumblerCheck(
         itemName
-      )}** | **${completedEntries}/${totalEntries} (${leftHandSize}%)**`
+      )}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)**`
     );
   }
   return msgMap;

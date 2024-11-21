@@ -8,7 +8,7 @@ import * as Constants from '../constants.js';
  * @param playerName
  * @returns
  */
-function checkKc(bossName, killCount, playerName, gameMessage) {
+function checkKc(msgMap, bossName, killCount, playerName, gameMessage) {
   const bossInterval = Constants.bossMap.get(bossName?.toUpperCase());
   const formattedKC = gameMessage?.split(': ')[1]?.replace('.', '!');
 

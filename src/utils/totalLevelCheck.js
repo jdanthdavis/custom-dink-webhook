@@ -8,7 +8,7 @@ import * as Constants from '../constants.js';
  * @param {*} URL
  * @returns
  */
-export default function totalLevelCheck(msgMap, playerName, extra, URL) {
+function totalLevelCheck(msgMap, playerName, extra, URL) {
   const {
     allSkills = extra?.allSkills,
     levelledSkills = extra?.levelledSkills,
@@ -59,3 +59,5 @@ export default function totalLevelCheck(msgMap, playerName, extra, URL) {
 
   return msgMap;
 }
+
+export default totalLevelCheck;

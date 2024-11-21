@@ -3,7 +3,7 @@
  * @param {*} time
  * @returns
  */
-export default function sanitizedTime(time) {
+function sanitizeTime(time) {
   // Remove the leading PT
   let cleanedTime = time.replace('PT', '');
 
@@ -27,3 +27,5 @@ export default function sanitizedTime(time) {
   }
   return cleanedTime;
 }
+
+export default sanitizeTime;

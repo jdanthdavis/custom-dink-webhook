@@ -1,6 +1,6 @@
-import formatPercentage from './formatPercentage.js';
+import formatAsPercentage from './formatAsPercentage';
 
-export default function checkCAProgress(msgMap, playerName, extra, URL) {
+function checkCAProgress(msgMap, playerName, extra, URL) {
   const {
     tier,
     task,
@@ -11,10 +11,10 @@ export default function checkCAProgress(msgMap, playerName, extra, URL) {
     totalPossiblePoints,
     currentTier,
   } = extra;
-  const formattedTaskPercentageCompleted = formatPercentage(
+  const formattedTaskPercentageCompleted = formatAsPercentage(
     (tierProgress / tierTotalPoints) * 100
   );
-  const formattedTotalCaCompletion = formatPercentage(
+  const formattedTotalCaCompletion = formatAsPercentage(
     (totalPoints / totalPossiblePoints) * 100
   );
   const formattedTier =
@@ -37,3 +37,5 @@ export default function checkCAProgress(msgMap, playerName, extra, URL) {
     );
   }
 }
+
+export default checkCAProgress;

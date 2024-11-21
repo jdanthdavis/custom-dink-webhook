@@ -1,7 +1,6 @@
 import * as Constants from './constants.js';
 import {
   checkKc,
-  grumblerCheck,
   checkForPB,
   totalLevelCheck,
   collectionLogCheck,
@@ -52,15 +51,6 @@ export function createFormData(extra, payloadType, playerName, env) {
 
   if (payloadType === Constants.KILL_COUNT) {
     checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL);
-    // Pulls the killCount from the actual game message and formats the message
-    // const formattedKC = extra?.gameMessage?.split(': ')[1]?.replace('.', '!');
-
-    // msgMap.set(
-    //   { ID: 'KILL_COUNT', URL: KC_URL },
-    //   `**${playerName}** has defeated **${grumblerCheck(
-    //     bossName
-    //   )}** with a completion count of **${formattedKC}**`
-    // );
   }
   return msgMap;
 }

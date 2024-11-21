@@ -29,19 +29,6 @@ function checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL) {
       )}** with a completion count of **${formattedKC}**`
     );
   }
-
-  // base bossInterval of 100
-  // if (killCount % 100 === 0) return true;
-
-  // special occasion
-  //   if (
-  //     Constants.theBoys.includes(playerName?.toUpperCase()) &&
-  //     killCount === 1 &&
-  //     Constants.specialKills.includes(bossName.toUpperCase())
-  //   ) {
-  //     return true;
-  //   }
-  //   return false;
 }
 
 export default checkKc;

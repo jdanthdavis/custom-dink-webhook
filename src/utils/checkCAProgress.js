@@ -28,7 +28,7 @@ function checkCAProgress(msgMap, playerName, extra, URL) {
   if (justCompletedTier) {
     msgMap.set(
       { ID: 'CA', URL: URL },
-      `**${playerName}** has completed the **${formattedJustCompleted}** combat achievements, by completing combat task: **${task}!**\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCaCompletion}%) of total points for Grandmasters`
+      `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCaCompletion}%) of total points for Grandmasters`
     );
   } else {
     msgMap.set(

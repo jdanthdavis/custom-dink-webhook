@@ -1,10 +1,13 @@
 name: Deploy to Cloudflare
 
 on:
-  push:
+  workflow_dispatch: # Allows manual triggering
+  pull_request:
     branches:
-      - Main
-      - Dev
+      - main
+      - dev
+    # Only trigger if the pull request is merged
+    if: github.event.pull_request.merged == true
 
 jobs:
   deploy:
@@ -12,25 +15,37 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set Environment Variables for Main
-        if: github.ref == 'refs/heads/Main'
+        if: github.ref == 'refs/heads/main'
         run: |
           echo "KC_URL=${{ secrets.KC_URL }}" >> $GITHUB_ENV
           echo "PB_URL=${{ secrets.PB_URL }}" >> $GITHUB_ENV
           echo "PET_URL=${{ secrets.PET_URL }}" >> $GITHUB_ENV
 
       - name: Set Environment Variables for Dev
-        if: github.ref == 'refs/heads/Dev'
+        if: github.ref == 'refs/heads/dev'
         run: |
           echo "KC_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
           echo "PB_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
           echo "PET_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "CA_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "COLLECTION_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "LEVEL_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
 
-      - name: Build and Deploy
-        run: npm run deploy
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Build & Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         env:
           KC_URL: ${{ env.KC_URL }}
           PB_URL: ${{ env.PB_URL }}
           PET_URL: ${{ env.PET_URL }}
+          CA_URL: ${{ env.CA_URL }}
+          COLLECTION_URL: ${{ env.COLLECTION_URL }}
+          LEVEL_URL: ${{ env.LEVEL_URL }}

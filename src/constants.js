@@ -29,7 +29,7 @@ export const bossMap = new Map([
   ["PHOSANI'S NIGHTMARE", 25],
   ['THE NIGHTMARE', 25],
   ['CORPOREAL BEAST', 50],
-  ['HERBIBOAR', 200],
+  ['HERBIBOAR', 150],
   ['TEST', 1],
 ]);
 

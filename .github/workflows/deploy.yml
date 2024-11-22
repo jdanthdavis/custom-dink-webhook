@@ -6,8 +6,8 @@ on:
     branches:
       - main
       - dev
-    types:
-      - closed # Trigger on PR being closed (merged or just closed)
+    # Only trigger if the pull request is merged
+    if: github.event.pull_request.merged == true
 
 jobs:
   deploy:
@@ -30,6 +30,9 @@ jobs:
           echo "KC_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
           echo "PB_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
           echo "PET_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "CA_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "COLLECTION_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "LEVEL_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
 
       - name: Install Wrangler
         run: npm install -g wrangler
@@ -43,3 +46,6 @@ jobs:
           KC_URL: ${{ env.KC_URL }}
           PB_URL: ${{ env.PB_URL }}
           PET_URL: ${{ env.PET_URL }}
+          CA_URL: ${{ env.CA_URL }}
+          COLLECTION_URL: ${{ env.COLLECTION_URL }}
+          LEVEL_URL: ${{ env.LEVEL_URL }}

@@ -34,6 +34,18 @@ jobs:
           echo "COLLECTION_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
           echo "LEVEL_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
 
+      - name: Ensure correct wrangler.toml name for main branch
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Ensure wrangler.toml has the correct name for main
+          sed -i 's/name = "swap-meet-custom-dink-webhook-dev"/name = "swap-meet-custom-dink-webhook"/' wrangler.toml
+
+      - name: Ensure correct wrangler.toml name for dev branch
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          # Ensure wrangler.toml has the correct name for dev
+          sed -i 's/name = "swap-meet-custom-dink-webhook"/name = "swap-meet-custom-dink-webhook-dev"/' wrangler.toml
+
       - name: Install Wrangler
         run: npm install -g wrangler
 

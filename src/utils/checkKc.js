@@ -15,10 +15,20 @@ function checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL) {
 
   // if KC is noteable
   if (
-    (Constants.bossMap.has(bossName?.toUpperCase()) &&
-      killCount % bossInterval === 0) ||
-    (killCount % 100 === 0 &&
-      Constants.bossMap.has(!bossName?.toUpperCase())) ||
+    Constants.bossMap.has(bossName?.toUpperCase()) &&
+    killCount % bossInterval === 0
+  ) {
+    msgMap.set(
+      { ID: 'KILL_COUNT', URL: KC_URL },
+      `**${playerName}** has defeated **${grumblerCheck(
+        bossName
+      )}** with a completion count of **${formattedKC}**`
+    );
+    return;
+  }
+
+  if (
+    killCount % 100 === 0 ||
     (Constants.theBoys.includes(playerName?.toUpperCase()) &&
       killCount === 1 &&
       Constants.specialKills.includes(bossName.toUpperCase()))
@@ -30,6 +40,17 @@ function checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL) {
       )}** with a completion count of **${formattedKC}**`
     );
   }
+
+  // if (
+
+  // ) {
+  //   msgMap.set(
+  //     { ID: 'KILL_COUNT', URL: KC_URL },
+  //     `**${playerName}** has defeated **${grumblerCheck(
+  //       bossName
+  //     )}** with a completion count of **${formattedKC}**`
+  //   );
+  // }
 }
 
 export default checkKc;

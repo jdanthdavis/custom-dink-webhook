@@ -1,5 +1,5 @@
-import * as Constants from "../constants.js";
-import killCountMsgConstructor from "./killCountMsgConstructor/killCountMsgConstructor.js";
+import * as Constants from '../constants.js';
+import killCountMsgConstructor from './killCountMsgConstructor/killCountMsgConstructor.js';
 
 /**
  * Check if the current killCount is divisible by 100.
@@ -20,7 +20,7 @@ function checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL) {
     (killCount === 1 && Constants.specialKills.includes(bossName.toUpperCase()))
   ) {
     msgMap.set(
-      { ID: "KILL_COUNT", URL: KC_URL },
+      { ID: 'KILL_COUNT', URL: KC_URL },
       killCountMsgConstructor(playerName, gameMessage, bossName)
     );
   }

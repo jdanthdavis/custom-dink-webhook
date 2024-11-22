@@ -12,33 +12,33 @@ function killCountMsgConstructor(playerName, gameMessage, bossName) {
     /Your (?<type>completed|subdued) (?<key>.+?) count is: (?<value>[\d,]+)\b/i;
   const primaryMatch = gameMessage.match(primary_regex);
   const secondaryMatch = gameMessage.match(secondary_regex);
-  const formattedKC = gameMessage?.split(": ")[1]?.replace(".", "!");
-  let key = "";
+  const formattedKC = gameMessage?.split(': ')[1]?.replace('.', '!');
+  let key = '';
 
   if (primaryMatch) {
     switch (primaryMatch.groups.type) {
-      case "kill":
-        key = "kill";
+      case 'kill':
+        key = 'kill';
         break;
-      case "harvest":
-        key = "harvest";
+      case 'harvest':
+        key = 'harvest';
         break;
-      case "chest":
-        key = "chest";
+      case 'chest':
+        key = 'chest';
         break;
       default:
-        key = "completion";
+        key = 'completion';
     }
   } else if (secondaryMatch) {
     switch (secondaryMatch.groups.type) {
-      case "completed":
-        key = "completed";
+      case 'completed':
+        key = 'completed';
         break;
-      case "subdued":
-        key = "subdued";
+      case 'subdued':
+        key = 'subdued';
         break;
       default:
-        key = "completion";
+        key = 'completion';
     }
   }
 

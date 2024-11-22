@@ -12,10 +12,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Build & Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Install Wrangler
         run: npm install -g wrangler
@@ -35,7 +38,7 @@ jobs:
           echo "PET_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
 
       - name: Publish to Cloudflare Workers
-        run: wrangler publish
+        run: wrangler deploy
         env:
           KC_URL: ${{ env.KC_URL }}
           PB_URL: ${{ env.PB_URL }}

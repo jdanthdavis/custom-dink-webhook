@@ -16,6 +16,9 @@ export default {
     let msgMap;
 
     console.log('payload - ', payload);
+    // Access the KC_URL environment variable
+    const kcUrl = env.KC_URL;
+    console.log('Using KC_URL:', kcUrl);
 
     if (acceptedPayloads.includes(payloadType)) {
       msgMap = createFormData(extra, payloadType, playerName, env);

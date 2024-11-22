@@ -17,7 +17,8 @@ function checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL) {
   if (
     (Constants.bossMap.has(bossName?.toUpperCase()) &&
       killCount % bossInterval === 0) ||
-    killCount % 100 === 0 ||
+    (killCount % 100 === 0 &&
+      Constants.bossMap.has(!bossName?.toUpperCase())) ||
     (Constants.theBoys.includes(playerName?.toUpperCase()) &&
       killCount === 1 &&
       Constants.specialKills.includes(bossName.toUpperCase()))

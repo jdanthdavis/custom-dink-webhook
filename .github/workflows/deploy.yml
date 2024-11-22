@@ -1,15 +1,45 @@
-name: Deploy Worker
+name: Deploy to Cloudflare
+
 on:
-  push:
+  workflow_dispatch: # Allows manual triggering
+  pull_request:
     branches:
       - main
+      - dev
+    types:
+      - closed # Trigger on PR being closed (merged or just closed)
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set Environment Variables for Main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "KC_URL=${{ secrets.KC_URL }}" >> $GITHUB_ENV
+          echo "PB_URL=${{ secrets.PB_URL }}" >> $GITHUB_ENV
+          echo "PET_URL=${{ secrets.PET_URL }}" >> $GITHUB_ENV
+
+      - name: Set Environment Variables for Dev
+        if: github.ref == 'refs/heads/dev'
+        run: |
+          echo "KC_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "PB_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          echo "PET_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        env:
+          KC_URL: ${{ env.KC_URL }}
+          PB_URL: ${{ env.PB_URL }}
+          PET_URL: ${{ env.PET_URL }}

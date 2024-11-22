@@ -1,10 +1,13 @@
 name: Deploy to Cloudflare
 
 on:
-  push:
+  workflow_dispatch: # Allows manual triggering
+  pull_request:
     branches:
-      - Main
-      - Dev
+      - main
+      - dev
+    types:
+      - closed # Trigger on PR being closed (merged or just closed)
 
 jobs:
   deploy:

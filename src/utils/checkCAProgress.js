@@ -27,13 +27,17 @@ function checkCAProgress(msgMap, playerName, extra, URL) {
 
   if (justCompletedTier) {
     msgMap.set(
-      { ID: 'CA', URL: URL },
-      `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCaCompletion}%) of total points for Grandmasters`
+      { ID: 'CA', URL },
+      `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**${
+        justCompletedTier !== 'GRANDMASTER'
+          ? `\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCaCompletion}%) of total points for Grandmasters`
+          : ``
+      }`
     );
   } else {
     msgMap.set(
-      { ID: 'CA', URL: URL },
-      `**${playerName}** has completed **${formattedTier}** combat task: **${task} | ${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%) of ${formattedCurrentTier} of tier completed**`
+      { ID: 'CA', URL },
+      `**${playerName}** has completed **${formattedTier}** combat task: **${task} | ${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%) of ${formattedCurrentTier} of tier completed!**`
     );
   }
 }

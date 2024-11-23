@@ -17,16 +17,7 @@ import {
  * @returns
  */
 export function createFormData(extra, payloadType, playerName, env) {
-  const {
-    KC_URL,
-    PB_URL,
-    COLLECTION_URL,
-    PET_URL,
-    LEVEL_URL,
-    CA_URL,
-    TEST_URL,
-  } = env;
-  const { boss: bossName, count: killCount, gameMessage } = extra || {};
+  const { KC_URL, PB_URL, COLLECTION_URL, PET_URL, LEVEL_URL, CA_URL } = env;
   let msgMap = new Map();
 
   if (payloadType === Constants.PET) {
@@ -46,11 +37,11 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (extra?.isPersonalBest) {
-    checkForPB(msgMap, playerName, bossName, PB_URL);
+    checkForPB(msgMap, playerName, extra, PB_URL);
   }
 
   if (payloadType === Constants.KILL_COUNT) {
-    checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL);
+    checkKc(msgMap, playerName, extra, KC_URL);
   }
   return msgMap;
 }

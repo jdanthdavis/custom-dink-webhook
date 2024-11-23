@@ -1,5 +1,5 @@
 import { createFormData } from './createFormData.js';
-import { acceptedPayloads } from './constants.js';
+import { acceptedPayloads, theBoys } from './constants.js';
 
 export default {
   async fetch(request, env) {
@@ -16,11 +16,11 @@ export default {
     let msgMap;
 
     console.log('payload - ', payload);
-    // Access the KC_URL environment variable
-    const kcUrl = env.KC_URL;
-    console.log('Using KC_URL:', kcUrl);
 
-    if (acceptedPayloads.includes(payloadType)) {
+    if (
+      acceptedPayloads.includes(payloadType) &&
+      theBoys.includes(playerName)
+    ) {
       msgMap = createFormData(extra, payloadType, playerName, env);
 
       for (const [url, msg] of msgMap.entries()) {

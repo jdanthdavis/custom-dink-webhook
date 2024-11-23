@@ -1,32 +1,30 @@
 import * as Constants from '../constants.js';
 import grumblerCheck from './grumblerCheck.js';
+import killCountMsgConstructor from './killCountMsgConstructor/killCountMsgConstructor.js';
 
 /**
  * Check if the current killCount is divisible by 100.
  * If it's not but it is in specialKills then allow the notification.
- * @param bossName
- * @param killCount
- * @param playerName
- * @returns
+ * @param {*} msgMap
+ * @param {*} playerName
+ * @param {*} extra
+ * @param {*} KC_URL
  */
-function checkKc(msgMap, bossName, killCount, playerName, gameMessage, KC_URL) {
+function checkKc(msgMap, playerName, extra, KC_URL) {
+  const bossName = grumblerCheck(extra?.boss);
+  const { count: killCount, gameMessage } = extra || {};
   const bossInterval = Constants.bossMap.get(bossName?.toUpperCase());
-  const formattedKC = gameMessage?.split(': ')[1]?.replace('.', '!');
 
-  // if KC is noteable
+  // if KC is notable
   if (
     (Constants.bossMap.has(bossName?.toUpperCase()) &&
       killCount % bossInterval === 0) ||
     killCount % 100 === 0 ||
-    (Constants.theBoys.includes(playerName?.toUpperCase()) &&
-      killCount === 1 &&
-      Constants.specialKills.includes(bossName.toUpperCase()))
+    (killCount === 1 && Constants.specialKills.includes(bossName.toUpperCase()))
   ) {
     msgMap.set(
       { ID: 'KILL_COUNT', URL: KC_URL },
-      `**${playerName}** has defeated **${grumblerCheck(
-        bossName
-      )}** with a completion count of **${formattedKC}**`
+      killCountMsgConstructor(playerName, gameMessage, bossName)
     );
   }
 }

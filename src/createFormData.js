@@ -2,7 +2,7 @@ import * as Constants from './constants.js';
 import {
   checkKc,
   checkForPB,
-  totalLevelCheck,
+  checkLevelUp,
   collectionLogCheck,
   petCheck,
   checkCAProgress,
@@ -29,7 +29,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.LEVEL) {
-    totalLevelCheck(msgMap, playerName, extra, LEVEL_URL);
+    checkLevelUp(msgMap, playerName, extra, LEVEL_URL);
   }
 
   if (payloadType === Constants.COMBAT_ACHIEVEMENT) {

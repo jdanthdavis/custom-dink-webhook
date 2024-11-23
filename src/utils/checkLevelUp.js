@@ -74,16 +74,14 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
     if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
       msgMap.set(
         { ID: 'MAX_TOTAL_LEVEL', URL },
-        `-# @everyone
-<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
+        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
       );
       break;
     } else if (totalLevel !== 0 && totalLevel % 25 === 0) {
       if (skillLevel === 99) {
         msgMap.set(
           { ID: 'NEW_TOTAL_LEVEL', URL },
-          `-# @everyone
-<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`
+          `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`
         );
       } else {
         msgMap.set(
@@ -95,8 +93,7 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
     } else if (skillLevel === 99) {
       msgMap.set(
         { ID: skillName, URL },
-        `-# @everyone
-          <a:danse:1306473434221641760> **${playerName}** has levelled **${multiLvlStr}!** <a:danse:1306473434221641760>`
+        `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has levelled **${multiLvlStr}!** <a:danse:1306473434221641760>`
       );
       break;
     } else if (skillName === 'Fishing' && !multipleLevels) {

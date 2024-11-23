@@ -19,7 +19,7 @@ export default {
 
     if (
       acceptedPayloads.includes(payloadType) &&
-      theBoys.includes(playerName)
+      theBoys.includes(playerName.toUpperCase())
     ) {
       msgMap = createFormData(extra, payloadType, playerName, env);
 

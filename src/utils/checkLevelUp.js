@@ -71,14 +71,11 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
 
   for (const { skillName, skillLevel } of allLevelledSkills) {
     let multiLvlStr = multiLevelMsgConstructor();
-
     if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
       msgMap.set(
         { ID: 'MAX_TOTAL_LEVEL', URL },
         `-# @everyone
-<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by ${
-          !multipleLevels ? 'reaching' : 'levelling'
-        } **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
+<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
       );
       break;
     } else if (totalLevel !== 0 && totalLevel % 25 === 0) {
@@ -86,16 +83,12 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
         msgMap.set(
           { ID: 'NEW_TOTAL_LEVEL', URL },
           `-# @everyone
-<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by ${
-            !multipleLevels ? 'reaching' : 'levelling'
-          } **${multiLvlStr}!** <a:danse:1306473434221641760>`
+<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`
         );
       } else {
         msgMap.set(
           { ID: 'NEW_TOTAL_LEVEL', URL },
-          `**${playerName}** has reached a new total level of **${totalLevel}**, by ${
-            !multipleLevels ? 'reaching' : 'levelling'
-          } **${multiLvlStr}!**`
+          `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!**`
         );
       }
       break;

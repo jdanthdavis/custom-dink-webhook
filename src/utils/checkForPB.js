@@ -30,9 +30,7 @@ function checkForPB(msgMap, playerName, bossName, PB_URL) {
 
   msgMap.set(
     { ID: 'PB', URL: PB_URL },
-    `**${playerName}** has defeated **${grumblerCheck(
-      bossName
-    )}** with a new personal best of **${time}**`
+    `**${playerName}** has defeated **${bossName}** with a new personal best of **${time}**!`
   );
 }
 

@@ -8,7 +8,8 @@ import grumblerCheck from './grumblerCheck.js';
  * @param {*} URL
  */
 function petCheck(msgMap, playerName, extra, URL) {
-  const { petName, milestone, duplicate: isDuplicate } = extra;
+  const { milestone, duplicate: isDuplicate } = extra;
+  const petName = grumblerCheck(extra?.petName);
 
   if (!petName || !milestone) {
     // Need this fallback in case the game broadcast doesn't include the pet name or milestone
@@ -20,16 +21,12 @@ function petCheck(msgMap, playerName, extra, URL) {
     if (isDuplicate) {
       msgMap.set(
         { ID: 'PET', URL: URL },
-        `**${playerName}** has a funny feeling like they would have been followed by **${grumblerCheck(
-          petName
-        )}**! | **${milestone}**`
+        `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
       );
     } else {
       msgMap.set(
         { ID: 'PET', URL: URL },
-        `**${playerName}** has a funny feeling like they're being followed by **${grumblerCheck(
-          petName
-        )}**! | **${milestone}**`
+        `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`
       );
     }
   }

@@ -1,3 +1,5 @@
+import grumblerCheck from './grumblerCheck';
+
 /**
  * Time comes in ISO-8601 duration so we need to reformat the time
  * @param {*} msgMap
@@ -5,9 +7,10 @@
  * @param {*} bossName
  * @param {*} PB_URL
  */
-function checkForPB(msgMap, playerName, bossName, PB_URL) {
+function checkForPB(msgMap, playerName, extra, PB_URL) {
+  const bossName = grumblerCheck(extra?.boss);
   // Remove the leading PT
-  let cleanedTime = time.replace('PT', '');
+  let cleanedTime = extra?.time.replace('PT', '');
 
   if (cleanedTime.includes('M') && !cleanedTime.includes('S')) {
     // PB that has no seconds

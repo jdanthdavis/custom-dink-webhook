@@ -33,7 +33,7 @@ function checkForPB(msgMap, playerName, extra, PB_URL) {
 
   msgMap.set(
     { ID: 'PB', URL: PB_URL },
-    `**${playerName}** has defeated **${bossName}** with a new personal best of **${time}**`
+    `**${playerName}** has defeated **${bossName}** with a new personal best of **${time}**!`
   );
 }
 

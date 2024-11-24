@@ -13,68 +13,61 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
     allSkills = extra?.allSkills,
     levelledSkills = extra?.levelledSkills,
   } = extra || {};
-  const allLevelledSkills = [];
-  let totalLevel = 0;
-  // Get the total level of the account
-  for (const [key, value] of Object.entries(allSkills)) {
-    totalLevel = totalLevel + value;
+  const allLevelsMap = new Map(Object.entries(allSkills));
+  const levelledSkillsMap = new Map(Object.entries(levelledSkills));
+  // Get the new total level with newest level ups
+  for (const [skillName, skillLevel] of levelledSkillsMap.entries()) {
+    if (allLevelsMap.has(skillName)) {
+      const updatedLevel = skillLevel;
+      allLevelsMap.set(skillName, updatedLevel);
+    }
   }
-  // Get all skill's information that triggered the notification
-  for (const [key, value] of Object.entries(levelledSkills)) {
-    allLevelledSkills.push({ skillName: key, skillLevel: value });
-  }
-  const allLevelledSkillsLength = allLevelledSkills.length;
-  const multipleLevels = allLevelledSkillsLength > 1;
+  const totalLevel = Array.from(allLevelsMap.values()).reduce(
+    (sum, skillLevel) => sum + skillLevel,
+    0
+  );
 
   /**
    * Constructs a multi-level message when multiple skills caused the dink
    */
   const multiLevelMsgConstructor = () => {
     const isTotalLevelInterval =
-      totalLevel % 25 === 0 || totalLevel === Constants.MAX_TOTAL_LEVEL;
-    let skills =
-      allLevelledSkillsLength === 2 || allLevelledSkillsLength > 2
-        ? allLevelledSkills.map(
-            (skill) => `${skill.skillLevel} in ${skill.skillName}`
-          )
-        : [];
+      totalLevel % 25 === 0 || totalLevel === MAX_TOTAL_LEVEL;
 
-    if (allLevelledSkillsLength === 1) {
-      const { skillName, skillLevel } = allLevelledSkills[0];
-      if (isTotalLevelInterval) {
-        return `${skillLevel} in ${skillName}`; // Single skill and a total level interval
-      } else {
-        return `${skillName} to ${skillLevel}`; // Single skill with no total level interval
-      }
-    } else if (allLevelledSkillsLength === 2) {
-      if (isTotalLevelInterval) {
-        return skills.join(' and '); // Two skills abd a total level interval
-      } else {
-        skills = allLevelledSkills.map(
-          (skill) => `${skill.skillName} to ${skill.skillLevel}`
-        );
-        return skills.join(' and '); // Two skills
-      }
-    } else if (allLevelledSkillsLength > 2) {
-      if (isTotalLevelInterval) {
-        const lastSkill = skills.pop();
-        return `${skills.join(', ')}, and ${lastSkill}`; // More than two skills and a total level interval
-      } else {
-        skills = allLevelledSkills.map(
-          (skill) => `${skill.skillName} to ${skill.skillLevel}`
-        );
-        const lastSkill = skills.pop();
-        return `${skills.join(', ')}, and ${lastSkill}`; // More than two skills and a total level interval
-      }
+    // Helper function to construct skill messages
+    const constructSkillMessages = (format) =>
+      Array.from(levelledSkillsMap.entries()).map(([skillName, skillLevel]) =>
+        format(skillName, skillLevel)
+      );
+
+    if (levelledSkillsMap.size === 1) {
+      const [skillName, skillLevel] = levelledSkillsMap.entries().next().value;
+      return isTotalLevelInterval
+        ? `${skillLevel} in ${skillName}`
+        : `${skillName} to ${skillLevel}`;
+    }
+
+    // Determine message formatting
+    const skillMessages = isTotalLevelInterval
+      ? constructSkillMessages((name, level) => `${level} in ${name}`)
+      : constructSkillMessages((name, level) => `${name} to ${level}`);
+
+    if (levelledSkillsMap.size === 2) {
+      return skillMessages.join(' and ');
+    }
+
+    if (levelledSkillsMap.size > 2) {
+      const lastSkill = skillMessages.pop();
+      return `${skillMessages.join(', ')}, and ${lastSkill}`;
     }
   };
 
-  for (const { skillName, skillLevel } of allLevelledSkills) {
+  for (const [skillName, skillLevel] of levelledSkillsMap.entries()) {
     let multiLvlStr = multiLevelMsgConstructor();
-    if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
+    if (totalLevel === MAX_TOTAL_LEVEL) {
       msgMap.set(
         { ID: 'MAX_TOTAL_LEVEL', URL },
-        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
+        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
       );
       break;
     } else if (totalLevel !== 0 && totalLevel % 25 === 0) {
@@ -96,7 +89,7 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
         `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has levelled **${multiLvlStr}!** <a:danse:1306473434221641760>`
       );
       break;
-    } else if (skillName === 'Fishing' && !multipleLevels) {
+    } else if (skillName === 'Fishing' && levelledSkillsMap.size < 2) {
       msgMap.set(
         { ID: skillName, URL },
         `**${playerName}** has levelled **${multiLvlStr}!** <:fishh:1285367875531575306>`

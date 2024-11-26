@@ -41,7 +41,7 @@ function killCountMsgConstructor(playerName, gameMessage, bossName) {
         key = 'completion';
     }
   }
-  return `**${playerName}** has defeated **${bossName}** with a ${key} count of **${formattedKC}!**`;
+  return `**${playerName}** has defeated **${bossName}** with a ${key} count of **${formattedKC}**`;
 }
 
 export default killCountMsgConstructor;

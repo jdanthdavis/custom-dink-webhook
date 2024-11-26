@@ -26,7 +26,7 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
    */
   const multiLevelMsgConstructor = () => {
     const isTotalLevelInterval =
-      totalLevel % 25 === 0 || totalLevel === MAX_TOTAL_LEVEL;
+      totalLevel % 25 === 0 || totalLevel === Constants.MAX_TOTAL_LEVEL;
 
     // Helper function to construct skill messages
     const constructSkillMessages = (format) =>
@@ -58,10 +58,10 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
 
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
     let multiLvlStr = multiLevelMsgConstructor();
-    if (totalLevel === MAX_TOTAL_LEVEL) {
+    if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
       msgMap.set(
         { ID: 'MAX_TOTAL_LEVEL', URL },
-        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
+        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
       );
       break;
     } else if (totalLevel !== 0 && totalLevel % 25 === 0) {

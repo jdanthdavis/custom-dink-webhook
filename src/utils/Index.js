@@ -6,3 +6,4 @@ export { default as collectionLogCheck } from './collectionLogCheck';
 export { default as petCheck } from './petCheck';
 export { default as checkCAProgress } from './checkCAProgress';
 export { default as formatAsPercentage } from './formatAsPercentage';
+export { default as formatClue } from './formatClue';

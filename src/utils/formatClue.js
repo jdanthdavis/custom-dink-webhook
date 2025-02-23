@@ -10,16 +10,17 @@ import formatPrice from './formatPrice/formatPrice';
  */
 function formatClue(msgMap, playerName, extra, URL) {
   const { clueType, numberCompleted, items } = extra;
-
-  const message = `**${playerName}** has completed a **${clueType} clue!** | **Total: ${numberCompleted}**\nRewards:\n${items
-    .map(
-      (item) =>
-        `- ${item.name} - x${item.quantity} - (${formatPrice(item.priceEach)})`
-    )
-    .join('\n')}`;
-
+  const message = `**${playerName}** has completed a **${clueType} clue!** | **Total: ${numberCompleted}**
+Rewards:
+${items
+  .map(
+    (item) =>
+      `- ${item.name} - x${item.quantity} - ${formatPrice_default(
+        item.priceEach
+      )}`
+  )
+  .join('\n')}`;
   msgMap.set({ ID: 'CLUE', URL }, message);
-
   return msgMap;
 }
 

@@ -60,7 +60,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.LOOT) {
-    formatDrop(msgMap, playerName, extra, TEST_URL);
+    formatDrop(msgMap, playerName, extra, LOOT_URL);
   }
   return msgMap;
 }

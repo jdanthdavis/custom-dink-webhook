@@ -27,7 +27,7 @@ export function createFormData(extra, payloadType, playerName, env) {
     LEVEL_URL,
     CA_URL,
     CLUE_URL,
-    TEST_URL,
+    LOOT_URL,
   } = env;
   let msgMap = new Map();
 

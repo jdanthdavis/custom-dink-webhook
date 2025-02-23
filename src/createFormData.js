@@ -7,6 +7,7 @@ import {
   petCheck,
   checkCAProgress,
   formatClue,
+  formatDrop,
 } from './utils/Index.js';
 
 /**
@@ -26,6 +27,7 @@ export function createFormData(extra, payloadType, playerName, env) {
     LEVEL_URL,
     CA_URL,
     CLUE_URL,
+    LOOT_URL,
   } = env;
   let msgMap = new Map();
 
@@ -55,6 +57,10 @@ export function createFormData(extra, payloadType, playerName, env) {
 
   if (payloadType === Constants.CLUE) {
     formatClue(msgMap, playerName, extra, CLUE_URL);
+  }
+
+  if (payloadType === Constants.LOOT) {
+    formatDrop(msgMap, playerName, extra, LOOT_URL);
   }
   return msgMap;
 }

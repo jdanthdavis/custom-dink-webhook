@@ -3,6 +3,7 @@ export const PET = 'PET';
 export const KILL_COUNT = 'KILL_COUNT';
 export const LEVEL = 'LEVEL';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
+export const CLUE = 'CLUE';
 export const MAX_TOTAL_LEVEL = 2277;
 export const THE_GRUMBLER = 'The Grumbler';
 export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
@@ -42,4 +43,5 @@ export const acceptedPayloads = [
   'PET',
   'LEVEL',
   'COMBAT_ACHIEVEMENT',
+  'CLUE',
 ];

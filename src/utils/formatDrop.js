@@ -15,7 +15,7 @@ function formatDrop(msgMap, playerName, extra, URL) {
     .map(
       (item) => `x${item.quantity} ${item.name} ${formatPrice(item.priceEach)}`
     )
-    .join(items.length > 1 ? ' and ' : '')}** from **${grumblerCheck_default(
+    .join(items.length > 1 ? ' and ' : '')}** from **${grumblerCheck(
     source
   )}!**`;
   msgMap.set({ ID: 'LOOT', URL }, message);

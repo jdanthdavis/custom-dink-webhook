@@ -15,9 +15,7 @@ Rewards:
 ${items
   .map(
     (item) =>
-      `- ${item.name} - x${item.quantity} - ${formatPrice_default(
-        item.priceEach
-      )}`
+      `- ${item.name} - x${item.quantity} - **${formatPrice(item.priceEach)}**`
   )
   .join('\n')}`;
   msgMap.set({ ID: 'CLUE', URL }, message);

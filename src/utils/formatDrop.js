@@ -11,11 +11,13 @@ import grumblerCheck from './grumblerCheck';
  */
 function formatDrop(msgMap, playerName, extra, URL) {
   const { items, source } = extra;
-  const message = `**${playerName}** has received ${items
+  const message = `**${playerName}** has received **${items
     .map(
       (item) => `x${item.quantity} ${item.name} ${formatPrice(item.priceEach)}`
     )
-    .join(items.length > 1 ? ' and ' : '')} from **${grumblerCheck(source)}!**`;
+    .join(items.length > 1 ? ' and ' : '')}** from **${grumblerCheck_default(
+    source
+  )}!**`;
   msgMap.set({ ID: 'LOOT', URL }, message);
   return msgMap;
 }

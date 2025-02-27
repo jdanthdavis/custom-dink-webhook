@@ -1,5 +1,5 @@
 /**
- *
+ * Adds the correct wording for specific kill count messages
  * @param {*} playerName
  * @param {*} gameMessage
  * @param {*} bossName

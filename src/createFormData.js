@@ -8,6 +8,7 @@ import {
   checkCAProgress,
   formatClue,
   formatDrop,
+  bigFish,
 } from './utils/Index.js';
 
 /**
@@ -61,6 +62,10 @@ export function createFormData(extra, payloadType, playerName, env) {
 
   if (payloadType === Constants.LOOT) {
     formatDrop(msgMap, playerName, extra, LOOT_URL);
+  }
+
+  if (payloadType === Constants.CHAT) {
+    bigFish(msgMap, playerName, extra, LOOT_URL);
   }
   return msgMap;
 }

@@ -29,7 +29,6 @@ export function createFormData(extra, payloadType, playerName, env) {
     CA_URL,
     CLUE_URL,
     LOOT_URL,
-    CHAT_URL,
   } = env;
   let msgMap = new Map();
 
@@ -66,7 +65,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.CHAT) {
-    bigFish(msgMap, playerName, extra, CHAT_URL);
+    bigFish(msgMap, playerName, extra, LOOT_URL);
   }
   return msgMap;
 }

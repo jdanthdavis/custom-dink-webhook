@@ -14,8 +14,8 @@ function bigFish(msgMap, playerName, extra, URL) {
   const fish = message.match(/You catch an enormous (.+)!/);
   const randomIndex = Math.floor(Math.random() * Constants.bigFishArr.length);
   const msg = Constants.bigFishArr[randomIndex]
-    .replace(/\[FISH\]/g, fish)
-    .replace(/\[PLAYER\]/g, playerName);
+    .replace(/\[FISH\]/g, `**${fish}**`)
+    .replace(/\[PLAYER\]/g, `**${playerName}**`);
 
   msgMap.set({ ID: 'BIG_FISH', URL: URL }, msg);
 

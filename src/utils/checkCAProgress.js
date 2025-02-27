@@ -1,5 +1,12 @@
 import formatAsPercentage from './formatAsPercentage';
 
+/**
+ * Formats the players CA completion % with the completion of a new collection log slot
+ * @param {*} msgMap
+ * @param {*} playerName
+ * @param {*} extra
+ * @param {*} URL
+ */
 function checkCAProgress(msgMap, playerName, extra, URL) {
   const {
     tier,

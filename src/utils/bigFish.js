@@ -1,4 +1,4 @@
-import * as Constants from './constants.js';
+import * as Constants from '../constants';
 
 /**
  * Randomly pulls a big fish message when a player catches a big fish

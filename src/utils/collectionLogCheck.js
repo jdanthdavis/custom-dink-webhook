@@ -1,5 +1,6 @@
 import grumblerCheck from './grumblerCheck.js';
 import formatAsPercentage from './formatAsPercentage.js';
+import test from '../assets/clogRanks/mithril_rank.png';
 
 /**
  * Gathers the collection log item and builds the accounts total collection log entries
@@ -10,7 +11,7 @@ import formatAsPercentage from './formatAsPercentage.js';
  * @returns
  */
 function collectionLogCheck(msgMap, playerName, extra, URL) {
-  const { totalEntries, completedEntries } = extra || {};
+  const { totalEntries, completedEntries, clogRank } = extra || {};
   const itemName = grumblerCheck(extra?.itemName);
   const percentageCompleted = formatAsPercentage(
     (completedEntries / totalEntries) * 100
@@ -26,7 +27,7 @@ function collectionLogCheck(msgMap, playerName, extra, URL) {
   } else {
     msgMap.set(
       { ID: 'COLLECTION_LOG', URL: URL },
-      `**${playerName}** has added a new item to their collection log: **${itemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)**`
+      `**${playerName}** has added a new item to their collection log: **${itemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${test}`
     );
   }
   return msgMap;

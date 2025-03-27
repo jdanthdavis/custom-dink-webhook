@@ -1,4 +1,4 @@
-import * as Constants from './constants.js';
+import * as Constants from "./constants.js";
 import {
   checkKc,
   checkForPB,
@@ -9,7 +9,7 @@ import {
   formatClue,
   formatDrop,
   bigFish,
-} from './utils/Index.js';
+} from "./utils/Index.js";
 
 /**
  * Creates the formData payload to send to a URL
@@ -65,7 +65,11 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.CHAT) {
-    bigFish(msgMap, playerName, extra, LOOT_URL);
+    if (extra.message.includes("vestige")) {
+      vestigeCheck(msgMap, playerName, extra, LOOT_URL);
+    } else {
+      bigFish(msgMap, playerName, extra, LOOT_URL);
+    }
   }
   return msgMap;
 }

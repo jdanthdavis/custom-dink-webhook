@@ -9,6 +9,7 @@ import {
   formatClue,
   formatDrop,
   bigFish,
+  vestigeCheck,
 } from "./utils/Index.js";
 
 /**

@@ -66,7 +66,7 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.CHAT) {
-    if (extra.message.includes("vestige")) {
+    if (extra.type === "GAMEMESSAGE" && extra.message.includes("vestige")) {
       vestigeCheck(msgMap, playerName, extra, LOOT_URL);
     } else {
       bigFish(msgMap, playerName, extra, LOOT_URL);

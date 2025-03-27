@@ -15,12 +15,12 @@ function vestigeCheck(msgMap, playerName, extra, URL) {
     Venator: "The Leviathan",
   };
   const VESTIGE_REGEX =
-    /(.*?) received a drop: (Ultor|Bellator|Magus|Venator) vestige \(\d{1,3}(?:,\d{3})*\s*coins\)\./;
+    /Untradeable drop: (Ultor|Bellator|Magus|Venator) vestige/;
   const match = message?.match(VESTIGE_REGEX);
 
   if (!match) return;
 
-  const vestigeType = match[2];
+  const vestigeType = match[1];
   const bossName = vestigeMap[vestigeType];
   const msg = `**${playerName}** has received **x1 ${vestigeType} vestige (5M)** from **${bossName}!**`;
   msgMap.set({ ID: "VESTIGE_DROP", URL }, msg);

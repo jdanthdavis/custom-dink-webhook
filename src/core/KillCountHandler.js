@@ -1,6 +1,8 @@
 import * as Constants from '../constants.js';
-import grumblerCheck from './grumblerCheck.js';
-import killCountMsgConstructor from './killCountMsgConstructor/killCountMsgConstructor.js';
+import {
+  grumblerCheck,
+  killCountMsgConstructor,
+} from './helperFunctions/index.js';
 
 /**
  * Check if the current killCount is divisible by 100.
@@ -10,7 +12,7 @@ import killCountMsgConstructor from './killCountMsgConstructor/killCountMsgConst
  * @param {*} extra
  * @param {*} URL
  */
-function checkKc(msgMap, playerName, extra, URL) {
+function KillCountHandler(msgMap, playerName, extra, URL) {
   const { boss, count: killCount, gameMessage } = extra || {};
   const validatedBossName = grumblerCheck(boss);
   const bossInterval = Constants.bossMap.get(validatedBossName?.toUpperCase());
@@ -31,4 +33,4 @@ function checkKc(msgMap, playerName, extra, URL) {
   }
 }
 
-export default checkKc;
+export default KillCountHandler;

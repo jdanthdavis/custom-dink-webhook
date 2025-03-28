@@ -1,4 +1,17 @@
-import * as Constants from "./constants.js";
+import * as Constants from './constants.js';
+import ChatHandler from './core/ChatHandler.js';
+// import {
+//   checkKc,
+//   checkForPB,
+//   checkLevelUp,
+//   collectionLogCheck,
+//   petCheck,
+//   checkCAProgress,
+//   formatClue,
+//   formatDrop,
+//   bigFish,
+//   vestigeCheck,
+// } from "./utils/Index.js";
 import {
   checkKc,
   checkForPB,
@@ -6,11 +19,8 @@ import {
   collectionLogCheck,
   petCheck,
   checkCAProgress,
-  formatClue,
-  formatDrop,
-  bigFish,
-  vestigeCheck,
-} from "./utils/Index.js";
+} from './core/Index.js';
+import { formatClue } from './core/formatters/index.js';
 
 /**
  * Creates the formData payload to send to a URL
@@ -65,11 +75,23 @@ export function createFormData(extra, payloadType, playerName, env) {
     formatDrop(msgMap, playerName, extra, LOOT_URL);
   }
 
-  if (payloadType === Constants.CHAT) {
-    if (extra.type === "GAMEMESSAGE" && extra.message.includes("vestige")) {
-      vestigeCheck(msgMap, playerName, extra, LOOT_URL);
+  if (payloadType === Constants.CHAT && extra.type === 'GAMEMESSAGE') {
+    if (extra.message.includes('vestige')) {
+      ChatHandler(
+        msgMap,
+        playerName,
+        extra,
+        (typeOfChat = 'VESTIGE_DROP'),
+        LOOT_URL
+      );
     } else {
-      bigFish(msgMap, playerName, extra, LOOT_URL);
+      ChatHandler(
+        msgMap,
+        playerName,
+        extra,
+        (typeOfChat = 'BIG_FISH'),
+        LOOT_URL
+      );
     }
   }
   return msgMap;

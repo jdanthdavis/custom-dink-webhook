@@ -8,7 +8,7 @@ import * as Constants from '../constants.js';
  * @param {*} URL
  * @returns
  */
-function checkLevelUp(msgMap, playerName, extra, URL) {
+function LevelUpHandler(msgMap, playerName, extra, URL) {
   const { allSkills = {}, levelledSkills = {} } = extra;
   const levelledSkillsLength = Object.keys(levelledSkills).length;
 
@@ -97,4 +97,4 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
   }
 }
 
-export default checkLevelUp;
+export default LevelUpHandler;

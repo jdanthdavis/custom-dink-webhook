@@ -1,4 +1,4 @@
-import formatAsPercentage from './formatAsPercentage';
+import { formatAsPercentage } from './formatters';
 
 /**
  * Formats the player's CA completion % with the completion of a new collection log slot
@@ -7,7 +7,7 @@ import formatAsPercentage from './formatAsPercentage';
  * @param {*} extra
  * @param {*} URL
  */
-function checkCAProgress(msgMap, playerName, extra, URL) {
+function CombatTaskHandler(msgMap, playerName, extra, URL) {
   const {
     tier,
     task,
@@ -59,4 +59,4 @@ function checkCAProgress(msgMap, playerName, extra, URL) {
   }
 }
 
-export default checkCAProgress;
+export default CombatTaskHandler;

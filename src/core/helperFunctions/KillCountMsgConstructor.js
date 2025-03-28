@@ -5,7 +5,7 @@
  * @param {*} bossName
  * @returns
  */
-function killCountMsgConstructor(playerName, gameMessage, bossName) {
+function KillCountMsgConstructor(playerName, gameMessage, bossName) {
   const primary_regex =
     /Your (?<key>.+)\s(?<type>kill|chest|completion|harvest)\s?count is: (?<value>[\d,]+)\b/i;
   const secondary_regex =
@@ -44,4 +44,4 @@ function killCountMsgConstructor(playerName, gameMessage, bossName) {
   return `**${playerName}** has defeated **${bossName}** with a ${key} count of **${formattedKC}**`;
 }
 
-export default killCountMsgConstructor;
+export default KillCountMsgConstructor;

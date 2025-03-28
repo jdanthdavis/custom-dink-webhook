@@ -1,4 +1,4 @@
-import grumblerCheck from "./grumblerCheck.js";
+import { grumblerCheck } from './helperFunctions';
 
 /**
  * Gathers the pet information
@@ -7,7 +7,7 @@ import grumblerCheck from "./grumblerCheck.js";
  * @param {*} extra
  * @param {*} URL
  */
-function petCheck(msgMap, playerName, extra, URL) {
+function PetHandler(msgMap, playerName, extra, URL) {
   const { milestone, duplicate: isDuplicate, petName } = extra;
   const validatedPetName = grumblerCheck(petName);
 
@@ -17,14 +17,14 @@ function petCheck(msgMap, playerName, extra, URL) {
       ? `**${playerName}** has a funny feeling like they would have been followed, but the pet name or milestone is missing!`
       : `**${playerName}** has a funny feeling like they're being followed, but the pet name or milestone is missing!`;
 
-    msgMap.set({ ID: "FALLBACK_PET", URL: URL }, fallbackMsg);
+    msgMap.set({ ID: 'FALLBACK_PET', URL: URL }, fallbackMsg);
   } else {
     // Happy path with all information.
     const msg = isDuplicate
       ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}**! | **${milestone}**`
       : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}**! | **${milestone}**`;
-    msgMap.set({ ID: "PET", URL: URL }, msg);
+    msgMap.set({ ID: 'PET', URL: URL }, msg);
   }
 }
 
-export default petCheck;
+export default PetHandler;

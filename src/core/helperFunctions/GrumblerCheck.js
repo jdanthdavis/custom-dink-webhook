@@ -1,11 +1,11 @@
-import * as Constants from "../constants.js";
+import * as Constants from '../../constants';
 
 /**
  * Always check for the grumbler
  * @param {*} name
  * @returns
  */
-function grumblerCheck(name) {
+function GrumblerCheck(name) {
   const upperName = name.toUpperCase();
   if (
     upperName === Constants.PHANTOM_MUSPAH ||
@@ -16,4 +16,4 @@ function grumblerCheck(name) {
   return name;
 }
 
-export default grumblerCheck;
+export default GrumblerCheck;

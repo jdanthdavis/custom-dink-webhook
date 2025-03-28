@@ -1,4 +1,4 @@
-import * as Constants from '../constants.js';
+import * as Constants from "../constants.js";
 
 /**
  * Always check for the grumbler
@@ -6,9 +6,10 @@ import * as Constants from '../constants.js';
  * @returns
  */
 function grumblerCheck(name) {
+  const upperName = name.toUpperCase();
   if (
-    name.toUpperCase() === Constants.PHANTOM_MUSPAH ||
-    name.toUpperCase() === Constants.MUPHIN
+    upperName === Constants.PHANTOM_MUSPAH ||
+    upperName === Constants.MUPHIN
   ) {
     return Constants.THE_GRUMBLER;
   }

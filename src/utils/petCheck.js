@@ -1,4 +1,4 @@
-import grumblerCheck from './grumblerCheck.js';
+import grumblerCheck from "./grumblerCheck.js";
 
 /**
  * Gathers the pet information
@@ -8,27 +8,22 @@ import grumblerCheck from './grumblerCheck.js';
  * @param {*} URL
  */
 function petCheck(msgMap, playerName, extra, URL) {
-  const { milestone, duplicate: isDuplicate } = extra;
-  const petName = grumblerCheck(extra?.petName);
+  const { milestone, duplicate: isDuplicate, petName } = extra;
+  const validatedPetName = grumblerCheck(petName);
 
-  if (!petName || !milestone) {
-    // Need this fallback in case the game broadcast doesn't include the pet name or milestone
-    msgMap.set(
-      { ID: 'PET', URL: URL },
-      `**${playerName}** has a funny feeling like they would have been followed!\n-# Unable to fetch pet name and milestone!`
-    );
+  // Fallback for when the game message does not contain the pet's name or the milestone it was acquired at.
+  if (!validatedPetName || !milestone) {
+    const fallbackMsg = isDuplicate
+      ? `**${playerName}** has a funny feeling like they would have been followed, but the pet name or milestone is missing!`
+      : `**${playerName}** has a funny feeling like they're being followed, but the pet name or milestone is missing!`;
+
+    msgMap.set({ ID: "FALLBACK_PET", URL: URL }, fallbackMsg);
   } else {
-    if (isDuplicate) {
-      msgMap.set(
-        { ID: 'PET', URL: URL },
-        `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
-      );
-    } else {
-      msgMap.set(
-        { ID: 'PET', URL: URL },
-        `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`
-      );
-    }
+    // Happy path with all information.
+    const msg = isDuplicate
+      ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}**! | **${milestone}**`
+      : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}**! | **${milestone}**`;
+    msgMap.set({ ID: "PET", URL: URL }, msg);
   }
 }
 

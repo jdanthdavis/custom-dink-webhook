@@ -8,24 +8,26 @@ import killCountMsgConstructor from './killCountMsgConstructor/killCountMsgConst
  * @param {*} msgMap
  * @param {*} playerName
  * @param {*} extra
- * @param {*} KC_URL
+ * @param {*} URL
  */
-function checkKc(msgMap, playerName, extra, KC_URL) {
-  const bossName = grumblerCheck(extra?.boss);
-  const { count: killCount, gameMessage } = extra || {};
-  const bossInterval = Constants.bossMap.get(bossName?.toUpperCase());
+function checkKc(msgMap, playerName, extra, URL) {
+  const { boss, count: killCount, gameMessage } = extra || {};
+  const validatedBossName = grumblerCheck(boss);
+  const bossInterval = Constants.bossMap.get(validatedBossName?.toUpperCase());
 
   // if KC is notable
-  if (
-    (Constants.bossMap.has(bossName?.toUpperCase()) &&
-      killCount % bossInterval === 0) ||
-    killCount % 100 === 0 ||
-    (killCount === 1 && Constants.specialKills.includes(bossName.toUpperCase()))
-  ) {
-    msgMap.set(
-      { ID: 'KILL_COUNT', URL: KC_URL },
-      killCountMsgConstructor(playerName, gameMessage, bossName)
-    );
+  if (Constants.bossMap.has(bossName?.toUpperCase())) {
+    if (
+      killCount % bossInterval === 0 ||
+      killCount % 100 === 0 ||
+      (killCount === 1 &&
+        Constants.specialKills.includes(bossName.toUpperCase()))
+    ) {
+      msgMap.set(
+        { ID: 'KILL_COUNT', URL: URL },
+        killCountMsgConstructor(playerName, gameMessage, validatedBossName)
+      );
+    }
   }
 }
 

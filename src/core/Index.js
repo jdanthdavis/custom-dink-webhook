@@ -1,6 +1,9 @@
-export { default as CollectionLogHandler } from './CollectionLogHandler';
-export { default as CombatTaskHandler } from './CombatTaskHandler';
-export { default as KillCountHandler } from './KillCountHandler';
-export { default as LevelUpHandler } from './LevelUpHandler';
-export { default as PersonalBestHandler } from './PersonalBestHandler';
-export { default as PetHandler } from './PetHandler';
+export { default as ChatHandler } from './ChatHandler.js';
+export { default as CollectionLogHandler } from './CollectionLogHandler.js';
+export { default as PetHandler } from './PetHandler.js';
+export { default as CombatTaskHandler } from './CombatTaskHandler.js';
+export { default as KillCountHandler } from './KillCountHandler.js';
+export { default as LevelUpHandler } from './LevelUpHandler.js';
+export { default as PersonalBestHandler } from './PersonalBestHandler.js';
+export { default as ClueScrollHandler } from './ClueScrollHandler.js';
+export { default as LootHandler } from './LootHandler.js';

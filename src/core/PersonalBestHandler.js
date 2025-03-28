@@ -1,4 +1,4 @@
-import { grumblerCheck } from './helperFunctions';
+import { GrumblerCheck } from './helperFunctions';
 
 /**
  * Time comes in ISO-8601 duration so we need to reformat the time
@@ -8,7 +8,7 @@ import { grumblerCheck } from './helperFunctions';
  * @param {*} PB_URL
  */
 function PersonalBestHandler(msgMap, playerName, extra, PB_URL) {
-  const bossName = grumblerCheck(extra?.boss);
+  const bossName = GrumblerCheck(extra?.boss);
   // Remove the leading PT
   let cleanedTime = extra?.time.replace('PT', '');
 

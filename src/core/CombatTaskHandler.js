@@ -1,4 +1,4 @@
-import { formatAsPercentage } from './formatters';
+// import { FormatAsPercentage } from './formatters';
 
 /**
  * Formats the player's CA completion % with the completion of a new collection log slot

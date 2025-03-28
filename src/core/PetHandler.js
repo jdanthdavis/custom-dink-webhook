@@ -1,4 +1,4 @@
-import { grumblerCheck } from './helperFunctions';
+import { GrumblerCheck } from './helperFunctions';
 
 /**
  * Gathers the pet information
@@ -9,7 +9,7 @@ import { grumblerCheck } from './helperFunctions';
  */
 function PetHandler(msgMap, playerName, extra, URL) {
   const { milestone, duplicate: isDuplicate, petName } = extra;
-  const validatedPetName = grumblerCheck(petName);
+  const validatedPetName = GrumblerCheck(petName);
 
   // Fallback for when the game message does not contain the pet's name or the milestone it was acquired at.
   if (!validatedPetName || !milestone) {

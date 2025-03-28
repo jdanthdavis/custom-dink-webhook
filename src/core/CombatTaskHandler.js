@@ -1,13 +1,13 @@
-import formatAsPercentage from './formatAsPercentage';
+// import { FormatAsPercentage } from './formatters';
 
 /**
- * Formats the players CA completion % with the completion of a new collection log slot
+ * Formats the player's CA completion % with the completion of a new collection log slot
  * @param {*} msgMap
  * @param {*} playerName
  * @param {*} extra
  * @param {*} URL
  */
-function checkCAProgress(msgMap, playerName, extra, URL) {
+function CombatTaskHandler(msgMap, playerName, extra, URL) {
   const {
     tier,
     task,
@@ -18,12 +18,22 @@ function checkCAProgress(msgMap, playerName, extra, URL) {
     totalPossiblePoints,
     currentTier,
   } = extra;
+
+  const formatAsPercentage = (value, total) => {
+    return total && total > 0
+      ? formatAsPercentage((value / total) * 100)
+      : '0%';
+  };
+
   const formattedTaskPercentageCompleted = formatAsPercentage(
-    (tierProgress / tierTotalPoints) * 100
+    tierProgress,
+    tierTotalPoints
   );
-  const formattedTotalCaCompletion = formatAsPercentage(
-    (totalPoints / totalPossiblePoints) * 100
+  const formattedTotalCACompletion = formatAsPercentage(
+    totalPoints,
+    totalPossiblePoints
   );
+
   const formattedTier =
     tier?.charAt(0) + tier?.substring(1).toLowerCase() ?? '';
   const formattedCurrentTier =
@@ -37,7 +47,7 @@ function checkCAProgress(msgMap, playerName, extra, URL) {
       { ID: 'CA', URL },
       `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**${
         justCompletedTier !== 'GRANDMASTER'
-          ? `\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCaCompletion}%) of total points for Grandmasters`
+          ? `\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCACompletion}%) of total points for Grandmasters`
           : ``
       }`
     );
@@ -49,4 +59,4 @@ function checkCAProgress(msgMap, playerName, extra, URL) {
   }
 }
 
-export default checkCAProgress;
+export default CombatTaskHandler;

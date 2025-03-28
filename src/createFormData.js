@@ -1,16 +1,14 @@
-import * as Constants from "./constants.js";
+import * as Constants from './constants.js';
 import {
-  checkKc,
-  checkForPB,
-  checkLevelUp,
-  collectionLogCheck,
-  petCheck,
-  checkCAProgress,
-  formatClue,
-  formatDrop,
-  bigFish,
-  vestigeCheck,
-} from "./utils/Index.js";
+  ChatHandler,
+  CollectionLogHandler,
+  PetHandler,
+  CombatTaskHandler,
+  KillCountHandler,
+  LevelUpHandler,
+  PersonalBestHandler,
+  ClueScrollHandler,
+} from './core';
 
 /**
  * Creates the formData payload to send to a URL
@@ -31,46 +29,46 @@ export function createFormData(extra, payloadType, playerName, env) {
     CLUE_URL,
     LOOT_URL,
   } = env;
+
   let msgMap = new Map();
 
-  if (payloadType === Constants.PET) {
-    petCheck(msgMap, playerName, extra, PET_URL);
-  }
-
-  if (payloadType === Constants.COLLECTION) {
-    collectionLogCheck(msgMap, playerName, extra, COLLECTION_URL);
-  }
-
-  if (payloadType === Constants.LEVEL) {
-    checkLevelUp(msgMap, playerName, extra, LEVEL_URL);
-  }
-
-  if (payloadType === Constants.COMBAT_ACHIEVEMENT) {
-    checkCAProgress(msgMap, playerName, extra, CA_URL);
+  switch (payloadType) {
+    case Constants.PET:
+      PetHandler(msgMap, playerName, extra, PET_URL);
+      break;
+    case Constants.COLLECTION:
+      CollectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
+      break;
+    case Constants.LEVEL:
+      LevelUpHandler(msgMap, playerName, extra, LEVEL_URL);
+      break;
+    case Constants.COMBAT_ACHIEVEMENT:
+      CombatTaskHandler(msgMap, playerName, extra, CA_URL);
+      break;
+    case Constants.KILL_COUNT:
+      KillCountHandler(msgMap, playerName, extra, KC_URL);
+      break;
+    case Constants.CLUE:
+      ClueScrollHandler(msgMap, playerName, extra, CLUE_URL);
+      break;
+    case Constants.LOOT:
+      formatDrop(msgMap, playerName, extra, LOOT_URL);
+      break;
+    case Constants.CHAT:
+      if (extra.type === 'GAMEMESSAGE') {
+        const typeOfChat = extra.message.includes('vestige')
+          ? 'VESTIGE_DROP'
+          : 'BIG_FISH';
+        ChatHandler(msgMap, playerName, extra, typeOfChat, LOOT_URL);
+      }
+      break;
+    default:
+      console.log(`Unknown payload type: ${payloadType}`);
   }
 
   if (extra?.isPersonalBest) {
-    checkForPB(msgMap, playerName, extra, PB_URL);
+    PersonalBestHandler(msgMap, playerName, extra, PB_URL);
   }
 
-  if (payloadType === Constants.KILL_COUNT) {
-    checkKc(msgMap, playerName, extra, KC_URL);
-  }
-
-  if (payloadType === Constants.CLUE) {
-    formatClue(msgMap, playerName, extra, CLUE_URL);
-  }
-
-  if (payloadType === Constants.LOOT) {
-    formatDrop(msgMap, playerName, extra, LOOT_URL);
-  }
-
-  if (payloadType === Constants.CHAT) {
-    if (extra.type === "GAMEMESSAGE" && extra.message.includes("vestige")) {
-      vestigeCheck(msgMap, playerName, extra, LOOT_URL);
-    } else {
-      bigFish(msgMap, playerName, extra, LOOT_URL);
-    }
-  }
   return msgMap;
 }

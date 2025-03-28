@@ -8,31 +8,32 @@ import * as Constants from '../constants.js';
  * @param {*} URL
  * @returns
  */
-function checkLevelUp(msgMap, playerName, extra, URL) {
-  const {
-    allSkills = extra?.allSkills,
-    levelledSkills = extra?.levelledSkills,
-  } = extra || {};
-  const levelledSkillsLength = Object.keys(levelledSkills)?.length;
-  // Dink's allSkills correctly reflects the levelledSkills values
-  // e,g., Levelling Attack to 99 will show Attack is level 99 in allSkills
+function LevelUpHandler(msgMap, playerName, extra, URL) {
+  const { allSkills = {}, levelledSkills = {} } = extra;
+  const levelledSkillsLength = Object.keys(levelledSkills).length;
+
+  // Calculate total level but cap values at 99
   const totalLevel = Object.values(allSkills).reduce(
     (sum, skillLevel) => sum + (skillLevel > 99 ? 99 : skillLevel),
     0
   );
 
   /**
-   * Constructs a multi-level message when multiple skills caused the dink
+   * Check if the total level is at an important interval (multiple of 25)
+   * @param {number} level
+   * @returns {boolean} - True if total level is divisible by 25 or max total level
+   */
+  const isImportantLevelInterval = (level) =>
+    level % 25 === 0 || level === Constants.MAX_TOTAL_LEVEL;
+
+  /**
+   * Constructs a message based on multiple level-ups
+   * @returns {string} - The constructed message
    */
   const multiLevelMsgConstructor = () => {
-    const isTotalLevelInterval =
-      totalLevel % 25 === 0 || totalLevel === Constants.MAX_TOTAL_LEVEL;
-
-    // Helper function to construct skill messages
-    const constructSkillMessages = (format) =>
-      Object.entries(levelledSkills).map(([skillName, skillLevel]) =>
-        format(skillName, skillLevel)
-      );
+    const isTotalLevelInterval = isImportantLevelInterval(totalLevel);
+    const formatSkillMessage = (name, level) =>
+      isTotalLevelInterval ? `${level} in ${name}` : `${name} to ${level}`;
 
     if (levelledSkillsLength === 1) {
       const [skillName, skillLevel] = Object.entries(levelledSkills)[0];
@@ -41,10 +42,10 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
         : `${skillName} to ${skillLevel}`;
     }
 
-    // Determine message formatting
-    const skillMessages = isTotalLevelInterval
-      ? constructSkillMessages((name, level) => `${level} in ${name}`)
-      : constructSkillMessages((name, level) => `${name} to ${level}`);
+    // Construct skill messages for multiple level-ups
+    const skillMessages = Object.entries(levelledSkills).map(([name, level]) =>
+      formatSkillMessage(name, level)
+    );
 
     if (levelledSkillsLength === 2) {
       return skillMessages.join(' and ');
@@ -56,26 +57,23 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
     }
   };
 
+  // Build the level-up message based on the player's skill level and total level
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
-    let multiLvlStr = multiLevelMsgConstructor();
+    const multiLvlStr = multiLevelMsgConstructor();
+
     if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
       msgMap.set(
         { ID: 'MAX_TOTAL_LEVEL', URL },
         `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
       );
       break;
-    } else if (totalLevel !== 0 && totalLevel % 25 === 0) {
-      if (skillLevel === 99) {
-        msgMap.set(
-          { ID: 'NEW_TOTAL_LEVEL', URL },
-          `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`
-        );
-      } else {
-        msgMap.set(
-          { ID: 'NEW_TOTAL_LEVEL', URL },
-          `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!**`
-        );
-      }
+    } else if (totalLevel !== 0 && isImportantLevelInterval(totalLevel)) {
+      const levelMessage =
+        skillLevel === 99
+          ? `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`
+          : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!**`;
+
+      msgMap.set({ ID: 'NEW_TOTAL_LEVEL', URL }, levelMessage);
       break;
     } else if (skillLevel === 99) {
       msgMap.set(
@@ -99,4 +97,4 @@ function checkLevelUp(msgMap, playerName, extra, URL) {
   }
 }
 
-export default checkLevelUp;
+export default LevelUpHandler;

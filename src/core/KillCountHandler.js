@@ -23,7 +23,12 @@ function KillCountHandler(msgMap, playerName, extra, URL) {
     ) {
       msgMap.set(
         { ID: 'KILL_COUNT', URL: URL },
-        KillCountMsgConstructor(playerName, gameMessage, validatedBossName)
+        KillCountMsgConstructor(
+          playerName,
+          gameMessage,
+          validatedBossName,
+          killCount
+        )
       );
     }
   }

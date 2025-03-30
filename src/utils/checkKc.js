@@ -24,7 +24,7 @@ function checkKc(msgMap, playerName, extra, KC_URL) {
   ) {
     msgMap.set(
       { ID: 'KILL_COUNT', URL: KC_URL },
-      killCountMsgConstructor(playerName, gameMessage, bossName)
+      killCountMsgConstructor(playerName, gameMessage, bossName, killCount)
     );
   }
 }

@@ -10,9 +10,9 @@ export function SepulchreHandler(message, playerName, msgMap, URL) {
     // msg = `🔥 **${playerName}** set a new overall personal best: **${time}**!`;
     msg = `**${playerName}** has achieved a new **Hallowed Sepulchre (Overall)** personal best of: **${time}!**`;
   } else if (floorMatch) {
-    const floor = floorMatch[1];
+    const floorNumber = floorMatch[1];
     const time = floorMatch[2];
-    msg = `**${playerName}** has achieved a new **Hallowed Sepulchre (${floor})** personal best of: **${time}!**`;
+    msg = `**${playerName}** has achieved a new **Hallowed Sepulchre (Floor ${floorNumber})** personal best of: **${time}!**`;
   }
 
   if (msg) {

@@ -8,4 +8,4 @@ export { default as checkCAProgress } from './checkCAProgress';
 export { default as formatAsPercentage } from './formatAsPercentage';
 export { default as formatClue } from './formatClue';
 export { default as formatDrop } from './formatDrop';
-export { default as bigFish } from './bigFish';
+export { default as ChatHandler } from './ChatHandler/ChatHandler';

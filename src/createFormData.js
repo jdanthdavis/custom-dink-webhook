@@ -8,7 +8,6 @@ import {
   checkCAProgress,
   formatClue,
   formatDrop,
-  bigFish,
 } from './utils/Index.js';
 
 /**
@@ -65,7 +64,17 @@ export function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (payloadType === Constants.CHAT) {
-    bigFish(msgMap, playerName, extra, LOOT_URL);
+    const isPersonalBest = extra.message.includes('(new personal best)');
+    const typeOfChat = isPersonalBest
+      ? 'NEW_PERSONAL_BEST'
+      : extra.message.includes('vestige')
+      ? 'VESTIGE_DROP'
+      : 'BIG_FISH';
+
+    const URL = isPersonalBest ? PB_URL : LOOT_URL;
+
+    ChatHandler(msgMap, playerName, extra, typeOfChat, URL);
   }
+
   return msgMap;
 }

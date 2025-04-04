@@ -1,7 +1,7 @@
-import * as Constants from './Constants';
 import { BigFishHandler } from './BigFishHandler';
 import { SepulchreHandler } from './SepulchreHandler';
 import { VestigeHandler } from './VestigeHandler';
+import * as Constants from './Constants';
 
 /**
  * Handles various chat messages.

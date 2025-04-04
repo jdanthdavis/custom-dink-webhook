@@ -9,7 +9,7 @@ import {
   ClueScrollHandler,
 } from './core/Index';
 import * as Constants from './Constants';
-import * as Chat_Constants from './core/ChatHandler/Constants';
+import * as Chat_Constants from './core/chatHandler/Constants';
 
 /**
  * Creates the formData payload to send to a URL based on the provided payload type.

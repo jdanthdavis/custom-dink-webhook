@@ -1,4 +1,4 @@
-import { FormatPrice } from './Formatters';
+import { FormatPrice } from './helperFunctions';
 
 /**
  * Formats a clue scroll's rewards

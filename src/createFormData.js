@@ -8,7 +8,7 @@ import {
   PersonalBestHandler,
   ClueScrollHandler,
   LootHandler,
-} from './core';
+} from './core/Index.js';
 import * as Constants from './constants';
 
 /**

@@ -1,5 +1,5 @@
-import { formatPrice } from './formatters';
-import { grumblerCheck } from './helperFunctions';
+import { GrumblerCheck } from './helperFunctions';
+import { FormatPrice } from './formatters';
 
 /**
  * Formats drops
@@ -13,9 +13,9 @@ function LootHandler(msgMap, playerName, extra, URL) {
   const { items, source } = extra;
   const message = `**${playerName}** has received **${items
     .map(
-      (item) => `x${item.quantity} ${item.name} ${formatPrice(item.priceEach)}`
+      (item) => `x${item.quantity} ${item.name} ${FormatPrice(item.priceEach)}`
     )
-    .join(items.length > 1 ? ' and ' : '')}** from **${grumblerCheck(
+    .join(items.length > 1 ? ' and ' : '')}** from **${GrumblerCheck(
     source
   )}!**`;
   msgMap.set({ ID: 'LOOT', URL }, message);

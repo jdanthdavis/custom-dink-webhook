@@ -1,2 +1,2 @@
-export { default as formatPrice } from './formatPrice.js';
-export { default as formatAsPercentage } from './formatAsPercentage.js';
+export { default as FormatPrice } from './FormatPrice.js';
+export { default as FormatAsPercentage } from './FormatAsPercentage.js';

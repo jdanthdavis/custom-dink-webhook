@@ -1,4 +1,4 @@
-import * as Constants from '../constants';
+import * as Constants from '../Constants';
 
 /**
  * Constructs special messages depending on the level information

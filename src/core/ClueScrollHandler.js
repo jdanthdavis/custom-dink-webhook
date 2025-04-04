@@ -1,4 +1,4 @@
-import { formatPrice } from './formatters';
+import { FormatPrice } from './formatters';
 
 /**
  * Formats a clue scroll's rewards
@@ -15,7 +15,7 @@ Rewards:
 ${items
   .map(
     (item) =>
-      `- ${item.name} - x${item.quantity} - **${formatPrice(item.priceEach)}**`
+      `- ${item.name} - x${item.quantity} - **${FormatPrice(item.priceEach)}**`
   )
   .join('\n')}`;
   msgMap.set({ ID: 'CLUE', URL }, message);

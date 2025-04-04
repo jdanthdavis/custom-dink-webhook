@@ -7,9 +7,9 @@ import {
   LevelUpHandler,
   PersonalBestHandler,
   ClueScrollHandler,
-} from './core/Index.js';
-import * as Constants from './constants.js';
-import * as Chat_Constants from './core/ChatHandler/constants.js';
+} from './core';
+import * as Constants from './Constants';
+import * as Chat_Constants from './core/chatHandler/Constants';
 
 /**
  * Creates the formData payload to send to a URL based on the provided payload type.
@@ -36,7 +36,7 @@ import * as Chat_Constants from './core/ChatHandler/constants.js';
  * @param {*} env - The URLs used for each payload type.
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
-export function createFormData(extra, payloadType, playerName, env) {
+export function CreateFormData(extra, payloadType, playerName, env) {
   const {
     KC_URL,
     PB_URL,

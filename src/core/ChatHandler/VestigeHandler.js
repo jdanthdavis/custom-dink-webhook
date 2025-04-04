@@ -1,4 +1,4 @@
-import * as Constants from './constants';
+import * as Constants from './Constants';
 
 /**
  * Handles when a player gets an untradable vestige drop.

@@ -1,5 +1,5 @@
-import { createFormData } from './createFormData.js';
-import { acceptedPayloads, theBoys } from './constants.js';
+import { CreateFormData } from './CreateFormData';
+import { acceptedPayloads, theBoys } from './Constants';
 export default {
   async fetch(request, env) {
     if (!isValidAgent(request.headers.get('User-Agent'))) {
@@ -20,7 +20,7 @@ export default {
       acceptedPayloads.includes(payloadType) &&
       theBoys.includes(playerName.toUpperCase())
     ) {
-      msgMap = createFormData(extra, payloadType, playerName, env);
+      msgMap = CreateFormData(extra, payloadType, playerName, env);
 
       for (const [url, msg] of msgMap.entries()) {
         let formData = new FormData();

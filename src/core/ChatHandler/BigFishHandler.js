@@ -1,4 +1,4 @@
-import * as Constants from './constants';
+import * as Constants from './Constants';
 
 /**
  * Picks a custom messages when a player catches a big fish.

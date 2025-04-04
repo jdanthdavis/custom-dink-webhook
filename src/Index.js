@@ -1,6 +1,5 @@
 import { CreateFormData } from './CreateFormData.js';
 import { acceptedPayloads, theBoys } from './Constants.js';
-
 export default {
   async fetch(request, env) {
     if (!isValidAgent(request.headers.get('User-Agent'))) {

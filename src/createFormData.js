@@ -8,7 +8,7 @@ import {
   PersonalBestHandler,
   ClueScrollHandler,
   ChatHandler,
-} from './core';
+} from './core/index.js';
 import * as Constants from './Constants.js';
 import * as Chat_Constants from './core/ChatHandler/constants.js';
 

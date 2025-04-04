@@ -1,5 +1,5 @@
 import * as Constants from '../Constants';
-import { GrumblerCheck, KillCountMsgConstructor } from './helperFunctions';
+import { GrumblerCheck, KillCountMsgConstructor } from './HelperFunctions';
 
 /**
  * Check if the current killCount is divisible by 100.

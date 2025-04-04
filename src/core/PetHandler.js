@@ -1,4 +1,4 @@
-import { GrumblerCheck } from './helperFunctions';
+import { GrumblerCheck } from './HelperFunctions';
 
 /**
  * Gathers the pet information

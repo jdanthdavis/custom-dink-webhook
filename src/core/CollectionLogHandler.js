@@ -1,5 +1,5 @@
-import { GrumblerCheck } from './helperFunctions';
-import { FormatAsPercentage } from './formatters';
+import { GrumblerCheck } from './HelperFunctions';
+import { FormatAsPercentage } from './Formatters';
 /**
  * Gathers the collection log item and builds the accounts total collection log entries
  * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update

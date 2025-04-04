@@ -1,4 +1,3 @@
-// try to trigger path updates
 import { CreateFormData } from './CreateFormData';
 import { acceptedPayloads, theBoys } from './Constants';
 export default {

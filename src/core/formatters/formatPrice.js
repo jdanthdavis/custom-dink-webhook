@@ -11,7 +11,7 @@
  * @param {number} value - The numeric value to be formatted.
  * @returns {string} - The formatted price as a string, or 'Very valuable' for extremely large values.
  */
-function FormatPrice(value) {
+function formatPrice(value) {
   if (value >= 2147e6) return 'Very valuable';
   if (value >= 1e9)
     return `(${(value / 1e9).toFixed(2).replace(/\.00$/, '')}B)`;
@@ -21,4 +21,4 @@ function FormatPrice(value) {
   return value;
 }
 
-export default FormatPrice;
+export default formatPrice;

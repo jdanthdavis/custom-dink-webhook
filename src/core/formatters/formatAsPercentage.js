@@ -9,7 +9,7 @@
  * @param {number} percentage - The percentage to be formatted.
  * @returns {string} - The formatted percentage as a string.
  */
-function FormatAsPercentage(percentage) {
+function formatAsPercentage(percentage) {
   if (typeof percentage !== 'number' || isNaN(percentage)) {
     return 'Invalid percentage';
   }
@@ -25,4 +25,4 @@ function FormatAsPercentage(percentage) {
   return '100%';
 }
 
-export default FormatAsPercentage;
+export default formatAsPercentage;

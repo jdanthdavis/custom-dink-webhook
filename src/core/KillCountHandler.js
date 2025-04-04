@@ -1,8 +1,5 @@
-import * as Constants from '../Constants.js';
-import {
-  GrumblerCheck,
-  KillCountMsgConstructor,
-} from './HelperFunctions/Index.js';
+import * as Constants from '../constants.js';
+import { grumblerCheck, killCountMsgConstructor } from './helperFunctions';
 
 /**
  * Check if the current killCount is divisible by 100.
@@ -15,7 +12,7 @@ import {
  */
 function KillCountHandler(msgMap, playerName, extra, URL) {
   const { boss, count: killCount, gameMessage } = extra || {};
-  const validatedBossName = GrumblerCheck(boss);
+  const validatedBossName = grumblerCheck(boss);
   const bossInterval = Constants.bossMap.get(validatedBossName?.toUpperCase());
 
   // if KC is notable
@@ -28,7 +25,7 @@ function KillCountHandler(msgMap, playerName, extra, URL) {
     ) {
       msgMap.set(
         { ID: 'KILL_COUNT', URL: URL },
-        KillCountMsgConstructor(
+        killCountMsgConstructor(
           playerName,
           gameMessage,
           validatedBossName,

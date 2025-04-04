@@ -1,5 +1,5 @@
-import { GrumblerCheck } from './HelperFunctions/Index';
-import { FormatAsPercentage } from './Formatters';
+import { grumblerCheck } from './helperFunctions';
+import { formatAsPercentage } from './formatters';
 
 /**
  * Gathers the collection log item and builds the accounts total collection log entries
@@ -11,10 +11,10 @@ import { FormatAsPercentage } from './Formatters';
  */
 function CollectionLogHandler(msgMap, playerName, extra, URL) {
   const { totalEntries, completedEntries, itemName, currentRank } = extra;
-  const validatedItemName = GrumblerCheck(itemName);
+  const validatedItemName = grumblerCheck(itemName);
   const percentageCompleted =
     totalEntries > 0
-      ? FormatAsPercentage((completedEntries / totalEntries) * 100)
+      ? formatAsPercentage((completedEntries / totalEntries) * 100)
       : '0%';
 
   const rankMap = {

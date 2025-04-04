@@ -1,4 +1,4 @@
-import { GrumblerCheck } from './HelperFunctions/Index';
+import { grumblerCheck } from './helperFunctions';
 
 /**
  * Formats the in-game ISO-8601 duration.
@@ -9,7 +9,7 @@ import { GrumblerCheck } from './HelperFunctions/Index';
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function PersonalBestHandler(msgMap, playerName, extra, PB_URL) {
-  const bossName = GrumblerCheck(extra?.boss);
+  const bossName = grumblerCheck(extra?.boss);
   // Remove the leading PT
   let cleanedTime = extra?.time.replace('PT', '');
 

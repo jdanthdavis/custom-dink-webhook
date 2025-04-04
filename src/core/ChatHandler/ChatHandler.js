@@ -2,7 +2,7 @@ import * as Constants from '../../constants';
 import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { vestigeHandler } from './vestigeHandler';
-//
+
 function chatHandler(msgMap, playerName, extra, typeOfChat, URL) {
   const message = extra?.message;
   const chatType = Constants.CHAT_MESSAGE_TYPES;

@@ -1,8 +1,8 @@
-export { killCountHandler } from './killCountHandler';
-export { personalBestHandler } from './personalBestHandler';
-export { levelUpHandler } from './levelUpHandler';
-export { collectionLogHandler } from './collectionLogHandler';
-export { clueScrollHandler } from './clueScrollHandler';
-export { combatTaskHandler } from './combatTaskHandler';
-export { lootHandler } from './lootHandler';
-export { petHandler } from './petHandler';
+export { default as killCountHandler } from './killCountHandler';
+export { default as personalBestHandler } from './personalBestHandler';
+export { default as levelUpHandler } from './levelUpHandler';
+export { default as collectionLogHandler } from './collectionLogHandler';
+export { default as clueScrollHandler } from './clueScrollHandler';
+export { default as combatTaskHandler } from './combatTaskHandler';
+export { default as lootHandler } from './lootHandler';
+export { default as petHandler } from './petHandler';

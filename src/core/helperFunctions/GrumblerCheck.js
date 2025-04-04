@@ -1,4 +1,4 @@
-import * as Constants from '../../constants';
+import * as Constants from '../../Constants';
 
 /**
  * Always check for the grumbler

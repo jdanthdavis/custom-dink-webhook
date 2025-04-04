@@ -1,5 +1,8 @@
-import * as Constants from '../constants.js';
-import { GrumblerCheck, KillCountMsgConstructor } from './helperFunctions';
+import * as Constants from '../Constants.js';
+import {
+  GrumblerCheck,
+  KillCountMsgConstructor,
+} from './HelperFunctions/Index.js';
 
 /**
  * Check if the current killCount is divisible by 100.

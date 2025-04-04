@@ -1,5 +1,5 @@
-import { FormatPrice } from './formatters';
-import { GrumblerCheck } from './helperFunctions';
+import { FormatPrice } from './Formatters';
+import { GrumblerCheck } from './HelperFunctions/Index';
 
 /**
  * Formats drops

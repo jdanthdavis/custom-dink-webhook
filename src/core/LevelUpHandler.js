@@ -1,4 +1,4 @@
-import * as Constants from '../constants.js';
+import * as Constants from '../Constants.js';
 
 /**
  * Constructs special messages depending on the level information

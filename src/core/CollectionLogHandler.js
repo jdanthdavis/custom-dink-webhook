@@ -1,5 +1,5 @@
-import { GrumblerCheck } from './helperFunctions';
-import { FormatAsPercentage } from './formatters';
+import { GrumblerCheck } from './HelperFunctions/Index';
+import { FormatAsPercentage } from './Formatters';
 
 /**
  * Gathers the collection log item and builds the accounts total collection log entries

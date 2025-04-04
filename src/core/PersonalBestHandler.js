@@ -1,4 +1,4 @@
-import { GrumblerCheck } from './helperFunctions';
+import { GrumblerCheck } from './HelperFunctions/Index';
 
 /**
  * Formats the in-game ISO-8601 duration.

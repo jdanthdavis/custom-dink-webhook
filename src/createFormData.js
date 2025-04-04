@@ -36,7 +36,7 @@ import * as Constants from './constants';
  * @param {*} env - The URLs used for each payload type.
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
-export function CreateFormData(extra, payloadType, playerName, env) {
+function createFormData(extra, payloadType, playerName, env) {
   const {
     KC_URL,
     PB_URL,
@@ -95,3 +95,5 @@ export function CreateFormData(extra, payloadType, playerName, env) {
 
   return msgMap;
 }
+
+export default createFormData;

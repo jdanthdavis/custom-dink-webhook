@@ -1,6 +1,6 @@
-import * as Constants from './constants';
+import * as Constants from '../../constants';
 
-export function VestigeHandler(message, playerName, msgMap, URL) {
+export function vestigeHandler(message, playerName, msgMap, URL) {
   const match = message?.match(Constants.CHAT_REGEX.VESTIGE_TEXT);
 
   if (!match) return;

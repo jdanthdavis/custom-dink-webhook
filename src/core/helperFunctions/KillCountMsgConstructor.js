@@ -1,18 +1,18 @@
 /**
  * Adds the correct wording for specific kill count messages
- * @param {*} playerName
- * @param {*} gameMessage
- * @param {*} bossName
- * @returns
+ * @param {*} playerName - The player's name
+ * @param {string} message - The in-game message
+ * @param {*} bossName - The name of the boss
+ * @returns {string} - The updated kill count message
  */
-function KillCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
+function KillCountMsgConstructor(playerName, message, bossName, killCount) {
   const primary_regex =
     /Your (?<key>.+)\s(?<type>kill|chest|completion|harvest)\s?count is: [\d,]+\b/i;
   const secondary_regex =
     /Your (?<type>completed|subdued) (?<key>.+?) count is: [\d,]+\b/i;
 
-  const primaryMatch = gameMessage.match(primary_regex);
-  const secondaryMatch = gameMessage.match(secondary_regex);
+  const primaryMatch = message.match(primary_regex);
+  const secondaryMatch = message.match(secondary_regex);
 
   let fallBackType = 'completion';
 

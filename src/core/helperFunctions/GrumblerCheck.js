@@ -2,8 +2,8 @@ import * as Constants from '../../constants';
 
 /**
  * Always check for the grumbler
- * @param {*} name
- * @returns
+ * @param {string} name - The name of the boss
+ * @returns {string} - The updated name
  */
 function GrumblerCheck(name) {
   const upperName = name.toUpperCase();

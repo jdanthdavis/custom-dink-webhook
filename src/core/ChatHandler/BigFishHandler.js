@@ -19,5 +19,6 @@ export function BigFishHandler(msgMap, playerName, message, URL) {
     .replace(/\[PLAYER\]/g, `**${playerName}**`);
 
   msgMap.set({ ID: Constants.CHAT_MESSAGE_TYPES.BIG_FISH, URL }, msg);
+
   return msgMap;
 }

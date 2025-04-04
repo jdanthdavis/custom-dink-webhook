@@ -1,12 +1,12 @@
 import * as Constants from './constants';
 
 /**
- * Handles when a player gets a new PB in Hallowed Sepulchre.
- * @param {Map<{ ID: string, URL: string}, string>} msgMap
- * @param {string} playerName
- * @param {string} message
- * @param {string} URL
- * @returns
+ * Handles when a player gets a new PB in Hallowed
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
+ * @param {string} playerName - The player's name
+ * @param {string} message - The in-game message
+ * @param {string} URL - The associated URL
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 export function SepulchreHandler(msgMap, playerName, message, URL) {
   const overallMatch = message.match(Constants.CHAT_REGEX.OVERALL_TIME_TEXT);
@@ -29,4 +29,6 @@ export function SepulchreHandler(msgMap, playerName, message, URL) {
       msg
     );
   }
+
+  return msgMap;
 }

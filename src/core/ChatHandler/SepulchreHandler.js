@@ -1,6 +1,14 @@
 import * as Constants from './constants';
 
-export function SepulchreHandler(message, playerName, msgMap, URL) {
+/**
+ * Handles when a player gets a new PB in Hallowed Sepulchre.
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap
+ * @param {string} playerName
+ * @param {string} message
+ * @param {string} URL
+ * @returns
+ */
+export function SepulchreHandler(msgMap, playerName, message, URL) {
   const overallMatch = message.match(Constants.CHAT_REGEX.OVERALL_TIME_TEXT);
   const floorMatch = message.match(Constants.CHAT_REGEX.FLOOR_TIME_TEXT);
 

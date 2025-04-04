@@ -2,11 +2,11 @@ import { FormatPrice } from './formatters';
 
 /**
  * Formats a clue scroll's rewards
- * @param {*} msgMap
- * @param {*} playerName
- * @param {*} extra
- * @param {*} URL
- * @returns
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
+ * @param {string} playerName - The player's name
+ * @param {Object<string, any>} extra - Additional information
+ * @param {string} URL - The associated URL
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function ClueScrollHandler(msgMap, playerName, extra, URL) {
   const { clueType, numberCompleted, items } = extra;

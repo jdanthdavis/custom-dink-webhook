@@ -56,10 +56,16 @@ export function createFormData(extra, payloadType, playerName, env) {
       break;
     case Constants.CHAT:
       if (extra.type === 'GAMEMESSAGE') {
-        const typeOfChat = extra.message.includes('vestige')
+        const isPersonalBest = extra.message.includes('(new personal best)');
+        const typeOfChat = isPersonalBest
+          ? 'NEW_PERSONAL_BEST'
+          : extra.message.includes('vestige')
           ? 'VESTIGE_DROP'
           : 'BIG_FISH';
-        ChatHandler(msgMap, playerName, extra, typeOfChat, LOOT_URL);
+
+        const URL = isPersonalBest ? PB_URL : LOOT_URL;
+
+        ChatHandler(msgMap, playerName, extra, typeOfChat, URL);
       }
       break;
     default:

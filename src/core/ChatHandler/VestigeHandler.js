@@ -1,5 +1,5 @@
 import * as Constants from '../../constants';
-
+//
 export function vestigeHandler(message, playerName, msgMap, URL) {
   const match = message?.match(Constants.CHAT_REGEX.VESTIGE_TEXT);
 

@@ -9,7 +9,7 @@ import {
   ClueScrollHandler,
   ChatHandler,
 } from './core/index.js';
-import * as Constants from './Constants.js';
+import * as Constants from './constants.js';
 import * as Chat_Constants from './core/ChatHandler/constants.js';
 
 /**
@@ -37,7 +37,7 @@ import * as Chat_Constants from './core/ChatHandler/constants.js';
  * @param {*} env - The URLs used for each payload type.
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
-export function CreateFormData(extra, payloadType, playerName, env) {
+export function createFormData(extra, payloadType, playerName, env) {
   const {
     KC_URL,
     PB_URL,

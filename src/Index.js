@@ -1,4 +1,4 @@
-import { CreateFormData } from './CreateFormData.js';
+import { createFormData } from './createFormData.js';
 import { acceptedPayloads, theBoys } from './Constants.js';
 export default {
   async fetch(request, env) {
@@ -20,7 +20,7 @@ export default {
       acceptedPayloads.includes(payloadType) &&
       theBoys.includes(playerName.toUpperCase())
     ) {
-      msgMap = CreateFormData(extra, payloadType, playerName, env);
+      msgMap = createFormData(extra, payloadType, playerName, env);
 
       for (const [url, msg] of msgMap.entries()) {
         let formData = new FormData();

@@ -1,13 +1,13 @@
 import {
-  ChatHandler,
-  CollectionLogHandler,
-  PetHandler,
-  CombatTaskHandler,
-  KillCountHandler,
-  LevelUpHandler,
-  PersonalBestHandler,
-  ClueScrollHandler,
-  LootHandler,
+  chatHandler,
+  collectionLogHandler,
+  petHandler,
+  combatTaskHandler,
+  killCountHandler,
+  levelUpHandler,
+  personalBestHandler,
+  clueScrollHandler,
+  lootHandler,
 } from './core';
 import * as Constants from './constants';
 
@@ -52,25 +52,25 @@ function createFormData(extra, payloadType, playerName, env) {
 
   switch (payloadType) {
     case Constants.PET:
-      PetHandler(msgMap, playerName, extra, PET_URL);
+      petHandler(msgMap, playerName, extra, PET_URL);
       break;
     case Constants.COLLECTION:
-      CollectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
+      collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
       break;
     case Constants.LEVEL:
-      LevelUpHandler(msgMap, playerName, extra, LEVEL_URL);
+      levelUpHandler(msgMap, playerName, extra, LEVEL_URL);
       break;
     case Constants.COMBAT_ACHIEVEMENT:
-      CombatTaskHandler(msgMap, playerName, extra, CA_URL);
+      combatTaskHandler(msgMap, playerName, extra, CA_URL);
       break;
     case Constants.KILL_COUNT:
-      KillCountHandler(msgMap, playerName, extra, KC_URL);
+      killCountHandler(msgMap, playerName, extra, KC_URL);
       break;
     case Constants.CLUE:
-      ClueScrollHandler(msgMap, playerName, extra, CLUE_URL);
+      clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
       break;
     case Constants.LOOT:
-      LootHandler(msgMap, playerName, extra, LOOT_URL);
+      lootHandler(msgMap, playerName, extra, LOOT_URL);
       break;
     case Constants.CHAT:
       const isPersonalBest = extra.message.includes('(new personal best)');
@@ -82,7 +82,7 @@ function createFormData(extra, payloadType, playerName, env) {
 
       const URL = isPersonalBest ? PB_URL : LOOT_URL;
 
-      ChatHandler(msgMap, playerName, extra, typeOfChat, URL);
+      chatHandler(msgMap, playerName, extra, typeOfChat, URL);
 
       break;
     default:
@@ -90,7 +90,7 @@ function createFormData(extra, payloadType, playerName, env) {
   }
 
   if (extra?.isPersonalBest) {
-    PersonalBestHandler(msgMap, playerName, extra, PB_URL);
+    personalBestHandler(msgMap, playerName, extra, PB_URL);
   }
 
   return msgMap;

@@ -1,5 +1,4 @@
 import {
-  chatHandler,
   collectionLogHandler,
   petHandler,
   combatTaskHandler,
@@ -9,6 +8,7 @@ import {
   clueScrollHandler,
   lootHandler,
 } from './core';
+import { chatHandler } from './core/chatHandler/chatHandler';
 import * as Constants from './constants';
 
 /**

@@ -1,6 +1,6 @@
-import * as Constants from './constants';
+import * as Constants from '../../constants';
 
-export function SepulchreHandler(message, playerName, msgMap, URL) {
+export function sepulchreHandler(message, playerName, msgMap, URL) {
   const overallMatch = message.match(Constants.CHAT_REGEX.OVERALL_TIME_TEXT);
   const floorMatch = message.match(Constants.CHAT_REGEX.FLOOR_TIME_TEXT);
 

@@ -1,6 +1,6 @@
-import * as Constants from './constants';
+import * as Constants from '../../constants';
 
-export function BigFishHandler(message, playerName, msgMap, URL) {
+export function bigFishHandler(message, playerName, msgMap, URL) {
   const fishMatch = message.match(Constants.CHAT_MESSAGE_TYPES.BIG_FISH);
   if (!fishMatch) return;
 

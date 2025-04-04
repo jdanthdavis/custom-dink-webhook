@@ -8,6 +8,7 @@ import {
   LevelUpHandler,
   PersonalBestHandler,
   ClueScrollHandler,
+  ChatHandler,
 } from './core';
 
 /**
@@ -55,18 +56,17 @@ export function createFormData(extra, payloadType, playerName, env) {
       formatDrop(msgMap, playerName, extra, LOOT_URL);
       break;
     case Constants.CHAT:
-      if (extra.type === 'GAMEMESSAGE') {
-        const isPersonalBest = extra.message.includes('(new personal best)');
-        const typeOfChat = isPersonalBest
-          ? 'NEW_PERSONAL_BEST'
-          : extra.message.includes('vestige')
-          ? 'VESTIGE_DROP'
-          : 'BIG_FISH';
+      const isPersonalBest = extra.message.includes('(new personal best)');
+      const typeOfChat = isPersonalBest
+        ? 'NEW_PERSONAL_BEST'
+        : extra.message.includes('vestige')
+        ? 'VESTIGE_DROP'
+        : 'BIG_FISH';
 
-        const URL = isPersonalBest ? PB_URL : LOOT_URL;
+      const URL = isPersonalBest ? PB_URL : LOOT_URL;
 
-        ChatHandler(msgMap, playerName, extra, typeOfChat, URL);
-      }
+      ChatHandler(msgMap, playerName, extra, typeOfChat, URL);
+
       break;
     default:
       console.log(`Unknown payload type: ${payloadType}`);

@@ -1,4 +1,4 @@
-export { default as ChatHandler } from './ChatHandler.js';
+export { default as ChatHandler } from './ChatHandler/ChatHandler.js';
 export { default as CollectionLogHandler } from './CollectionLogHandler.js';
 export { default as PetHandler } from './PetHandler.js';
 export { default as CombatTaskHandler } from './CombatTaskHandler.js';

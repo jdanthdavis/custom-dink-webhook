@@ -2,10 +2,11 @@
 
 /**
  * Formats the player's CA completion % with the completion of a new collection log slot
- * @param {*} msgMap
- * @param {*} playerName
- * @param {*} extra
- * @param {*} URL
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
+ * @param {*} playerName - The player's name
+ * @param {*} extra - Additional information
+ * @param {*} URL - The associated URL
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function CombatTaskHandler(msgMap, playerName, extra, URL) {
   const {
@@ -57,6 +58,8 @@ function CombatTaskHandler(msgMap, playerName, extra, URL) {
       `**${playerName}** has completed **${formattedTier}** combat task: **${task} | ${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%) of ${formattedCurrentTier} of tier completed!**`
     );
   }
+
+  return msgMap;
 }
 
 export default CombatTaskHandler;

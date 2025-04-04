@@ -1,13 +1,13 @@
-import { GrumblerCheck } from './helperFunctions';
-import { FormatAsPercentage } from './formatters';
+import { GrumblerCheck } from './HelperFunctions/Index';
+import { FormatAsPercentage } from './Formatters';
 
 /**
  * Gathers the collection log item and builds the accounts total collection log entries
- * @param {*} msgMap
- * @param {*} playerName
- * @param {*} extra
- * @param {*} URL
- * @returns
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
+ * @param {*} playerName - The player's name
+ * @param {*} extra - Additional information
+ * @param {*} URL - The associated URL
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function CollectionLogHandler(msgMap, playerName, extra, URL) {
   const { totalEntries, completedEntries, itemName, currentRank } = extra;
@@ -42,6 +42,7 @@ function CollectionLogHandler(msgMap, playerName, extra, URL) {
       `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
     );
   }
+
   return msgMap;
 }
 

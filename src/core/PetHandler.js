@@ -1,11 +1,11 @@
-import { GrumblerCheck } from './helperFunctions';
+import { GrumblerCheck } from './HelperFunctions/Index';
 
 /**
  * Gathers the pet information
- * @param {*} msgMap
- * @param {*} playerName
- * @param {*} extra
- * @param {*} URL
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
+ * @param {*} playerName - The player's name
+ * @param {*} extra - Additional information. See {@link https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#pets} for all the information.
+ * @param {*} URL - The associated URL
  */
 function PetHandler(msgMap, playerName, extra, URL) {
   const { milestone, duplicate: isDuplicate, petName } = extra;
@@ -25,6 +25,8 @@ function PetHandler(msgMap, playerName, extra, URL) {
       : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}**! | **${milestone}**`;
     msgMap.set({ ID: 'PET', URL: URL }, msg);
   }
+
+  return msgMap;
 }
 
 export default PetHandler;

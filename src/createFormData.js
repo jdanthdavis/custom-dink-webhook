@@ -1,4 +1,3 @@
-import * as Constants from './constants.js';
 import {
   ChatHandler,
   CollectionLogHandler,
@@ -8,17 +7,37 @@ import {
   LevelUpHandler,
   PersonalBestHandler,
   ClueScrollHandler,
+  ChatHandler,
 } from './core';
+import * as Constants from './Constants.js';
+import * as Chat_Constants from './core/ChatHandler/constants.js';
 
 /**
- * Creates the formData payload to send to a URL
- * @param {*} extra
- * @param {*} payloadType
- * @param {*} playerName
- * @param {*} env
- * @returns
+ * Creates the formData payload to send to a URL based on the provided payload type.
+ *
+ * This function handles different types of payloads, formats the relevant data,
+ * and returns a message map to be sent to the appropriate URL.
+ *
+ * The following payload types are supported:
+ * - Pet
+ * - Collection Log
+ * - Level Up
+ * - Combat Achievement
+ * - Kill Count
+ * - Clue Scroll
+ * - Loot
+ * - Chat
+ *
+ * For more information on the payload types, see [here](https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#all).
+ *
+ * @param {*} extra - Additional information required for formatting the message.
+ * @param {*} payloadType - The type of payload (e.g., Pet, Collection, Level, etc.).
+ *                          For more details, see the link provided in the description.
+ * @param {string} playerName - The name of the player.
+ * @param {*} env - The URLs used for each payload type.
+ * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
-export function createFormData(extra, payloadType, playerName, env) {
+export function CreateFormData(extra, payloadType, playerName, env) {
   const {
     KC_URL,
     PB_URL,
@@ -55,12 +74,17 @@ export function createFormData(extra, payloadType, playerName, env) {
       formatDrop(msgMap, playerName, extra, LOOT_URL);
       break;
     case Constants.CHAT:
-      if (extra.type === 'GAMEMESSAGE') {
-        const typeOfChat = extra.message.includes('vestige')
-          ? 'VESTIGE_DROP'
-          : 'BIG_FISH';
-        ChatHandler(msgMap, playerName, extra, typeOfChat, LOOT_URL);
-      }
+      const isPersonalBest = extra.message.includes('(new personal best)');
+      const typeOfChat = isPersonalBest
+        ? Chat_Constants.CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST
+        : extra.message.includes('vestige')
+        ? Chat_Constants.CHAT_MESSAGE_TYPES.VESTIGE_DROP
+        : Chat_Constants.CHAT_MESSAGE_TYPES.BIG_FISH;
+
+      const URL = isPersonalBest ? PB_URL : LOOT_URL;
+
+      ChatHandler(msgMap, playerName, extra, typeOfChat, URL);
+
       break;
     default:
       console.log(`Unknown payload type: ${payloadType}`);

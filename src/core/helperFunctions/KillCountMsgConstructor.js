@@ -1,47 +1,28 @@
 /**
  * Adds the correct wording for specific kill count messages
- * @param {*} playerName
- * @param {*} gameMessage
- * @param {*} bossName
- * @returns
+ * @param {*} playerName - The player's name
+ * @param {string} message - The in-game message
+ * @param {*} bossName - The name of the boss
+ * @returns {string} - The updated kill count message
  */
-function KillCountMsgConstructor(playerName, gameMessage, bossName) {
+function KillCountMsgConstructor(playerName, message, bossName, killCount) {
   const primary_regex =
-    /Your (?<key>.+)\s(?<type>kill|chest|completion|harvest)\s?count is: (?<value>[\d,]+)\b/i;
+    /Your (?<key>.+)\s(?<type>kill|chest|completion|harvest)\s?count is: [\d,]+\b/i;
   const secondary_regex =
-    /Your (?<type>completed|subdued) (?<key>.+?) count is: (?<value>[\d,]+)\b/i;
-  const primaryMatch = gameMessage.match(primary_regex);
-  const secondaryMatch = gameMessage.match(secondary_regex);
-  const formattedKC = gameMessage?.split(': ')[1]?.replace('.', '!');
-  let key = '';
+    /Your (?<type>completed|subdued) (?<key>.+?) count is: [\d,]+\b/i;
+
+  const primaryMatch = message.match(primary_regex);
+  const secondaryMatch = message.match(secondary_regex);
+
+  let fallBackType = 'completion';
 
   if (primaryMatch) {
-    switch (primaryMatch.groups.type) {
-      case 'kill':
-        key = 'kill';
-        break;
-      case 'harvest':
-        key = 'harvest';
-        break;
-      case 'chest':
-        key = 'chest';
-        break;
-      default:
-        key = 'completion';
-    }
+    fallBackType = primaryMatch.groups.type;
   } else if (secondaryMatch) {
-    switch (secondaryMatch.groups.type) {
-      case 'completed':
-        key = 'completed';
-        break;
-      case 'subdued':
-        key = 'subdued';
-        break;
-      default:
-        key = 'completion';
-    }
+    fallBackType = secondaryMatch.groups.type;
   }
-  return `**${playerName}** has defeated **${bossName}** with a ${key} count of **${formattedKC}**`;
+
+  return `**${playerName}** has defeated **${bossName}** with a ${fallBackType} count of **${killCount}!**`;
 }
 
 export default KillCountMsgConstructor;

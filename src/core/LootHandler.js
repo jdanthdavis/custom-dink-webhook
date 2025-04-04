@@ -1,13 +1,13 @@
-import { FormatPrice } from './formatters';
-import { GrumblerCheck } from './helperFunctions';
+import { FormatPrice } from './Formatters';
+import { GrumblerCheck } from './HelperFunctions/Index';
 
 /**
  * Formats drops
- * @param {*} msgMap
- * @param {*} playerName
- * @param {*} extra
- * @param {*} URL
- * @returns
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
+ * @param {*} playerName - The player's name
+ * @param {*} extra - Additional information
+ * @param {*} URL - The associated URL
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function LootHandler(msgMap, playerName, extra, URL) {
   const { items, source } = extra;
@@ -19,6 +19,7 @@ function LootHandler(msgMap, playerName, extra, URL) {
     source
   )}!**`;
   msgMap.set({ ID: 'LOOT', URL }, message);
+
   return msgMap;
 }
 

@@ -1,12 +1,12 @@
-import * as Constants from '../constants.js';
+import * as Constants from '../Constants.js';
 
 /**
  * Constructs special messages depending on the level information
- * @param {*} msgMap
- * @param {*} playerName
- * @param {*} extra
- * @param {*} URL
- * @returns
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
+ * @param {*} playerName - The player's name
+ * @param {*} extra - Additional information
+ * @param {*} URL - The associated URL
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function LevelUpHandler(msgMap, playerName, extra, URL) {
   const { allSkills = {}, levelledSkills = {} } = extra;
@@ -95,6 +95,8 @@ function LevelUpHandler(msgMap, playerName, extra, URL) {
       break;
     }
   }
+
+  return msgMap;
 }
 
 export default LevelUpHandler;

@@ -28,5 +28,4 @@ function petHandler(msgMap, playerName, extra, URL) {
 
   return msgMap;
 }
-
 export default petHandler;

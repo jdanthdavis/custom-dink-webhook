@@ -44,5 +44,4 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
 
   return msgMap;
 }
-
 export default collectionLogHandler;

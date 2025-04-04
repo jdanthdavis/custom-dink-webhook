@@ -1,4 +1,4 @@
-import { createFormData } from './createFormData.js';
+import createFormData from './createFormData.js';
 import { acceptedPayloads, theBoys } from './constants.js';
 
 export default {

@@ -61,5 +61,4 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
 
   return msgMap;
 }
-
 export default combatTaskHandler;

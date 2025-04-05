@@ -15,7 +15,7 @@ function clueScrollHandler(msgMap, playerName, extra, URL) {
 ${items
   .map(
     (item) =>
-      `x${item.quantity} ${item.name} - **${formatPrice(item.priceEach)}**`
+      `- x${item.quantity} ${item.name} - **${formatPrice(item.priceEach)}**`
   )
   .join('\n')}`;
   msgMap.set({ ID: 'CLUE', URL }, message);

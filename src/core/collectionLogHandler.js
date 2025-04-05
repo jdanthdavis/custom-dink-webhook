@@ -38,8 +38,13 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
   } else {
     msgMap.set(
       { ID: 'COLLECTION_LOG', URL: URL },
-      `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
+      `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)**`
     );
+    //TODO: Enable currentRank when Dink updates
+    // msgMap.set(
+    //   { ID: 'COLLECTION_LOG', URL: URL },
+    //   `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
+    // );
   }
 
   return msgMap;

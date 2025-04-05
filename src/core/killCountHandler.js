@@ -16,7 +16,7 @@ function killCountHandler(msgMap, playerName, extra, URL) {
   const bossInterval = Constants.bossMap.get(validatedBossName?.toUpperCase());
 
   // if KC is notable
-  if (Constants.bossMap.has(bossName?.toUpperCase())) {
+  if (Constants.bossMap.has(validatedBossName?.toUpperCase())) {
     if (
       killCount % bossInterval === 0 ||
       killCount % 100 === 0 ||

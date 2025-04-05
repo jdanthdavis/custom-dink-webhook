@@ -11,11 +11,11 @@ import { formatPrice } from './helperFunctions';
 function clueScrollHandler(msgMap, playerName, extra, URL) {
   const { clueType, numberCompleted, items } = extra;
   const message = `**${playerName}** has completed a **${clueType} clue!** | **Total: ${numberCompleted}**
-Rewards:
+**Rewards:**
 ${items
   .map(
     (item) =>
-      `- ${item.name} - x${item.quantity} - **${formatPrice(item.priceEach)}**`
+      `x${item.quantity} ${item.name} - **${formatPrice(item.priceEach)}**`
   )
   .join('\n')}`;
   msgMap.set({ ID: 'CLUE', URL }, message);

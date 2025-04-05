@@ -8,7 +8,7 @@ import {
   clueScrollHandler,
   lootHandler,
 } from './core';
-import chatHandler from './core/test/chatHandler';
+import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
 
 /**

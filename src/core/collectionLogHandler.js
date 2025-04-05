@@ -11,10 +11,10 @@ import { grumblerCheck, formatAsPercentage } from './helperFunctions';
 function collectionLogHandler(msgMap, playerName, extra, URL) {
   const { totalEntries, completedEntries, itemName, currentRank } = extra;
   const validatedItemName = grumblerCheck(itemName);
-  const percentageCompleted =
-    totalEntries > 0
-      ? formatAsPercentage((completedEntries / totalEntries) * 100)
-      : '0%';
+  const percentageCompleted = formatAsPercentage(
+    completedEntries,
+    totalEntries
+  );
 
   const rankMap = {
     BRONZE: '<:bronze_rank:1353119905750192209>',

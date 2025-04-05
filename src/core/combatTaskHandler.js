@@ -1,4 +1,4 @@
-// import { FormatAsPercentage } from './formatters';
+import { formatAsPercentage } from './helperFunctions';
 
 /**
  * Formats the player's CA completion % with the completion of a new collection log slot
@@ -20,10 +20,8 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
     currentTier,
   } = extra;
 
-  const formatAsPercentage = (value, total) => {
-    return total && total > 0
-      ? formatAsPercentage((value / total) * 100)
-      : '0%';
+  const formatTierText = (tier) => {
+    return tier[0] + tier.slice(1).toLowerCase();
   };
 
   const formattedTaskPercentageCompleted = formatAsPercentage(
@@ -35,13 +33,9 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
     totalPossiblePoints
   );
 
-  const formattedTier =
-    tier?.charAt(0) + tier?.substring(1).toLowerCase() ?? '';
-  const formattedCurrentTier =
-    currentTier?.charAt(0) + currentTier?.substring(1).toLowerCase() ?? '';
-  const formattedJustCompleted =
-    justCompletedTier?.charAt(0).toUpperCase() +
-      justCompletedTier?.substring(1).toLowerCase() ?? '';
+  const formattedTier = formatTierText(tier);
+  const formattedCurrentTier = formatTierText(currentTier);
+  const formattedJustCompleted = formatTierText(justCompletedTier);
 
   if (justCompletedTier) {
     msgMap.set(

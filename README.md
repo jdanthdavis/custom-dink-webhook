@@ -2,44 +2,58 @@
 
 A custom webhook that takes in requests from Dink and constructs custom messages that are dependent on checks against the data from Dink.
 
-## checkKC
+## [killCountHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/killCountHandler.js)
 
-Checks if the current `killCount` is divisible by `100`, included in the `bossMap`, or a player has achieved a _special occasion_ kill (e.g., their first Sol-Heredit, Tzkal-Zuk, or TzTok-Jad kill).
+Checks if a player's kill count for a boss is a notable milestone (every 100 kills, specific boss-defined intervals, or first kills of special bosses) and updates the message map with a formatted notification if applicable. It ensures the boss name is validated and retrieves interval data from constants before constructing and storing the message.
 
 ### Boss Map
 
-For select NPCs, we check for a specific `killCount` value instead of defaulting to `100`.<br/><br/>
-**Example**<br/>Here we would fire a notification for every 5th TzKal-Zuk kill and every 25th Phosani's Nightmare kill.</br>
-`[['TzKal-Zuk', 5],
-['Phosani's Nightmare', 25]]`
+For select NPCs, the milestone check follows a custom `killCount` interval instead of the default `100`.  
 
-## petCheck
+#### Example  
+The following configuration triggers notifications every 5 kills for **TzKal-Zuk** and every 25 kills for **Phosani's Nightmare**:  
 
-A check that constructs a message giving the `petName` and the `milestone` the pet was acquired on.
+```javascript
+[
+  ['TzKal-Zuk', 5],
+  ['Phosani’s Nightmare', 25]
+]
+```
+## [petHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/petHandler.js)
 
-## collectionLogCheck
+Processes pet drop notifications by verifying the pet name and milestone before constructing a message. If either detail is missing, a fallback message is used. Differentiates between first-time and duplicate pet drops, formatting the message accordingly before updating the message map.
 
-In this check we construct a message that gets the player's percentage of total completed collection logs and appends it to the end of the message. A fallback message in case the user hasn't cycled their collection is in place so that we can still send the default collection log message.
+## [collectionLogHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/collectionLogHandler.js)
 
-## checkCAProgress
+Handles collection log item notifications by validating the item name and calculating the player's total collection log completion percentage. If total or completed entries are missing, a fallback message is used to prompt the player to refresh their log. Supports rank-based icons for future updates.
 
-A similar function to `collectionLogCheck()` that appends the user's completed percentage of `currentTier`. If a notification is fired because of a `justCompletedTier` then we append the user's overall completed percentage to the total possible CA points.
+## [combatTaskHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/combatTaskHandler.js)
 
-## checkForPB
+Tracks combat achievement progress by formatting completion percentages and structuring notifications for newly completed combat tasks. If a player completes an entire tier, a specialized message highlights their achievement, while regular task completions update their progress within the current tier.
 
-We wanted a very specific time formatting so we take the incoming `time` which is in `ISO-8601` format and we clean the time to our requirements (e.g., `PT46M23.1S` would be formatted as `46:23:1s`)
+## [personalBestHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/personalBestHandler.js)
 
-## checkLevelUp
+Processes and formats in-game ISO-8601 duration strings for personal best times, ensuring consistency in minute, second, and millisecond formatting. Updates the message map with a notification when a player achieves a new personal best for a boss kill.
 
-Constructs special messages depending on the occasion (e.g., max total level, a total level interval of 25, 99 in a skill). A special feature in this function is when a player achieves multiple level ups in one notification. We construct a message that lists every skill rather than one at a time.<br/></br>
-**Example of a 1 skill level up**<br/>
+## [clueScrollHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/clueScrollHandler.js)
 
-> **playerName** has has levelled **Attack** to **99**!</br>
+Formats and constructs a message for a completed clue scroll, listing the type of clue, the number completed, and the rewards received. Each reward is displayed with its quantity, name, and formatted price.
 
-**Examples of a multi-skill level up**<br/>
+## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
-> **playerName** has has levelled **Attack and Strength** to **99**!</br>
-> **playerName** has has levelled **Attack, Strength, Defence** to **99**!</br>
+Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type (e.g., Big Fish, Vestige Drop, New Personal Best).
+
+## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
+
+Constructs special messages for significant level-up milestones, including max total level, total level intervals of 25, and reaching level 99 in a skill. A key feature of this function is handling multiple level-ups in a single notification, ensuring all skills are listed in one message rather than separately.<br/><br/>
+#### Example of a single skill level-up:<br/>
+
+> playerName has leveled Attack to 99!<br/>
+
+#### Examples of multiple skill level-ups:<br/>
+
+>playerName has leveled Attack and Strength to 99!<br/>
+>playerName has leveled Attack, Strength, and Defence to 99!<br/>
 
 ## Credits
 

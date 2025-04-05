@@ -41,7 +41,7 @@ Formats and constructs a message for a completed clue scroll, listing the type o
 
 ## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
-Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type (e.g., Big Fish, Vestige Drop, New Personal Best).
+Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type (e.g., [Big Fish](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/bigFishHandler.js), [Vestige Drop](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/vestigeHandler.js), [Sepulchre Personal Best](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/sepulchreHandler.js)).
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 

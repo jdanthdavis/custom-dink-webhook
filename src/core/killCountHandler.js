@@ -16,23 +16,21 @@ function killCountHandler(msgMap, playerName, extra, URL) {
   const bossInterval = Constants.bossMap.get(validatedBossName?.toUpperCase());
 
   // if KC is notable
-  if (Constants.bossMap.has(validatedBossName?.toUpperCase())) {
-    if (
-      killCount % bossInterval === 0 ||
-      killCount % 100 === 0 ||
-      (killCount === 1 &&
-        Constants.specialKills.includes(validatedBossName.toUpperCase()))
-    ) {
-      msgMap.set(
-        { ID: 'KILL_COUNT', URL: URL },
-        killCountMsgConstructor(
-          playerName,
-          gameMessage,
-          validatedBossName,
-          killCount
-        )
-      );
-    }
+  if (
+    killCount % bossInterval === 0 ||
+    killCount % 100 === 0 ||
+    (killCount === 1 &&
+      Constants.specialKills.includes(validatedBossName.toUpperCase()))
+  ) {
+    msgMap.set(
+      { ID: 'KILL_COUNT', URL: URL },
+      killCountMsgConstructor(
+        playerName,
+        gameMessage,
+        validatedBossName,
+        killCount
+      )
+    );
   }
 
   return msgMap;

@@ -18,10 +18,9 @@ import { vestigeHandler } from './vestigeHandler';
  * @param {string} playerName - The name of the player who triggered the chat message.
  * @param {Object} extra - Additional data related to the chat, including the message and count.
  * @param {string} typeOfChat - The type of chat message being handled (e.g., `VESTIGE_DROP`, `NEW_PERSONAL_BEST`).
- * @param {string} URL - The URL to which the message will be sent.
  *
  */
-function chatHandler(embeds, playerName, extra, URL) {
+function chatHandler(embeds, playerName, extra) {
   const message = extra?.message;
   const chatType = Constants.CHAT_MESSAGE_TYPES;
   const typeOfChat = message.includes('(new personal best)')
@@ -30,10 +29,10 @@ function chatHandler(embeds, playerName, extra, URL) {
 
   switch (typeOfChat) {
     case chatType.VESTIGE_DROP:
-      vestigeHandler(message, extra.count, playerName, embeds, URL);
+      vestigeHandler(message, playerName, embeds);
       break;
     case chatType.NEW_PERSONAL_BEST:
-      sepulchreHandler(message, playerName, embeds, URL);
+      sepulchreHandler(message, playerName, embeds);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

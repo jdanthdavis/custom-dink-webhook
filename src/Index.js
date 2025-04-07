@@ -21,6 +21,7 @@ export default {
     createFormData(formDataMap, embeds, payloadType, playerName, extra, env);
 
     console.log('payload - ', payload);
+    console.log('ruleBroken: ', formDataMap.get('ruleBroken'));
 
     if (
       formDataMap.get('ruleBroken') === false &&

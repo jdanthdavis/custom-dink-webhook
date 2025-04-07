@@ -92,4 +92,7 @@ export const RULES = Object.freeze({
   clueScrolls: {
     minValue: 500000,
   },
+  chat: {
+    messageTypes: ['GAMEMESSAGE'],
+  },
 });

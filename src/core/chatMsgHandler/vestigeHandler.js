@@ -1,6 +1,6 @@
 import * as Constants from '../../constants';
 
-export function vestigeHandler(message, killCount, playerName, embeds, URL) {
+export function vestigeHandler(message, playerName, embeds) {
   const match = message?.match(Constants.CHAT_REGEX.VESTIGE_TEXT);
   const embed = embeds[0];
   embed.title = 'Loot Drop';

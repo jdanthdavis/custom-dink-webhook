@@ -10,15 +10,15 @@ function killCountHandler(extra) {
   const { boss, count: killCount } = extra || {};
   const bossInterval = Constants.bossMap.get(boss?.toUpperCase());
 
-  // if KC is notable
-  if (Constants.bossMap.has(boss?.toUpperCase())) {
-    if (
-      killCount % bossInterval === 0 ||
-      killCount % 100 === 0 ||
-      (killCount === 1 && Constants.specialKills.includes(boss.toUpperCase()))
-    )
-      true;
+  if (
+    killCount % bossInterval === 0 ||
+    killCount % 100 === 0 ||
+    (killCount === 1 && Constants.specialKills.includes(boss.toUpperCase()))
+  ) {
+    return true;
   }
+
+  return false;
 }
 
 export default killCountHandler;

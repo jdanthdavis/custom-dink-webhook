@@ -1,5 +1,5 @@
 import { calculateTotalValue } from './helperFunctions';
-import { RULES, LOOT, DEATH, CLUE } from '../constants';
+import { RULES, LOOT, DEATH, CLUE, CHAT } from '../constants';
 
 /**
  * Checks if the provided payload violates any defined rules.
@@ -28,14 +28,20 @@ import { RULES, LOOT, DEATH, CLUE } from '../constants';
  */
 function ruleHandler(ruleBroken, payloadType, extra) {
   switch (payloadType) {
-    // case LOOT:
-    //   if (calculateTotalValue(extra.items) < RULES.drops.minLootValue) {
-    //     ruleBroken = true;
-    //     return ruleBroken;
-    //   }
-    //   break;
+    case LOOT:
+      if (calculateTotalValue(extra.items) < RULES.drops.minLootValue) {
+        ruleBroken = true;
+        return ruleBroken;
+      }
+      break;
     case CLUE:
       if (calculateTotalValue(extra.items) < RULES.clueScrolls.minValue) {
+        ruleBroken = true;
+        return ruleBroken;
+      }
+      break;
+    case CHAT:
+      if (!RULES.chat.messageTypes.includes(extra.type)) {
         ruleBroken = true;
         return ruleBroken;
       }

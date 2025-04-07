@@ -51,7 +51,9 @@ function createFormData(
   }
 
   if (
-    [Constants.CLUE, Constants.LOOT, Constants.DEATH].includes(payloadType) &&
+    [Constants.CLUE, Constants.LOOT, Constants.DEATH, Constants.CHAT].includes(
+      payloadType
+    ) &&
     ruleHandler(ruleBroken, payloadType, extra)
   ) {
     formDataMap.set('ruleBroken', true);
@@ -69,7 +71,10 @@ function createFormData(
       URL = CA_URL;
       break;
     case Constants.KILL_COUNT:
-      if (!killCountHandler(extra)) return;
+      if (killCountHandler(extra) === false) {
+        formDataMap.set('ruleBroken', true);
+        return;
+      }
       URL = KC_URL;
       break;
     case Constants.LOOT:

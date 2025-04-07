@@ -18,8 +18,8 @@ export default {
       ['ruleBroken', false],
       ['URL', ''],
     ]);
-    const URL = formDataMap.get('URL');
     createFormData(formDataMap, embeds, payloadType, playerName, extra, env);
+    const URL = formDataMap.get('URL');
 
     console.log('payload - ', payload);
     console.log('ruleBroken: ', formDataMap.get('ruleBroken'));

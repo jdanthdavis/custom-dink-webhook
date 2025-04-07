@@ -21,7 +21,7 @@ The following configuration triggers notifications every 5 kills for **TzKal-Zuk
 ```
 ## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
-Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type (e.g., [Big Fish](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/bigFishHandler.js), [Vestige Drop](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/vestigeHandler.js), [Sepulchre Personal Best](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/sepulchreHandler.js)).
+Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type (e.g., [Vestige Drop](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/vestigeHandler.js), [Sepulchre Personal Best](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/sepulchreHandler.js)).
 
 ## Credits
 

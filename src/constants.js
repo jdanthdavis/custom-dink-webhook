@@ -12,19 +12,6 @@ export const THE_GRUMBLER = 'The Grumbler';
 export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
 
-export const theBoys = [
-  'LSX SWAP',
-  'MOOREI',
-  'GOUT HAVER',
-  'GLASSFACE',
-  'Z4M',
-  'Z4M I',
-  'THEMILDEST1',
-  'CAN IT WORM',
-  'MOOREI',
-  'FROSTY DAD',
-];
-
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
   ['SOL HEREDIT', 5],
@@ -44,11 +31,9 @@ export const acceptedPayloads = [
   'CHAT',
   'COLLECTION',
   'PET',
-  'LEVEL',
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',
-  'CHAT',
 ];
 
 export const CHAT_MESSAGE_TYPES = {

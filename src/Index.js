@@ -1,5 +1,5 @@
 import createFormData from './createFormData.js';
-import { acceptedPayloads, theBoys } from './constants.js';
+import { acceptedPayloads } from './constants.js';
 
 export default {
   async fetch(request, env) {
@@ -9,41 +9,43 @@ export default {
 
     const form = await request.clone().formData();
     const payload = JSON.parse(form.get('payload_json'));
-    const file = form.get('file');
     const extra = payload.extra;
     const payloadType = payload.type;
     const playerName = payload.playerName ? payload.playerName : payload.source;
-    let msgMap;
+    const embeds = payload.embeds;
+    const content = payload.content;
+    let URL;
 
     console.log('payload - ', payload);
 
-    if (
-      acceptedPayloads.includes(payloadType) &&
-      theBoys.includes(playerName.toUpperCase())
-    ) {
-      msgMap = createFormData(extra, payloadType, playerName, env);
+    if (acceptedPayloads.includes(payloadType)) {
+      createFormData(extra, payloadType, playerName, env, embeds, URL);
 
-      for (const [url, msg] of msgMap.entries()) {
-        let formData = new FormData();
-        let response;
-        formData.append('payload_json', JSON.stringify({ content: msg }));
-        if (file !== null) {
-          // since the screenshots would be taken so close to each other we are fine with sending the first one twice
-          formData.append('file', file);
-        }
+      let formData;
+      let response;
+      const payloadToSend = {
+        content,
+        embeds: originalEmbed.map((embed) => ({
+          ...embed,
+          thumbnail:
+            typeof embed.thumbnail === 'string'
+              ? { url: embed.thumbnail }
+              : embed.thumbnail,
+        })),
+      };
+      formData.append('payload_json', JSON.stringify(payloadToSend));
 
-        try {
-          response = await fetch(url.URL, {
-            method: 'post',
-            body: formData,
-          });
-        } catch (error) {
-          console.log('There was an error - ', error);
-        }
+      try {
+        response = await fetch(URL, {
+          method: 'post',
+          body: formData,
+        });
+      } catch (error) {
+        console.log(error);
+      }
 
-        if (!response.ok) {
-          console.log(`Response Code: ${response?.status}`);
-        }
+      if (!response.ok) {
+        console.log(`Response Code: ${response?.status}`);
       }
     }
     return new Response();

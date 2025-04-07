@@ -1,5 +1,3 @@
-import { grumblerCheck } from './helperFunctions';
-
 /**
  * Gathers the pet information
  * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
@@ -9,7 +7,6 @@ import { grumblerCheck } from './helperFunctions';
  */
 function petHandler(msgMap, playerName, extra, URL) {
   const { milestone, duplicate: isDuplicate, petName } = extra;
-  const validatedPetName = grumblerCheck(petName);
 
   // Fallback for when the game message does not contain the pet's name or the milestone it was acquired at.
   if (!validatedPetName || !milestone) {
@@ -21,8 +18,8 @@ function petHandler(msgMap, playerName, extra, URL) {
   } else {
     // Happy path with all information.
     const msg = isDuplicate
-      ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}**! | **${milestone}**`
-      : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}**! | **${milestone}**`;
+      ? `**${playerName}** has a funny feeling like they would have been followed by **${petName}**! | **${milestone}**`
+      : `**${playerName}** has a funny feeling like they're being followed by **${petName}**! | **${milestone}**`;
     msgMap.set({ ID: 'PET', URL: URL }, msg);
   }
 

@@ -35,7 +35,7 @@ import * as Constants from './constants';
  * @param {*} env - The URLs used for each payload type.
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
-function createFormData(extra, payloadType, playerName, env) {
+function createFormData(extra, payloadType, playerName, env, embeds, URL) {
   const {
     KC_URL,
     PB_URL,
@@ -50,39 +50,42 @@ function createFormData(extra, payloadType, playerName, env) {
 
   switch (payloadType) {
     case Constants.PET:
-      if (ruleHandler(payloadType, extra)) return;
-      petHandler(msgMap, playerName, extra, PET_URL);
+      URL = PET_URL;
       break;
     case Constants.COLLECTION:
-      collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
+      URL = COLLECTION_URL;
       break;
     case Constants.COMBAT_ACHIEVEMENT:
-      combatTaskHandler(msgMap, playerName, extra, CA_URL);
+      URL = CA_URL;
       break;
     case Constants.KILL_COUNT:
-      killCountHandler(msgMap, playerName, extra, KC_URL);
+      if (!killCountHandler(extra)) return;
+      URL = KC_URL;
       break;
     case Constants.CLUE:
-      if (ruleHandler(payloadType, extra)) return;
+      //TODO: forward url to clue url
+      // if (ruleHandler(payloadType, extra)) return;
       clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
       break;
     case Constants.LOOT:
       if (ruleHandler(payloadType, extra)) return;
-      lootHandler(msgMap, playerName, extra, LOOT_URL);
+      embeds[0].title = 'MODIFIED TITLE';
+      URL = LOOT_URL;
       break;
-    case Constants.CHAT:
-      let typeOfChat;
-      const isPersonalBest = extra.message.includes('(new personal best)');
-      if (isPersonalBest) {
-        typeOfChat = Constants.CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST;
-      } else if (extra.message.includes('vestige')) {
-        typeOfChat = Constants.CHAT_MESSAGE_TYPES.VESTIGE_DROP;
-      }
-      const URL = isPersonalBest ? PB_URL : LOOT_URL;
+    // case Constants.CHAT:
+    //   URL = LOOT_URL;
+    //   let typeOfChat;
+    //   const isPersonalBest = extra.message.includes('(new personal best)');
+    //   if (isPersonalBest) {
+    //     typeOfChat = Constants.CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST;
+    //   } else if (extra.message.includes('vestige')) {
+    //     typeOfChat = Constants.CHAT_MESSAGE_TYPES.VESTIGE_DROP;
+    //   }
+    //   const URL = isPersonalBest ? PB_URL : LOOT_URL;
 
-      chatHandler(msgMap, playerName, extra, typeOfChat, URL);
+    //   chatHandler(msgMap, playerName, extra, typeOfChat, URL);
 
-      break;
+    //   break;
     default:
       console.log(`Unknown payload type: ${payloadType}`);
   }

@@ -20,7 +20,7 @@ export default {
     ]);
 
     createFormData(formDataMap, embeds, payloadType, playerName, extra, env);
-    const URLs = formDataMap.get('URLs') || [];
+    const urls = formDataMap.get('URLs');
 
     console.log('payload - ', payload);
     console.log('ruleBroken: ', formDataMap.get('ruleBroken'));
@@ -29,37 +29,37 @@ export default {
       formDataMap.get('ruleBroken') === false &&
       acceptedPayloads.includes(payloadType)
     ) {
-      let formData = new FormData();
-      const payloadToSend = {
-        content: '',
-        embeds: embeds.map((embed) => ({
-          ...embed,
-          thumbnail:
-            typeof embed.thumbnail === 'string'
-              ? { url: embed.thumbnail }
-              : embed.thumbnail,
-        })),
-      };
-      formData.append('payload_json', JSON.stringify(payloadToSend));
+      for (const { url, embeds } of urls) {
+        let formData = new FormData();
+        let response;
+        const payloadToSend = {
+          content: '',
+          embeds: embeds.map((embed) => ({
+            ...embed,
+            thumbnail:
+              typeof embed.thumbnail === 'string'
+                ? { url: embed.thumbnail }
+                : embed.thumbnail,
+          })),
+        };
+        formData.append('payload_json', JSON.stringify(payloadToSend));
 
-      if (file) {
-        formData.append('file', file, file.name || 'attachment');
-      }
+        if (file) {
+          formData.append('file', file, file.name || 'attachment');
+        }
 
-      for (const URL of URLs) {
         try {
-          const response = await fetch(URL, {
+          response = await fetch(url, {
             method: 'post',
             body: formData,
           });
-
-          if (!response.ok) {
-            console.log(
-              `Failed to post to ${URL}, Response Code: ${response?.status}`
-            );
-          }
         } catch (error) {
-          console.log(`Failed to post to ${URL}: `, error);
+          console.log('Failed to post: ', error);
+          continue;
+        }
+
+        if (!response.ok) {
+          console.log(`Response Code: ${response?.status}`);
         }
       }
     }

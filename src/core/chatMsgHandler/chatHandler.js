@@ -5,38 +5,53 @@ import { vestigeHandler } from './vestigeHandler';
 /**
  * Handles different types of chat messages and processes them accordingly.
  *
- * This function routes the message to the appropriate handler based on the type
- * of chat message (`VESTIGE_DROP` or `NEW_PERSONAL_BEST`). The handlers process
- * the message and modify the provided `embeds` accordingly. If an unknown type
- * of chat is provided, an error is thrown.
+ * This function determines the type of chat message and routes it to the appropriate handler.
+ * It modifies the provided `embeds` array accordingly and returns the updated embed data.
  *
  * Supported Chat Types:
- * - VESTIGE_DROP: Processes vestige drop messages using the `vestigeHandler`.
- * - NEW_PERSONAL_BEST: Processes new personal best messages using the `sepulchreHandler`.
+ * - `VESTIGE_DROP`: Processes vestige drop messages using the `vestigeHandler`.
+ * - `NEW_PERSONAL_BEST`: Processes new personal best messages using the `sepulchreHandler`.
  *
- * @param {Array} embeds - The list of embed objects to be updated based on the chat message.
+ * @param {Array<Object>} embeds - The list of embed objects to be updated based on the chat message.
  * @param {string} playerName - The name of the player who triggered the chat message.
- * @param {Object} extra - Additional data related to the chat, including the message and count.
- * @param {string} typeOfChat - The type of chat message being handled (e.g., `VESTIGE_DROP`, `NEW_PERSONAL_BEST`).
- *
+ * @param {string} message - The chat message to process.
+ * @param {string} LOOT_URL - The URL associated with loot drops.
+ * @param {string} PB_URL - The URL associated with personal best records.
+ * @returns {{ chatURL: string, chatEmbed: Array<Object> }} An object containing the chat URL and modified embed data.
  */
-function chatHandler(embeds, playerName, extra) {
-  const message = extra?.message;
+function chatHandler(embeds, playerName, message, LOOT_URL, PB_URL) {
   const chatType = Constants.CHAT_MESSAGE_TYPES;
   const typeOfChat = message.includes('(new personal best)')
     ? chatType.NEW_PERSONAL_BEST
     : chatType.VESTIGE_DROP;
+  const chatURL = handleChatURL(message, PB_URL, LOOT_URL);
+  let chatEmbed;
+
+  /**
+   * Determines the appropriate URL based on the chat message.
+   *
+   * @param {string} message - The chat message to evaluate.
+   * @param {string} PB_URL - The URL for personal best achievements.
+   * @param {string} LOOT_URL - The URL for loot drops.
+   * @returns {string} The selected URL based on the message type.
+   */
+  function handleChatURL(message, PB_URL, LOOT_URL) {
+    const isPersonalBest = message.includes('(new personal best)');
+    return isPersonalBest ? PB_URL : LOOT_URL;
+  }
 
   switch (typeOfChat) {
     case chatType.VESTIGE_DROP:
-      vestigeHandler(message, playerName, embeds);
+      chatEmbed = vestigeHandler(message, playerName, embeds);
       break;
     case chatType.NEW_PERSONAL_BEST:
-      sepulchreHandler(message, playerName, embeds);
+      chatEmbed = sepulchreHandler(message, playerName, embeds);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);
   }
+
+  return { chatURL, chatEmbed };
 }
 
 export default chatHandler;

@@ -19,28 +19,28 @@ import { RULES, LOOT, CLUE, CHAT } from '../constants';
  *                               It is updated to `true` if a violation is detected.
  * @param {string} payloadType - The type of payload (LOOT, CLUE, DEATH, etc.).
  *                               Determines which rule to check.
- * @param {Object} extra - The extra data for the payload, which contains specific values
- *                          for checking the rules (e.g., items, valueLost).
+ * @param {Array} extra.items - The list of loot or clue scroll items to be validated
+ *                               against the predefined rules.
  * @returns {boolean} - Returns `true` if the rule is broken for the given payload.
  *                      Otherwise, returns `false`.
  *
  */
-function ruleHandler(ruleBroken, payloadType, extra) {
+function ruleHandler(ruleBroken, payloadType, items, chatType) {
   switch (payloadType) {
     case LOOT:
-      if (calculateTotalValue(extra.items) < RULES.drops.minLootValue) {
+      if (calculateTotalValue(items) < RULES.drops.minLootValue) {
         ruleBroken = true;
         return ruleBroken;
       }
       break;
     case CLUE:
-      if (calculateTotalValue(extra.items) < RULES.clueScrolls.minValue) {
+      if (calculateTotalValue(items) < RULES.clueScrolls.minValue) {
         ruleBroken = true;
         return ruleBroken;
       }
       break;
     case CHAT:
-      if (!RULES.chat.messageTypes.includes(extra.type)) {
+      if (!RULES.chat.messageTypes.includes(chatType)) {
         ruleBroken = true;
         return ruleBroken;
       }

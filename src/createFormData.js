@@ -1,4 +1,4 @@
-import { killCountHandler, ruleHandler } from './core';
+import { killCountHandler, ruleHandler, personalBestHandler } from './core';
 import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
 
@@ -15,13 +15,13 @@ import * as Constants from './constants';
  *
  * For more information on the payload types, see [here](https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#all).
  *
- * @param {Map} formDataMap - The map where the resulting form data is stored, including the URLs and any flags like `ruleBroken`.
+ * @param {Map} formDataMap - The map where the resulting form data is stored, including the URL and any flags like `ruleBroken`.
  * @param {Object[]} embeds - An array of embed objects to include in the payload. These will be sent along with the message.
  * @param {string} payloadType - The type of payload to be processed (e.g., "Pet", "Collection", "Loot", etc.).
  * @param {string} playerName - The name of the player to include in the message.
  * @param {Object} extra - Additional data required for processing the payload, including specific event details.
  * @param {Object} env - An object containing the URLs for each type of payload (e.g., `PET_URL`, `KC_URL`, etc.).
- * @returns {Map} - The updated `formDataMap` containing the appropriate URLs for posting and any other relevant information, such as `ruleBroken`.
+ * @returns {Map} - The updated `formDataMap` containing the appropriate URL for posting and any other relevant information, such as `ruleBroken`.
  */
 function createFormData(
   formDataMap,
@@ -33,16 +33,11 @@ function createFormData(
 ) {
   const { KC_URL, PB_URL, CLUE_URL, LOOT_URL } = env;
   let ruleBroken = false;
-  let URLs = [];
-
-  function handleChatURL(message, PB_URL, LOOT_URL) {
-    const isPersonalBest = message.includes('(new personal best)');
-    return isPersonalBest ? PB_URL : LOOT_URL;
-  }
+  let urlEmbedPairs = [];
 
   if (
     [Constants.CLUE, Constants.LOOT, Constants.CHAT].includes(payloadType) &&
-    ruleHandler(ruleBroken, payloadType, extra)
+    ruleHandler(ruleBroken, payloadType, extra.items, extra.type)
   ) {
     formDataMap.set('ruleBroken', true);
     return;
@@ -50,30 +45,48 @@ function createFormData(
 
   switch (payloadType) {
     case Constants.KILL_COUNT:
-      if (killCountHandler(extra) === false) {
+      const { isKillCountValid, killCountEmbed } = killCountHandler(
+        extra,
+        embeds,
+        playerName
+      );
+      if (!isKillCountValid) {
         formDataMap.set('ruleBroken', true);
         return;
       }
-      URLs.push(KC_URL);
+      urlEmbedPairs.push({ url: KC_URL, embeds: killCountEmbed });
+
       if (extra?.isPersonalBest) {
-        URLs.push(PB_URL);
+        const personalBestEmbed = personalBestHandler(
+          extra,
+          embeds,
+          playerName
+        );
+        urlEmbedPairs.push({ url: PB_URL, embeds: personalBestEmbed });
       }
       break;
     case Constants.LOOT:
-      URLs.push(LOOT_URL);
+      urlEmbedPairs.push({ url: LOOT_URL, embeds });
       break;
     case Constants.CLUE:
-      URLs.push(CLUE_URL);
+      urlEmbedPairs.push({ url: CLUE_URL, embeds });
       break;
     case Constants.CHAT:
-      URLs.push(handleChatURL(extra.message, PB_URL, LOOT_URL));
-      chatHandler(embeds, playerName, extra, URLs[0]);
+      const { chatURL, chatEmbed } = chatHandler(
+        embeds,
+        playerName,
+        extra.message,
+        LOOT_URL,
+        PB_URL
+      );
+      console.log('chatEmbed: ', chatEmbed);
+      urlEmbedPairs.push({ url: chatURL, embeds: chatEmbed });
       break;
     default:
       console.log(`Unknown payload type: ${payloadType}`);
   }
 
-  formDataMap.set('URLs', URLs);
+  formDataMap.set('URLs', urlEmbedPairs);
   formDataMap.set('ruleBroken', ruleBroken);
 }
 

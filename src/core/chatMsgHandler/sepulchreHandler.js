@@ -1,22 +1,30 @@
 import * as Constants from '../../constants';
 
+/**
+ * Processes a personal best message for the Hallowed Sepulchre and updates the embed data.
+ *
+ * This function extracts the overall or floor-specific personal best time from the message
+ * and formats an embed to display the achievement.
+ *
+ * @param {string} message - The chat message containing the personal best information.
+ * @param {string} playerName - The name of the player who achieved the personal best.
+ * @param {Array<Object>} embeds - The list of embed objects to be updated.
+ * @returns {Array<Object>} An array of updated embed objects with the personal best details. Returns an empty array if no matching time is found.
+ */
 export function sepulchreHandler(message, playerName, embeds) {
   const overallMatch = message.match(Constants.CHAT_REGEX.OVERALL_TIME_TEXT);
   const floorMatch = message.match(Constants.CHAT_REGEX.FLOOR_TIME_TEXT);
-  const embed = embeds[0];
-  embed.title = 'Personal Best';
 
-  if (!overallMatch && !floorMatch) return;
+  if (!overallMatch && !floorMatch) return []; // Return an empty array instead of undefined
 
-  if (overallMatch) {
-    const time = overallMatch[1];
-    embed.description = `${playerName} has achieved a new [Hallowed Sepulchre](https://oldschool.runescape.wiki/w/Hallowed_Sepulchre) (Overall) personal best of ${time}`;
-  } else if (floorMatch) {
-    const floorNumber = floorMatch[1];
-    const time = floorMatch[2];
-    embed.description = `${playerName} has achieved a new [Hallowed Sepulchre](https://oldschool.runescape.wiki/w/Hallowed_Sepulchre) (Floor ${floorNumber}) personal best of ${time}`;
-  }
-  embed.thumbnail = {
-    url: 'https://static.runelite.net/cache/item/icon/24711.png',
-  };
+  const updatedEmbeds = embeds.map((embed) => ({
+    ...embed,
+    title: 'Personal Best',
+    thumbnail: { url: 'https://static.runelite.net/cache/item/icon/24711.png' },
+    description: overallMatch
+      ? `${playerName} has achieved a new [Hallowed Sepulchre](https://oldschool.runescape.wiki/w/Hallowed_Sepulchre) (Overall) personal best of ${overallMatch[1]}`
+      : `${playerName} has achieved a new [Hallowed Sepulchre](https://oldschool.runescape.wiki/w/Hallowed_Sepulchre) (Floor ${floorMatch[1]}) personal best of ${floorMatch[2]}`,
+  }));
+
+  return updatedEmbeds;
 }

@@ -5,22 +5,30 @@ export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
+export const WIKI_SEARCH =
+  'https://oldschool.runescape.wiki/w/Special:Search?search=';
 
-export const bossMap = new Map([
-  ['TZKAL-ZUK', 5],
-  ['SOL HEREDIT', 5],
-  ['THEATRE OF BLOOD: HARD MODE', 10],
-  ['CHAMBERS OF XERIC: CHALLENGE MODE', 10],
-  ["PHOSANI'S NIGHTMARE", 25],
-  ['THE NIGHTMARE', 25],
-  ['CORPOREAL BEAST', 50],
-  ['HERBIBOAR', 150],
-  ['TEST', 1],
+export const bossMap = Object.freeze(
+  new Map([
+    ['TZKAL-ZUK', 5],
+    ['SOL HEREDIT', 5],
+    ['THEATRE OF BLOOD: HARD MODE', 10],
+    ['CHAMBERS OF XERIC: CHALLENGE MODE', 10],
+    ["PHOSANI'S NIGHTMARE", 25],
+    ['THE NIGHTMARE', 25],
+    ['CORPOREAL BEAST', 50],
+    ['HERBIBOAR', 150],
+    ['TEST', 1],
+  ])
+);
+
+export const specialKills = Object.freeze([
+  'SOL HEREDIT',
+  'TZKAL-ZUK',
+  'TZTOK-JAD',
 ]);
 
-export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
-
-export const acceptedPayloads = [
+export const acceptedPayloads = Object.freeze([
   'KILL_COUNT',
   'CHAT',
   'COLLECTION',
@@ -28,7 +36,7 @@ export const acceptedPayloads = [
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',
-];
+]);
 
 export const CHAT_MESSAGE_TYPES = Object.freeze({
   VESTIGE_DROP: 'VESTIGE_DROP',

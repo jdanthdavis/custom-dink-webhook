@@ -18,6 +18,7 @@ export default {
       ['ruleBroken', false],
       ['URL', ''],
     ]);
+    const URL = formDataMap.get('URL');
     createFormData(formDataMap, embeds, payloadType, playerName, extra, env);
 
     console.log('payload - ', payload);
@@ -46,13 +47,10 @@ export default {
       }
 
       try {
-        response = await fetch(
-          'https://discord.com/api/webhooks/1270065149956456501/zDWUAfQKCjnEc9mdEroKgpElDqAMQzUWH64INfhhGiOJw_pFzL9QvTb9833DF5aJcvLt',
-          {
-            method: 'post',
-            body: formData,
-          }
-        );
+        response = await fetch(URL, {
+          method: 'post',
+          body: formData,
+        });
       } catch (error) {
         console.log('Failed to post: ', error);
       }

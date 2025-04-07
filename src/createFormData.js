@@ -1,4 +1,4 @@
-import { killCountHandler, personalBestHandler, ruleHandler } from './core';
+import { killCountHandler, ruleHandler } from './core';
 import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
 
@@ -31,16 +31,7 @@ function createFormData(
   extra,
   env
 ) {
-  const {
-    KC_URL,
-    PB_URL,
-    COLLECTION_URL,
-    PET_URL,
-    CA_URL,
-    CLUE_URL,
-    LOOT_URL,
-  } = env;
-
+  const { KC_URL, PB_URL, CLUE_URL, LOOT_URL } = env;
   let URL;
   let ruleBroken = false;
 
@@ -58,15 +49,6 @@ function createFormData(
   }
 
   switch (payloadType) {
-    case Constants.PET:
-      URL = PET_URL;
-      break;
-    case Constants.COLLECTION:
-      URL = COLLECTION_URL;
-      break;
-    case Constants.COMBAT_ACHIEVEMENT:
-      URL = CA_URL;
-      break;
     case Constants.KILL_COUNT:
       if (killCountHandler(extra) === false) {
         formDataMap.set('ruleBroken', true);
@@ -80,8 +62,6 @@ function createFormData(
     case Constants.CLUE:
       URL = CLUE_URL;
       break;
-    case Constants.DEATH:
-      URL = DEATH_URL;
     case Constants.CHAT:
       URL = handleChatURL(extra.message, PB_URL, LOOT_URL);
       chatHandler(embeds, playerName, extra, URL);
@@ -91,8 +71,7 @@ function createFormData(
   }
 
   if (extra?.isPersonalBest) {
-    //TODO: This needs to be refactored for embeds
-    personalBestHandler(formDataMap, playerName, extra, PB_URL);
+    URL = PB_URL;
   }
 
   formDataMap.set('URL', URL);

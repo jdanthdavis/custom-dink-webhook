@@ -16,12 +16,6 @@ export function vestigeHandler(message, playerName, embeds) {
   console.log(bossName, bossLink, vestigeThumbnail);
   embed.description = `${playerName} has looted:\n\n 1 x [${vestigeType} vestige](${itemLink}) (5M)\nFrom: [${bossName}](${bossLink})`;
   embed.fields = [
-    //TODO: Grab KC from message
-    // {
-    //   name: 'Kill Count',
-    //   value: `\`\`\`${killCount}\`\`\``,
-    //   inline: true,
-    // },
     {
       name: 'Total Value',
       value: '```5M```',

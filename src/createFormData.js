@@ -15,13 +15,13 @@ import * as Constants from './constants';
  *
  * For more information on the payload types, see [here](https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#all).
  *
- * @param {Map} formDataMap - The map where the resulting form data is stored, including the URL and any flags like `ruleBroken`.
+ * @param {Map} formDataMap - The map where the resulting form data is stored, including the URLs and any flags like `ruleBroken`.
  * @param {Object[]} embeds - An array of embed objects to include in the payload. These will be sent along with the message.
  * @param {string} payloadType - The type of payload to be processed (e.g., "Pet", "Collection", "Loot", etc.).
  * @param {string} playerName - The name of the player to include in the message.
  * @param {Object} extra - Additional data required for processing the payload, including specific event details.
  * @param {Object} env - An object containing the URLs for each type of payload (e.g., `PET_URL`, `KC_URL`, etc.).
- * @returns {Map} - The updated `formDataMap` containing the appropriate URL for posting and any other relevant information, such as `ruleBroken`.
+ * @returns {Map} - The updated `formDataMap` containing the appropriate URLs for posting and any other relevant information, such as `ruleBroken`.
  */
 function createFormData(
   formDataMap,
@@ -32,8 +32,8 @@ function createFormData(
   env
 ) {
   const { KC_URL, PB_URL, CLUE_URL, LOOT_URL } = env;
-  let URL;
   let ruleBroken = false;
+  let URLs = [];
 
   function handleChatURL(message, PB_URL, LOOT_URL) {
     const isPersonalBest = message.includes('(new personal best)');
@@ -54,27 +54,26 @@ function createFormData(
         formDataMap.set('ruleBroken', true);
         return;
       }
-      URL = KC_URL;
+      URLs.push(KC_URL);
+      if (extra?.isPersonalBest) {
+        URLs.push(PB_URL);
+      }
       break;
     case Constants.LOOT:
-      URL = LOOT_URL;
+      URLs.push(LOOT_URL);
       break;
     case Constants.CLUE:
-      URL = CLUE_URL;
+      URLs.push(CLUE_URL);
       break;
     case Constants.CHAT:
-      URL = handleChatURL(extra.message, PB_URL, LOOT_URL);
-      chatHandler(embeds, playerName, extra, URL);
+      URLs.push(handleChatURL(extra.message, PB_URL, LOOT_URL));
+      chatHandler(embeds, playerName, extra, URLs[0]);
       break;
     default:
       console.log(`Unknown payload type: ${payloadType}`);
   }
 
-  if (extra?.isPersonalBest) {
-    URL = PB_URL;
-  }
-
-  formDataMap.set('URL', URL);
+  formDataMap.set('URLs', URLs);
   formDataMap.set('ruleBroken', ruleBroken);
 }
 

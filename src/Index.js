@@ -16,10 +16,11 @@ export default {
     const embeds = payload.embeds;
     const formDataMap = new Map([
       ['ruleBroken', false],
-      ['URL', ''],
+      ['URLs', []],
     ]);
+
     createFormData(formDataMap, embeds, payloadType, playerName, extra, env);
-    const URL = formDataMap.get('URL');
+    const URLs = formDataMap.get('URLs') || [];
 
     console.log('payload - ', payload);
     console.log('ruleBroken: ', formDataMap.get('ruleBroken'));
@@ -29,7 +30,6 @@ export default {
       acceptedPayloads.includes(payloadType)
     ) {
       let formData = new FormData();
-      let response;
       const payloadToSend = {
         content: '',
         embeds: embeds.map((embed) => ({
@@ -46,17 +46,21 @@ export default {
         formData.append('file', file, file.name || 'attachment');
       }
 
-      try {
-        response = await fetch(URL, {
-          method: 'post',
-          body: formData,
-        });
-      } catch (error) {
-        console.log('Failed to post: ', error);
-      }
+      for (const URL of URLs) {
+        try {
+          const response = await fetch(URL, {
+            method: 'post',
+            body: formData,
+          });
 
-      if (!response.ok) {
-        console.log(`Response Code: ${response?.status}`);
+          if (!response.ok) {
+            console.log(
+              `Failed to post to ${URL}, Response Code: ${response?.status}`
+            );
+          }
+        } catch (error) {
+          console.log(`Failed to post to ${URL}: `, error);
+        }
       }
     }
     return new Response();
@@ -65,10 +69,7 @@ export default {
 
 function isValidAgent(ua) {
   if (typeof ua !== 'string') return false;
-
   if (ua.includes('PostmanRuntime/')) return true;
-
   if (!ua.startsWith('RuneLite/') && !ua.startsWith('HDOS/')) return false;
-
   return ua.includes('Dink/');
 }

@@ -39,7 +39,6 @@ function createFormData(
     CA_URL,
     CLUE_URL,
     LOOT_URL,
-    DEATH_URL,
   } = env;
 
   let URL;
@@ -51,9 +50,7 @@ function createFormData(
   }
 
   if (
-    [Constants.CLUE, Constants.LOOT, Constants.DEATH, Constants.CHAT].includes(
-      payloadType
-    ) &&
+    [Constants.CLUE, Constants.LOOT, Constants.CHAT].includes(payloadType) &&
     ruleHandler(ruleBroken, payloadType, extra)
   ) {
     formDataMap.set('ruleBroken', true);

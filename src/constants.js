@@ -5,7 +5,6 @@ export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
-export const DEATH = 'DEATH';
 
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
@@ -29,7 +28,6 @@ export const acceptedPayloads = [
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',
-  'DEATH',
 ];
 
 export const CHAT_MESSAGE_TYPES = Object.freeze({
@@ -84,10 +82,6 @@ export const CHAT_REGEX = Object.freeze({
 export const RULES = Object.freeze({
   drops: {
     minLootValue: 1000000,
-  },
-  deaths: {
-    ignoredRegions: ['123, 456, 789, 12984, 12985, 13150, 13151, 5021'],
-    minLostValue: 100000,
   },
   clueScrolls: {
     minValue: 500000,

@@ -9,23 +9,28 @@ export default {
 
     const form = await request.clone().formData();
     const payload = JSON.parse(form.get('payload_json'));
+    const file = form.get('file');
     const extra = payload.extra;
     const payloadType = payload.type;
     const playerName = payload.playerName ? payload.playerName : payload.source;
     const embeds = payload.embeds;
-    const content = payload.content;
-    let URL;
+    const formDataMap = new Map([
+      ['ruleBroken', false],
+      ['URL', ''],
+    ]);
+    createFormData(formDataMap, embeds, payloadType, playerName, extra, env);
 
     console.log('payload - ', payload);
 
-    if (acceptedPayloads.includes(payloadType)) {
-      createFormData(extra, payloadType, playerName, env, embeds, URL);
-
-      let formData;
+    if (
+      formDataMap.get('ruleBroken') === false &&
+      acceptedPayloads.includes(payloadType)
+    ) {
+      let formData = new FormData();
       let response;
       const payloadToSend = {
-        content,
-        embeds: originalEmbed.map((embed) => ({
+        content: '',
+        embeds: embeds.map((embed) => ({
           ...embed,
           thumbnail:
             typeof embed.thumbnail === 'string'
@@ -35,13 +40,20 @@ export default {
       };
       formData.append('payload_json', JSON.stringify(payloadToSend));
 
+      if (file) {
+        formData.append('file', file, file.name || 'attachment');
+      }
+
       try {
-        response = await fetch(URL, {
-          method: 'post',
-          body: formData,
-        });
+        response = await fetch(
+          'https://discord.com/api/webhooks/1270065149956456501/zDWUAfQKCjnEc9mdEroKgpElDqAMQzUWH64INfhhGiOJw_pFzL9QvTb9833DF5aJcvLt',
+          {
+            method: 'post',
+            body: formData,
+          }
+        );
       } catch (error) {
-        console.log(error);
+        console.log('Failed to post: ', error);
       }
 
       if (!response.ok) {

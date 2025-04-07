@@ -1,16 +1,11 @@
 export const COLLECTION = 'COLLECTION';
 export const PET = 'PET';
 export const KILL_COUNT = 'KILL_COUNT';
-export const LEVEL = 'LEVEL';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
 export const DEATH = 'DEATH';
-export const MAX_TOTAL_LEVEL = 2277;
-export const THE_GRUMBLER = 'The Grumbler';
-export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
-export const MUPHIN = 'MUPHIN';
 
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
@@ -34,35 +29,63 @@ export const acceptedPayloads = [
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',
+  'DEATH',
 ];
 
-export const CHAT_MESSAGE_TYPES = {
+export const CHAT_MESSAGE_TYPES = Object.freeze({
   VESTIGE_DROP: 'VESTIGE_DROP',
   NEW_PERSONAL_BEST: 'NEW_PERSONAL_BEST',
-};
+});
 
-export const VESTIGE_MAP = {
-  Ultor: 'Vardorvis',
-  Bellator: 'The Whisperer',
-  Magus: 'Duke Sucellus',
-  Venator: 'The Leviathan',
-};
+export const VESTIGE_MAP = Object.freeze({
+  Ultor: {
+    boss: 'Vardorvis',
+    bossLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=Vardorvis',
+    itemLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=Ultor_vestige',
+    thumbnail: 'https://static.runelite.net/cache/item/icon/28285.png',
+  },
+  Bellator: {
+    boss: 'The Whisperer',
+    bossLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=The_Whisperer',
+    itemLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=Bellator_vestige',
+    thumbnail: 'https://static.runelite.net/cache/item/icon/28279.png',
+  },
+  Magus: {
+    boss: 'Duke Sucellus',
+    bossLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=Duke_Sucellus',
+    itemLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=Magus_vestige',
+    thumbnail: 'https://static.runelite.net/cache/item/icon/28281.png',
+  },
+  Venator: {
+    boss: 'The Leviathan',
+    bossLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=The_Leviathan',
+    itemLink:
+      'https://oldschool.runescape.wiki/w/Special:Search?search=Venator_vestige',
+    thumbnail: 'https://static.runelite.net/cache/item/icon/28283.png',
+  },
+});
 
-const safeDeaths = [
-  'Chambers of Xeric',
-  'Diary Resurrection',
-  'Fight Caves',
-  'Jad challenges',
-  'Theatre of Blood',
-  'Tombs of Amascut',
-];
+export const CHAT_REGEX = Object.freeze({
+  VESTIGE_TEXT: /Untradeable drop: (Ultor|Bellator|Magus|Venator) vestige/,
+  OVERALL_TIME_TEXT:
+    /Overall time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
+  FLOOR_TIME_TEXT:
+    /Floor ([1-5]) time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
+  BIG_FISH: /You catch an enormous (.+)!/,
+});
 
 export const RULES = Object.freeze({
   drops: {
-    minLootValue: '',
+    minLootValue: 1000000,
   },
   deaths: {
-    ignoreSafeDeaths: true, // don't ignore Inferno deaths
     ignoredRegions: ['123, 456, 789, 12984, 12985, 13150, 13151, 5021'],
     minLostValue: 100000,
   },

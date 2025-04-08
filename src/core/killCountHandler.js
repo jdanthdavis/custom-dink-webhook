@@ -1,3 +1,4 @@
+import { getWikiSearchUrl } from './helperFunctions';
 import * as Constants from '../constants';
 
 /**
@@ -29,9 +30,9 @@ function killCountHandler(extra, embeds, playerName) {
   const killCountEmbed = embeds.map((embed) => ({
     ...embed,
     title: 'Personal Best',
-    description: `${playerName} has defeated [${boss}](${
-      Constants.WIKI_SEARCH
-    }${encodeURIComponent(boss)}) with a completion count of ${killCount}`,
+    description: `${playerName} has defeated [${boss}](${getWikiSearchUrl(
+      boss
+    )}) with a completion count of ${killCount}`,
   }));
 
   return { isKillCountValid, killCountEmbed };

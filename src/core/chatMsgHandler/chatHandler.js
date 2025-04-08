@@ -1,6 +1,6 @@
 import * as Constants from '../../constants';
 import { sepulchreHandler } from './sepulchreHandler';
-import { vestigeHandler } from './vestigeHandler';
+import { untradeableDropHandler } from './untradeableDropHandler';
 
 /**
  * Handles different types of chat messages and processes them accordingly.
@@ -23,7 +23,7 @@ function chatHandler(embeds, playerName, message, LOOT_URL, PB_URL) {
   const chatType = Constants.CHAT_MESSAGE_TYPES;
   const typeOfChat = message.includes('(new personal best)')
     ? chatType.NEW_PERSONAL_BEST
-    : chatType.VESTIGE_DROP;
+    : chatType.UNTRADEABLE_DROP;
   const chatURL = handleChatURL(message, PB_URL, LOOT_URL);
   let chatEmbed;
 
@@ -41,8 +41,8 @@ function chatHandler(embeds, playerName, message, LOOT_URL, PB_URL) {
   }
 
   switch (typeOfChat) {
-    case chatType.VESTIGE_DROP:
-      chatEmbed = vestigeHandler(message, playerName, embeds);
+    case chatType.UNTRADEABLE_DROP:
+      chatEmbed = untradeableDropHandler(message, playerName, embeds);
       break;
     case chatType.NEW_PERSONAL_BEST:
       chatEmbed = sepulchreHandler(message, playerName, embeds);

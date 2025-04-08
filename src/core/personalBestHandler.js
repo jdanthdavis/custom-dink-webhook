@@ -1,3 +1,5 @@
+import { getWikiSearchUrl } from './helperFunctions';
+
 /**
  * Formats and generates an embed for a player's personal best in a specific boss fight.
  * The function cleans the time string from ISO-8601 format, ensuring it is readable and includes a link to the boss's page.
@@ -48,7 +50,7 @@ function personalBestHandler(extra, embeds, playerName) {
   const personalBestEmbed = embeds.map((embed) => ({
     ...embed,
     title: 'Personal Best',
-    description: `${playerName} has defeated [${boss}](https://oldschool.runescape.wiki/w/Special:Search?search=${encodeURIComponent(
+    description: `${playerName} has defeated [${boss}](${getWikiSearchUrl(
       boss
     )}) with a new personal best of ${cleanTime(time)}`,
   }));

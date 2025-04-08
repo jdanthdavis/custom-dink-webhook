@@ -1,3 +1,4 @@
+import { getThumbnailUrl, getWikiSearchUrl } from '../helperFunctions';
 import * as Constants from '../../constants';
 
 /**
@@ -20,10 +21,14 @@ export function sepulchreHandler(message, playerName, embeds) {
   const updatedEmbeds = embeds.map((embed) => ({
     ...embed,
     title: 'Personal Best',
-    thumbnail: { url: 'https://static.runelite.net/cache/item/icon/24711.png' },
+    thumbnail: { url: getThumbnailUrl('24711') },
     description: overallMatch
-      ? `${playerName} has achieved a new [Hallowed Sepulchre](https://oldschool.runescape.wiki/w/Hallowed_Sepulchre) (Overall) personal best of ${overallMatch[1]}`
-      : `${playerName} has achieved a new [Hallowed Sepulchre](https://oldschool.runescape.wiki/w/Hallowed_Sepulchre) (Floor ${floorMatch[1]}) personal best of ${floorMatch[2]}`,
+      ? `${playerName} has achieved a new [Hallowed Sepulchre](${getWikiSearchUrl(
+          'Hallowed Sepulchre'
+        )}) (Overall) personal best of ${overallMatch[1]}`
+      : `${playerName} has achieved a new [Hallowed Sepulchre](${getWikiSearchUrl(
+          'Hallowed Sepulchre'
+        )}) (Floor ${floorMatch[1]}) personal best of ${floorMatch[2]}`,
   }));
 
   return updatedEmbeds;

@@ -5,8 +5,6 @@ export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
-export const WIKI_SEARCH =
-  'https://oldschool.runescape.wiki/w/Special:Search?search=';
 
 export const bossMap = Object.freeze(
   new Map([
@@ -39,42 +37,44 @@ export const acceptedPayloads = Object.freeze([
 ]);
 
 export const CHAT_MESSAGE_TYPES = Object.freeze({
-  VESTIGE_DROP: 'VESTIGE_DROP',
+  UNTRADEABLE_DROP: 'UNTRADEABLE_DROP',
   NEW_PERSONAL_BEST: 'NEW_PERSONAL_BEST',
 });
 
-export const VESTIGE_MAP = Object.freeze({
-  Ultor: {
-    boss: 'Vardorvis',
-    bossLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=Vardorvis',
-    itemLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=Ultor_vestige',
-    thumbnail: 'https://static.runelite.net/cache/item/icon/28285.png',
+export const UNTRADEABLE_MAP = Object.freeze({
+  vestiges: {
+    ultor: {
+      itemName: 'Ultor vestige',
+      boss: 'Vardorvis',
+      thumbnail: '28285',
+      value: '5M',
+    },
+    bellator: {
+      itemName: 'Bellator vestige',
+      boss: 'The Whisperer',
+      thumbnail: '28279',
+      value: '5M',
+    },
+    magus: {
+      itemName: 'Magus vestige',
+      boss: 'Duke Sucellus',
+      thumbnail: '28281',
+      value: '5M',
+    },
+    venator: {
+      itemName: 'Venator vestige',
+      boss: 'The Leviathan',
+      thumbnail: '28283',
+      value: '5M',
+    },
   },
-  Bellator: {
-    boss: 'The Whisperer',
-    bossLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=The_Whisperer',
-    itemLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=Bellator_vestige',
-    thumbnail: 'https://static.runelite.net/cache/item/icon/28279.png',
-  },
-  Magus: {
-    boss: 'Duke Sucellus',
-    bossLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=Duke_Sucellus',
-    itemLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=Magus_vestige',
-    thumbnail: 'https://static.runelite.net/cache/item/icon/28281.png',
-  },
-  Venator: {
-    boss: 'The Leviathan',
-    bossLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=The_Leviathan',
-    itemLink:
-      'https://oldschool.runescape.wiki/w/Special:Search?search=Venator_vestige',
-    thumbnail: 'https://static.runelite.net/cache/item/icon/28283.png',
+  araxyte: {
+    araxyte_fang: {
+      itemName: 'Araxyte fang',
+      boss: 'Araxxor',
+      thumbnail: '29799',
+      value: '50M',
+    },
   },
 });
 
@@ -84,7 +84,7 @@ export const CHAT_REGEX = Object.freeze({
     /Overall time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   FLOOR_TIME_TEXT:
     /Floor ([1-5]) time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
-  BIG_FISH: /You catch an enormous (.+)!/,
+  ARAXYTE_FANG: /.+? received a drop: Araxyte fang/,
 });
 
 export const RULES = Object.freeze({

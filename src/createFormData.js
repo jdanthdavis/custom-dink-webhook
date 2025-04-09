@@ -37,40 +37,31 @@ import * as Constants from './constants';
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
 function createFormData(extra, content, payloadType, playerName, env) {
-  const {
-    KC_URL,
-    PB_URL,
-    COLLECTION_URL,
-    PET_URL,
-    LEVEL_URL,
-    CA_URL,
-    CLUE_URL,
-    LOOT_URL,
-  } = env;
+  const { TEST_URL } = env;
 
   let msgMap = new Map();
 
   switch (payloadType) {
     case Constants.PET:
-      petHandler(msgMap, playerName, extra, PET_URL);
+      petHandler(msgMap, playerName, extra, TEST_URL);
       break;
     case Constants.COLLECTION:
-      collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
+      collectionLogHandler(msgMap, playerName, extra, TEST_URL);
       break;
     case Constants.LEVEL:
-      levelUpHandler(msgMap, playerName, extra, LEVEL_URL);
+      levelUpHandler(msgMap, playerName, extra, TEST_URL);
       break;
     case Constants.COMBAT_ACHIEVEMENT:
-      combatTaskHandler(msgMap, playerName, extra, CA_URL);
+      combatTaskHandler(msgMap, playerName, extra, TEST_URL);
       break;
     case Constants.KILL_COUNT:
-      killCountHandler(msgMap, playerName, extra, KC_URL);
+      killCountHandler(msgMap, playerName, extra, TEST_URL);
       break;
     case Constants.CLUE:
-      clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
+      clueScrollHandler(msgMap, playerName, extra, TEST_URL);
       break;
     case Constants.LOOT:
-      lootHandler(msgMap, content, playerName, extra.source, LOOT_URL);
+      lootHandler(msgMap, content, playerName, extra.source, TEST_URL);
       break;
     case Constants.CHAT:
       const isPersonalBest = extra.message.includes('(new personal best)');
@@ -80,7 +71,7 @@ function createFormData(extra, content, payloadType, playerName, env) {
         ? Constants.CHAT_MESSAGE_TYPES.VESTIGE_DROP
         : Constants.CHAT_MESSAGE_TYPES.BIG_FISH;
 
-      const URL = isPersonalBest ? PB_URL : LOOT_URL;
+      const URL = isPersonalBest ? TEST_URL : TEST_URL;
 
       chatHandler(msgMap, playerName, extra, typeOfChat, URL);
 
@@ -90,7 +81,7 @@ function createFormData(extra, content, payloadType, playerName, env) {
   }
 
   if (extra?.isPersonalBest) {
-    personalBestHandler(msgMap, playerName, extra, PB_URL);
+    personalBestHandler(msgMap, playerName, extra, TEST_URL);
   }
 
   return msgMap;

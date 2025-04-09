@@ -13,6 +13,7 @@ export default {
     const extra = payload.extra;
     const payloadType = payload.type;
     const playerName = payload.playerName ? payload.playerName : payload.source;
+    const content = payload.content;
     let msgMap;
 
     console.log('payload - ', payload);
@@ -21,9 +22,10 @@ export default {
       acceptedPayloads.includes(payloadType) &&
       theBoys.includes(playerName.toUpperCase())
     ) {
-      msgMap = createFormData(extra, payloadType, playerName, env);
+      msgMap = createFormData(extra, content, payloadType, playerName, env);
 
       for (const [url, msg] of msgMap.entries()) {
+        console.log(url, msg);
         let formData = new FormData();
         let response;
         formData.append('payload_json', JSON.stringify({ content: msg }));

@@ -36,7 +36,7 @@ import * as Constants from './constants';
  * @param {*} env - The URLs used for each payload type.
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
-function createFormData(extra, payloadType, playerName, env) {
+function createFormData(extra, content, payloadType, playerName, env) {
   const {
     KC_URL,
     PB_URL,
@@ -70,7 +70,7 @@ function createFormData(extra, payloadType, playerName, env) {
       clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
       break;
     case Constants.LOOT:
-      lootHandler(msgMap, playerName, extra, LOOT_URL);
+      lootHandler(msgMap, content, playerName, extra.source, LOOT_URL);
       break;
     case Constants.CHAT:
       const isPersonalBest = extra.message.includes('(new personal best)');

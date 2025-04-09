@@ -7,13 +7,17 @@ import * as Constants from './../../constants';
  */
 function grumblerCheck(name) {
   const upperName = name.toUpperCase();
+
   if (
     upperName === Constants.PHANTOM_MUSPAH ||
     upperName === Constants.MUPHIN
   ) {
     return Constants.THE_GRUMBLER;
+  } else if (upperName.includes(Constants.HALLOWED_SEPULCHRE.toUpperCase())) {
+    return Constants.GRAND_HALLOWED_COFFIN;
+  } else {
+    return name;
   }
-  return name;
 }
 
 export default grumblerCheck;

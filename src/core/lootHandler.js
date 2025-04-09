@@ -1,31 +1,33 @@
-import { grumblerCheck, formatPrice } from './helperFunctions';
+import { grumblerCheck } from './helperFunctions';
+
 /**
- * Formats drops
- * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
- * @param {*} playerName - The player's name
- * @param {*} extra - Additional information
- * @param {*} URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ * Formats loot drops into a message and updates the provided message map.
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update with the formatted loot message.
+ * @param {string} content - The content string containing loot information (e.g., "1 x Bones (70)").
+ * @param {string} playerName - The player's name who received the loot.
+ * @param {string} source - The source from which the loot was obtained (e.g., "Man").
+ * @param {string} URL - The associated URL for the loot event.
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map with the formatted loot message.
  */
 function lootHandler(msgMap, content, playerName, source, URL) {
-  // Extract item and price using regex
-  const lootItemMatch = content.match(/(\d+)x ([\w\s\(\)]+) \(([\d\.\w]+)\)/);
+  const lootItemMatch = content.match(
+    /(\d+)\s*x\s*([[\w\s\(\)]+)\s*\(([\d\.\w]+)\)/
+  );
 
   if (!lootItemMatch) {
-    return 'Error: Invalid loot format'; // Handle case if the format doesn't match
+    console.log('Error: Invalid loot format - ', content);
   }
 
-  const quantity = lootItemMatch[1]; // "1"
-  const item = lootItemMatch[2]; // "Bones"
-  const price = lootItemMatch[3]; // "70"
+  const quantity = lootItemMatch[1];
+  const item = lootItemMatch[2];
+  const price = lootItemMatch[3];
 
-  // Format the output as required
-  const outputString = `**${playerName}** has received **${quantity}x ${item} (${price})** from **${source}**`;
-
-  console.log('OUT: ', outputString);
-  console.log('URL: ', URL);
+  const outputString = `**${playerName}** has received **${quantity}x ${item}(${price})** from **${grumblerCheck(
+    source
+  )}!**`;
 
   msgMap.set({ ID: 'LOOT', URL }, outputString);
+
   return msgMap;
 }
 

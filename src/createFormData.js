@@ -50,12 +50,11 @@ function createFormData(
         embeds,
         playerName
       );
-      if (!isKillCountValid) {
+      if (isKillCountValid) {
+        urlEmbedPairs.push({ url: KC_URL, embeds: killCountEmbed });
+      } else {
         formDataMap.set('ruleBroken', true);
-        return;
       }
-      urlEmbedPairs.push({ url: KC_URL, embeds: killCountEmbed });
-
       if (extra?.isPersonalBest) {
         const personalBestEmbed = personalBestHandler(
           extra,
@@ -79,7 +78,6 @@ function createFormData(
         LOOT_URL,
         PB_URL
       );
-      console.log('chatEmbed: ', chatEmbed);
       urlEmbedPairs.push({ url: chatURL, embeds: chatEmbed });
       break;
     default:

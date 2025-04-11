@@ -29,7 +29,7 @@ function killCountHandler(extra, embeds, playerName) {
 
   const killCountEmbed = embeds.map((embed) => ({
     ...embed,
-    title: 'Personal Best',
+    title: 'Kill Count',
     description: `${playerName} has defeated [${boss}](${getWikiSearchUrl(
       boss
     )}) with a completion count of ${killCount}`,

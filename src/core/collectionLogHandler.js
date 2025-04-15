@@ -21,11 +21,11 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     completedEntries,
     totalEntries
   );
-  const formattedRank =
-    justCompletedRank &&
-    justCompletedRank.charAt(0).toUpperCase() +
-      justCompletedRank.slice(1).toLowerCase();
-
+  const formatedRanks = (rank) =>
+    rank.charAt(0).toUpperCase() + rank.slice(1).toLowerCase();
+  const formattedJustCompletedRank =
+    justCompletedRank && formatedRanks(justCompletedRank);
+  const formattedCurrentRank = currentRank && formatedRanks(currentRank);
   const rankMap = {
     BRONZE: '<:bronze_rank:1353119905750192209>',
     IRON: '<:iron_rank:1353119911643320390>',
@@ -46,10 +46,12 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
         `
     );
   } else if (justCompletedRank) {
-    msgMap.set(
-      { ID: 'NEW_CLOG_RANK', URL: URL },
-      `**${playerName}** has completed the **${formattedRank}** rank, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${rankMap[currentRank]}`
-    );
+    // The player has ranked up
+    const msg =
+      currentRank === 'GILDED'
+        ? `**${playerName}** has reached the highest possible rank of **${formattedCurrentRank}**, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${rankMap[currentRank]}`
+        : `**${playerName}** has completed the **${formattedJustCompletedRank}** rank, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${rankMap[currentRank]}`;
+    msgMap.set({ ID: 'COLLECTION_LOG', URL: URL }, msg);
   } else {
     msgMap.set(
       { ID: 'COLLECTION_LOG', URL: URL },

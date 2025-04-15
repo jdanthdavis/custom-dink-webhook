@@ -9,7 +9,13 @@ import { grumblerCheck, formatAsPercentage } from './helperFunctions';
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function collectionLogHandler(msgMap, playerName, extra, URL) {
-  const { totalEntries, completedEntries, itemName, currentRank } = extra;
+  const {
+    totalEntries,
+    completedEntries,
+    itemName,
+    currentRank,
+    justCompletedRank,
+  } = extra;
   const validatedItemName = grumblerCheck(itemName);
   const percentageCompleted = formatAsPercentage(
     completedEntries,
@@ -34,6 +40,11 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
       { ID: 'NO_CLOG_DATA', URL: URL },
       `**${playerName}** has added a new item to their collection log: **${validatedItemName}**\n-# Unable to fetch total and completed entries. Cycle through all tabs in your collection log to fix this!
         `
+    );
+  } else if (justCompletedRank) {
+    msgMap.set(
+      { ID: 'NEW_CLOG_RANK', URL: URL },
+      `**${playerName}** has completed the **${justCompletedRank}**, by adding **${validatedItemName}** to their collection log! | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
     );
   } else {
     msgMap.set(

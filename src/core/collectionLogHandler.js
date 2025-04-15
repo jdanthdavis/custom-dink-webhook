@@ -47,12 +47,12 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
   } else if (justCompletedRank) {
     msgMap.set(
       { ID: 'NEW_CLOG_RANK', URL: URL },
-      `**${playerName}** has completed the **${formattedRank}**, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
+      `**${playerName}** has completed the **${formattedRank}** rank, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${rankMap[currentRank]}`
     );
   } else {
     msgMap.set(
       { ID: 'COLLECTION_LOG', URL: URL },
-      `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
+      `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${rankMap[currentRank]}`
     );
   }
 

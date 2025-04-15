@@ -21,6 +21,8 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     completedEntries,
     totalEntries
   );
+  const formattedRank =
+    justCompletedRank?.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
   const rankMap = {
     BRONZE: '<:bronze_rank:1353119905750192209>',
@@ -44,7 +46,7 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
   } else if (justCompletedRank) {
     msgMap.set(
       { ID: 'NEW_CLOG_RANK', URL: URL },
-      `**${playerName}** has completed the **${justCompletedRank}**, by adding **${validatedItemName}** to their collection log! | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
+      `**${playerName}** has completed the **${formattedRank}**, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** | ${rankMap[currentRank]}`
     );
   } else {
     msgMap.set(

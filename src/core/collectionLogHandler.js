@@ -22,8 +22,9 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     totalEntries
   );
   const formattedRank =
-    justCompletedRank?.charAt(0).toUpperCase() +
-    justCompletedRank.slice(1).toLowerCase();
+    justCompletedRank &&
+    justCompletedRank.charAt(0).toUpperCase() +
+      justCompletedRank.slice(1).toLowerCase();
 
   const rankMap = {
     BRONZE: '<:bronze_rank:1353119905750192209>',

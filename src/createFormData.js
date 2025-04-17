@@ -36,7 +36,7 @@ import * as Constants from './constants';
  * @param {*} env - The URLs used for each payload type.
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
-function createFormData(extra, content, payloadType, playerName, env) {
+async function createFormData(extra, content, payloadType, playerName, env) {
   const {
     KC_URL,
     PB_URL,
@@ -46,13 +46,14 @@ function createFormData(extra, content, payloadType, playerName, env) {
     CA_URL,
     CLUE_URL,
     LOOT_URL,
+    MONGO_MIDDLEWARE,
   } = env;
 
   let msgMap = new Map();
 
   switch (payloadType) {
     case Constants.PET:
-      petHandler(msgMap, playerName, extra, PET_URL);
+      await petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, TEST_URL);
       break;
     case Constants.COLLECTION:
       collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);

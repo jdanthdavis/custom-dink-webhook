@@ -22,7 +22,13 @@ export default {
       acceptedPayloads.includes(payloadType) &&
       theBoys.includes(playerName.toUpperCase())
     ) {
-      msgMap = createFormData(extra, content, payloadType, playerName, env);
+      msgMap = await createFormData(
+        extra,
+        content,
+        payloadType,
+        playerName,
+        env
+      );
 
       for (const [url, msg] of msgMap.entries()) {
         console.log(url, msg);

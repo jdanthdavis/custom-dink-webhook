@@ -12,6 +12,7 @@ export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
 export const HALLOWED_SEPULCHRE = 'Hallowed Sepulchre';
 export const GRAND_HALLOWED_COFFIN = 'Grand Hallowed Coffin';
+export const ALL_PETS = 63;
 
 export const theBoys = [
   'LSX SWAP',

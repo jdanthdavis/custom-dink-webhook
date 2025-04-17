@@ -53,7 +53,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
 
   switch (payloadType) {
     case Constants.PET:
-      await petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, TEST_URL);
+      await petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, PET_URL);
       break;
     case Constants.COLLECTION:
       collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);

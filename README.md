@@ -21,11 +21,60 @@ The following configuration triggers notifications every 5 kills for **TzKal-Zuk
 ```
 ## [petHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/petHandler.js)
 
-Processes pet drop notifications by verifying the pet name and milestone before constructing a message. If either detail is missing, a fallback message is used. Differentiates between first-time and duplicate pet drops, formatting the message accordingly before updating the message map.
+Processes pet-related notifications, particularly for incrementing and retrieving a player's pet count in a MongoDB database. The handler supports both first-time pet drops and duplicate pet drops, adjusting the format and message accordingly. It ensures that the pet name is validated, and provides a system for tracking the pet count. The handler also includes a route for directly updating pet counts, so players can modify their progress in real-time. 
+
+### Pet Count Update Logic
+
+- **Incrementing Pet Count**: The handler supports the ability to increment a player's pet count when a new pet is obtained, ensuring the pet's milestone is recognized.
+- **Duplicate Pet Drops**: The handler differentiates between first-time and duplicate drops and updates the message map with appropriate notifications.
+
+### Routes
+
+#### **POST `/increment-pets`**
+
+This endpoint allows the pet count for a given player to be incremented by 1. The player’s name is sent as part of the request body. It ensures that the pet count is updated in the database, and returns a success message if the operation is successful.
+
+- **Parameters**:
+  - `playername` (JSON body): The player whose pet count is to be incremented.
+
+- **Response**:
+  - `200 OK`: If the pet count was successfully incremented.
+  - `400 Bad Request`: If no `playername` is provided.
+  - `404 Not Found`: If the player is not found in the database.
+  - `500 Internal Server Error`: If there is an error while updating the database.
+
+#### Example Request
+
+```bash
+curl -X POST "http://localhost:3000/increment-pets" \
+-H "Content-Type: application/json" \
+-d '{"playername": "player1"}'
+```
+#### Example response
+```json
+{
+  "success": true,
+  "playername": "player1"
+}
+```
 
 ## [collectionLogHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/collectionLogHandler.js)
 
-Handles collection log item notifications by validating the item name and calculating the player's total collection log completion percentage. If total or completed entries are missing, a fallback message is used to prompt the player to refresh their log. Supports rank-based icons for future updates.
+Handles collection log item notifications by validating the item name and calculating the player's total collection log completion percentage. If total or completed entries are missing, a fallback message is used to prompt the player to refresh their log. This handler now also supports rank-based icons and tracks rank milestones, such as completing a rank or reaching the highest possible rank in the collection log.
+
+### Rank Support
+
+- **Rank-based Icons**: Each rank in the collection log (from Bronze to Gilded) is represented with a unique emoji, displayed alongside the player's completion progress.
+- **Rank Milestones**: The handler checks if the player has just completed a new rank and formats a special message to highlight this achievement.
+- **Rank Format**: The ranks are displayed in a properly formatted, capitalized form (e.g., Bronze, Iron, etc.).
+
+#### Example Workflow
+
+1. **No Data Available**: If total and completed entries are unavailable (the player hasn’t cycled their collection log), a fallback message prompts them to refresh the log.
+
+2. **Rank Completion**: If the player has just completed a rank, the message will highlight the new rank they’ve reached, along with their current collection progress.
+
+3. **Normal Update**: For regular collection log additions, the handler provides an update that includes the item name and the player's progress (completed vs total entries).
 
 ## [combatTaskHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/combatTaskHandler.js)
 

@@ -1,4 +1,4 @@
-export { default as killCountHandler } from './killCountHandler';
+export { default as killCountHandler } from './killCountHandler/killCountHandler';
 export { default as personalBestHandler } from './personalBestHandler';
 export { default as levelUpHandler } from './levelUpHandler';
 export { default as collectionLogHandler } from './collectionLogHandler';

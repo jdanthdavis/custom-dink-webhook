@@ -1,4 +1,10 @@
-node_modules
-assets
-test
+# Dependency directories
+node_modules/
+
+# Build and test assets
+assets/
+coverage/
+test/
+
+# Environment variables
 .env

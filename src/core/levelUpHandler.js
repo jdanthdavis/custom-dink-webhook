@@ -61,13 +61,13 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
     const multiLvlStr = multiLevelMsgConstructor();
 
-    if (totalLevel === Constants.MAX_TOTAL_LEVEL) {
+    if (skillLevel <= 99 && totalLevel === Constants.MAX_TOTAL_LEVEL) {
       msgMap.set(
         { ID: 'MAX_TOTAL_LEVEL', URL },
         `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
       );
       break;
-    } else if (totalLevel !== 0 && isImportantLevelInterval(totalLevel)) {
+    } else if (skillLevel <= 99 && isImportantLevelInterval(totalLevel)) {
       const levelMessage =
         skillLevel === 99
           ? `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`

@@ -79,7 +79,7 @@ export const UNTRADEABLE_MAP = Object.freeze({
 });
 
 export const CHAT_REGEX = Object.freeze({
-  VESTIGE_TEXT: /Untradeable drop: (Ultor|Bellator|Magus|Venator) vestige/,
+  VESTIGE_TEXT: /(?:Untradeable drop: |.+ received a drop: )(Ultor|Bellator|Magus|Venator) vestige/,
   OVERALL_TIME_TEXT:
     /Overall time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   FLOOR_TIME_TEXT:

@@ -16,8 +16,8 @@ function deathHandler(msgMap, playerName, extra, URL) {
   ];
   const randomIndex = Math.floor(Math.random() * emojiArray.length);
   const msg = isPvp
-    ? `${playerName} has just been killed by ${killerName} for ${valueLost} coins ${emojiArray[randomIndex]}`
-    : `${playerName} has died ${emojiArray[randomIndex]}`;
+    ? `**${playerName}** has just been killed by **${killerName}** for **${valueLost}** coins ${emojiArray[randomIndex]}`
+    : `**${playerName}** has died ${emojiArray[randomIndex]}`;
 
   msgMap.set({ ID: 'DEATH', URL }, msg);
 

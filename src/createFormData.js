@@ -7,6 +7,7 @@ import {
   personalBestHandler,
   clueScrollHandler,
   lootHandler,
+  deathHandler,
 } from './core';
 import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
@@ -46,6 +47,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     CA_URL,
     CLUE_URL,
     LOOT_URL,
+    DEATH_URL,
     MONGO_MIDDLEWARE,
   } = env;
 
@@ -73,6 +75,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     case Constants.LOOT:
       lootHandler(msgMap, content, playerName, extra.source, LOOT_URL);
       break;
+    case Constants.DEATH:
+      deathHandler(msgMap, playerName, extra, DEATH_URL);
     case Constants.CHAT:
       const isPersonalBest = extra.message.includes('(new personal best)');
       const typeOfChat = isPersonalBest

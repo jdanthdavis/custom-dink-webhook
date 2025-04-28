@@ -6,6 +6,7 @@ export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
+export const DEATH = 'DEATH';
 export const MAX_TOTAL_LEVEL = 2277;
 export const THE_GRUMBLER = 'The Grumbler';
 export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
@@ -67,7 +68,8 @@ export const VESTIGE_MAP = {
 };
 
 export const CHAT_REGEX = {
-  VESTIGE_TEXT: /(?:Untradeable drop: |.+ received a drop: )(Ultor|Bellator|Magus|Venator) vestige/,
+  VESTIGE_TEXT:
+    /(?:Untradeable drop: |.+ received a drop: )(Ultor|Bellator|Magus|Venator) vestige/,
   OVERALL_TIME_TEXT:
     /Overall time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   FLOOR_TIME_TEXT:

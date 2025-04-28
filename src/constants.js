@@ -52,6 +52,7 @@ export const acceptedPayloads = [
   'CLUE',
   'LOOT',
   'CHAT',
+  'DEATH',
 ];
 
 export const CHAT_MESSAGE_TYPES = {

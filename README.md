@@ -104,6 +104,28 @@ Constructs special messages for significant level-up milestones, including max t
 >playerName has leveled Attack and Strength to 99!<br/>
 >playerName has leveled Attack, Strength, and Defence to 99!<br/>
 
+## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
+
+Handles player death events by formatting and updating a death message based on whether the death occurred in PvP or PvM. If the player was killed by another player, the message includes the killer’s name and the amount of coins lost. Otherwise, it generates a standard death message. Random humorous emojis are appended to each death message for added flavor.
+
+### Death Message Logic
+
+- **PvP Death**: Includes the killer's name and the value of coins lost.
+- **PvM or Other Death**: Displays a simple death message without financial loss or killer information.
+- **Randomized Emojis**: Each message randomly selects an emoji from a predefined list to add character to the notification.
+
+#### Example Workflow
+
+1. **PvP Death**: If the death was player-vs-player (PvP), the message follows the format:
+
+   > **playerName** has just been killed by **killerName** for **valueLost** coins 😄
+
+2. **PvM Death**: If not PvP, the message follows the simpler format:
+
+   > **playerName** has died 😄
+
+3. **Randomized Humor**: Each death message is enhanced with a randomly selected emoji for humor and personalization.
+
 ## Credits
 
 This handler wouldn't have been possible without the help from the team at [DinkPlugin](https://github.com/pajlads/DinkPlugin).

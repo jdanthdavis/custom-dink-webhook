@@ -1,11 +1,14 @@
 /**
- * Check if the current killCount is divisible by 100.
- * If it's not but it is in specialKills then allow the notification.
- * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
- * @param {*} playerName - The player's name
- * @param {*} extra - Additional information
- * @param {*} URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ * Handles a player's death event and updates the message map with a formatted message.
+ *
+ * If the death was caused by PvP, includes the killer's name and value lost.
+ * Otherwise, logs a simple death message.
+ *
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap - The map to update with the death message.
+ * @param {string} playerName - The name of the player who died.
+ * @param {{ isPvp?: boolean, valueLost?: number, killerName?: string }} extra - Additional death information.
+ * @param {string} URL - The associated URL for the death event.
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map.
  */
 function deathHandler(msgMap, playerName, extra, URL) {
   const { isPvp, valueLost, killerName } = extra;

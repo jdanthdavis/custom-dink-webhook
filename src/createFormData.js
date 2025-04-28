@@ -77,6 +77,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       break;
     case Constants.DEATH:
       deathHandler(msgMap, playerName, extra, DEATH_URL);
+      break;
     case Constants.CHAT:
       const isPersonalBest = extra.message.includes('(new personal best)');
       const typeOfChat = isPersonalBest

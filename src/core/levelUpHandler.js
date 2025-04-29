@@ -1,6 +1,7 @@
 import {
   MAX_TOTAL_LEVEL,
   LEVEL,
+  XP_MILESTONE,
   DANSE,
   DANSE_PARTY,
   FISHH,
@@ -15,9 +16,11 @@ import {
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function levelUpHandler(msgMap, playerName, extra, URL) {
-  const { allSkills = {}, levelledSkills = {} } = extra;
-  const levelledSkillsLength = Object.keys(levelledSkills).length;
-
+  const { allSkills = {}, levelledSkills = {}, xpData = {} } = extra;
+  const isXpMilestone = Boolean(Object.keys(xpData).length);
+  const levelledSkillsLength = isXpMilestone
+    ? Object.keys(xpData).length
+    : Object.keys(levelledSkills).length;
   // Calculate total level but cap values at 99
   const totalLevel = Object.values(allSkills).reduce(
     (sum, skillLevel) => sum + (skillLevel > 99 ? 99 : skillLevel),
@@ -33,6 +36,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     level % 25 === 0 || level === MAX_TOTAL_LEVEL;
 
   /**
+   * TODO: Refactor into levelUpHandlerUtils
    * Constructs a message based on multiple level-ups
    * @returns {string} - The constructed message
    */
@@ -62,6 +66,16 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
       return `${skillMessages.join(', ')}, and ${lastSkill}`;
     }
   };
+
+  if (isXpMilestone) {
+    for (const [skillName, skillLevel] of Object.entries(xpData)) {
+      msgMap.set(
+        { ID: XP_MILESTONE, URL },
+        `**${playerName}** has reached **${skillLevel}** XP in **${skillName}**`
+      );
+      break;
+    }
+  }
 
   // Build the level-up message based on the player's skill level and total level
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {

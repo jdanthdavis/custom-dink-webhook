@@ -6,6 +6,7 @@ export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
+export const XP_MILESTONE = 'XP_MILESTONE';
 export const DANSE = '<a:danseParty:1281063903933104160>';
 export const DANSE_PARTY = '<a:danseParty:1281063903933104160>';
 export const FISHH = '<:fishh:1285367875531575306>';

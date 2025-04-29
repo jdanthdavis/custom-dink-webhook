@@ -70,11 +70,10 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
 
   if (isXpMilestone) {
     for (const [skillName, xpInterval] of Object.entries(xpData)) {
+      const cleanedInterval = formatPrice(xpInterval, true);
       msgMap.set(
         { ID: XP_MILESTONE, URL },
-        `**${playerName}** has reached **${formatPrice(
-          xpInterval
-        )}** XP in **${skillName}!**`
+        `**${playerName}** has reached **${cleanedInterval} XP** in **${skillName}!**`
       );
       break;
     }

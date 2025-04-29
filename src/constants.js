@@ -2,12 +2,13 @@
 export const THE_GRUMBLER = 'The Grumbler';
 export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
-export const COLLECTION = 'COLLECTION';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
-export const DEATH = 'DEATH';
+export const DANSE = '<a:danseParty:1281063903933104160>';
+export const DANSE_PARTY = '<a:danseParty:1281063903933104160>';
+export const FISHH = '<:fishh:1285367875531575306>';
 export const theBoys = [
   'LSX SWAP',
   'MOOREI',
@@ -55,6 +56,28 @@ export const bossMap = new Map([
   ['HERBIBOAR', 150],
   ['TEST', 1],
 ]);
+
+// collection log
+export const COLLECTION = 'COLLECTION';
+export const RANK_MAP = {
+  BRONZE: '<:bronze_rank:1353119905750192209>',
+  IRON: '<:iron_rank:1353119911643320390>',
+  STEEL: '<:steel_rank:1353119914403172363>',
+  BLACK: '<:black_rank:1353119904550883409>',
+  MITHRIL: '<:mithril_rank:1352512785191538708>',
+  ADAMANT: '<:adamant_rank:1353119902403137658>',
+  RUNE: '<:rune_rank:1353119913115521228>',
+  DRAGON: '<:dragon_rank:1353119907864121425>',
+  GILDED: '<:gilded_rank:1353119909844095016>',
+};
+
+// deaths
+export const DEATH = 'DEATH';
+export const DEATH_EMOJIS = [
+  '<:giggle:1024050755017130016>',
+  '<:bozo:1364661207960780800>',
+  '<a:itswill_bozo:1365315318318366770>',
+];
 
 // chat
 export const PERSONAL_BEST = 'PERSONAL_BEST';

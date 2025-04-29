@@ -1,4 +1,10 @@
-import { MAX_TOTAL_LEVEL, LEVEL } from '../constants';
+import {
+  MAX_TOTAL_LEVEL,
+  LEVEL,
+  DANSE,
+  DANSE_PARTY,
+  FISHH,
+} from '../constants';
 
 /**
  * Constructs special messages depending on the level information
@@ -64,13 +70,13 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     if (skillLevel <= 99 && totalLevel === MAX_TOTAL_LEVEL) {
       msgMap.set(
         { ID: MAX_TOTAL_LEVEL, URL },
-        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
+        `-# @everyone\n${DANSE_PARTY} **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** ${DANSE_PARTY}`
       );
       break;
     } else if (skillLevel <= 99 && isImportantLevelInterval(totalLevel)) {
       const levelMessage =
         skillLevel === 99
-          ? `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`
+          ? `-# @everyone\n${DANSE} **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** ${DANSE}`
           : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!**`;
 
       msgMap.set({ ID: LEVEL, URL }, levelMessage);
@@ -78,13 +84,13 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     } else if (skillLevel === 99) {
       msgMap.set(
         { ID: LEVEL, URL },
-        `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has levelled **${multiLvlStr}!** <a:danse:1306473434221641760>`
+        `-# @everyone\n${DANSE} **${playerName}** has levelled **${multiLvlStr}!** ${DANSE}`
       );
       break;
     } else if (skillName === 'Fishing' && levelledSkillsLength < 2) {
       msgMap.set(
         { ID: LEVEL, URL },
-        `**${playerName}** has levelled **${multiLvlStr}!** <:fishh:1285367875531575306>`
+        `**${playerName}** has levelled **${multiLvlStr}!** ${FISHH}`
       );
       break;
     } else {

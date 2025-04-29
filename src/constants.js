@@ -1,20 +1,13 @@
+// misc
+export const THE_GRUMBLER = 'The Grumbler';
+export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
+export const MUPHIN = 'MUPHIN';
 export const COLLECTION = 'COLLECTION';
-export const PET = 'PET';
-export const KILL_COUNT = 'KILL_COUNT';
-export const LEVEL = 'LEVEL';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
 export const DEATH = 'DEATH';
-export const MAX_TOTAL_LEVEL = 2277;
-export const THE_GRUMBLER = 'The Grumbler';
-export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
-export const MUPHIN = 'MUPHIN';
-export const HALLOWED_SEPULCHRE = 'Hallowed Sepulchre';
-export const GRAND_HALLOWED_COFFIN = 'Grand Hallowed Coffin';
-export const ALL_PETS = 63;
-
 export const theBoys = [
   'LSX SWAP',
   'MOOREI',
@@ -27,21 +20,6 @@ export const theBoys = [
   'MOOREI',
   'FROSTY DAD',
 ];
-
-export const bossMap = new Map([
-  ['TZKAL-ZUK', 5],
-  ['SOL HEREDIT', 5],
-  ['THEATRE OF BLOOD: HARD MODE', 10],
-  ['CHAMBERS OF XERIC: CHALLENGE MODE', 10],
-  ["PHOSANI'S NIGHTMARE", 25],
-  ['THE NIGHTMARE', 25],
-  ['CORPOREAL BEAST', 50],
-  ['HERBIBOAR', 150],
-  ['TEST', 1],
-]);
-
-export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
-
 export const acceptedPayloads = [
   'KILL_COUNT',
   'CHAT',
@@ -55,19 +33,44 @@ export const acceptedPayloads = [
   'DEATH',
 ];
 
+// pets
+export const PET = 'PET';
+export const ALL_PETS = 63;
+
+// levels
+export const LEVEL = 'LEVEL';
+export const MAX_TOTAL_LEVEL = 2277;
+
+// kill count
+export const KILL_COUNT = 'KILL_COUNT';
+export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
+export const bossMap = new Map([
+  ['TZKAL-ZUK', 5],
+  ['SOL HEREDIT', 5],
+  ['THEATRE OF BLOOD: HARD MODE', 10],
+  ['CHAMBERS OF XERIC: CHALLENGE MODE', 10],
+  ["PHOSANI'S NIGHTMARE", 25],
+  ['THE NIGHTMARE', 25],
+  ['CORPOREAL BEAST', 50],
+  ['HERBIBOAR', 150],
+  ['TEST', 1],
+]);
+
+// chat
+export const PERSONAL_BEST = 'PERSONAL_BEST';
+export const HALLOWED_SEPULCHRE = 'Hallowed Sepulchre';
+export const GRAND_HALLOWED_COFFIN = 'Grand Hallowed Coffin';
 export const CHAT_MESSAGE_TYPES = {
   BIG_FISH: 'BIG_FISH',
   VESTIGE_DROP: 'VESTIGE_DROP',
   NEW_PERSONAL_BEST: 'NEW_PERSONAL_BEST',
 };
-
 export const VESTIGE_MAP = {
   Ultor: 'Vardorvis',
   Bellator: 'The Whisperer',
   Magus: 'Duke Sucellus',
   Venator: 'The Leviathan',
 };
-
 export const CHAT_REGEX = {
   VESTIGE_TEXT:
     /(?:Untradeable drop: |.+ received a drop: )(Ultor|Bellator|Magus|Venator) vestige/,
@@ -77,7 +80,6 @@ export const CHAT_REGEX = {
     /Floor ([1-5]) time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   BIG_FISH: /You catch an enormous (.+)!/,
 };
-
 export const bigFishArr = [
   '[PLAYER] just wrangled a [FISH] bigger’n a damn johnboat—y’all better bring the grill and a tall tale ‘cause this one’s a whopper!',
   "Y’all ain't gonna believe this shit, but [PLAYER] just hauled in a [FISH] so big, I reckon it’s got its own zip code!",

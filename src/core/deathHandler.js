@@ -1,3 +1,6 @@
+import { formatPrice } from './helperFunctions';
+import { DEATH } from '../constants';
+
 /**
  * Handles a player's death event and updates the message map with a formatted message.
  *
@@ -12,6 +15,7 @@
  */
 function deathHandler(msgMap, playerName, extra, URL) {
   const { isPvp, valueLost, killerName } = extra;
+  const formattedValueLost = formatPrice(valueLost);
   const emojiArray = [
     '<:giggle:1024050755017130016>',
     '<:bozo:1364661207960780800>',
@@ -19,10 +23,10 @@ function deathHandler(msgMap, playerName, extra, URL) {
   ];
   const randomIndex = Math.floor(Math.random() * emojiArray.length);
   const msg = isPvp
-    ? `**${playerName}** has just been killed by **${killerName}** for **${valueLost}** coins ${emojiArray[randomIndex]}`
+    ? `**${playerName}** has just been killed by **${killerName}** for **${formattedValueLost}** coins ${emojiArray[randomIndex]}`
     : `**${playerName}** has died ${emojiArray[randomIndex]}`;
 
-  msgMap.set({ ID: 'DEATH', URL }, msg);
+  msgMap.set({ ID: DEATH, URL }, msg);
 
   return msgMap;
 }

@@ -1,4 +1,4 @@
-import * as Constants from '../constants';
+import { MAX_TOTAL_LEVEL, LEVEL } from '../constants';
 
 /**
  * Constructs special messages depending on the level information
@@ -24,7 +24,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
    * @returns {boolean} - True if total level is divisible by 25 or max total level
    */
   const isImportantLevelInterval = (level) =>
-    level % 25 === 0 || level === Constants.MAX_TOTAL_LEVEL;
+    level % 25 === 0 || level === MAX_TOTAL_LEVEL;
 
   /**
    * Constructs a message based on multiple level-ups
@@ -61,10 +61,10 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
     const multiLvlStr = multiLevelMsgConstructor();
 
-    if (skillLevel <= 99 && totalLevel === Constants.MAX_TOTAL_LEVEL) {
+    if (skillLevel <= 99 && totalLevel === MAX_TOTAL_LEVEL) {
       msgMap.set(
-        { ID: 'MAX_TOTAL_LEVEL', URL },
-        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${Constants.MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
+        { ID: MAX_TOTAL_LEVEL, URL },
+        `-# @everyone\n<a:danseParty:1281063903933104160> **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** <a:danseParty:1281063903933104160>`
       );
       break;
     } else if (skillLevel <= 99 && isImportantLevelInterval(totalLevel)) {
@@ -73,23 +73,23 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
           ? `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** <a:danse:1306473434221641760>`
           : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!**`;
 
-      msgMap.set({ ID: 'NEW_TOTAL_LEVEL', URL }, levelMessage);
+      msgMap.set({ ID: LEVEL, URL }, levelMessage);
       break;
     } else if (skillLevel === 99) {
       msgMap.set(
-        { ID: skillName, URL },
+        { ID: LEVEL, URL },
         `-# @everyone\n<a:danse:1306473434221641760> **${playerName}** has levelled **${multiLvlStr}!** <a:danse:1306473434221641760>`
       );
       break;
     } else if (skillName === 'Fishing' && levelledSkillsLength < 2) {
       msgMap.set(
-        { ID: skillName, URL },
+        { ID: LEVEL, URL },
         `**${playerName}** has levelled **${multiLvlStr}!** <:fishh:1285367875531575306>`
       );
       break;
     } else {
       msgMap.set(
-        { ID: skillName, URL },
+        { ID: LEVEL, URL },
         `**${playerName}** has levelled **${multiLvlStr}**!`
       );
       break;

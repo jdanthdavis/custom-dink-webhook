@@ -1,5 +1,5 @@
 import { grumblerCheck, killCountMsgConstructor } from './helperFunctions';
-import * as Constants from '../constants';
+import { bossMap, specialKills, KILL_COUNT } from '../constants';
 
 /**
  * Check if the current killCount is divisible by 100.
@@ -13,17 +13,16 @@ import * as Constants from '../constants';
 function killCountHandler(msgMap, playerName, extra, URL) {
   const { boss, count: killCount, gameMessage } = extra || {};
   const validatedBossName = grumblerCheck(boss);
-  const bossInterval = Constants.bossMap.get(validatedBossName?.toUpperCase());
+  const bossInterval = bossMap.get(validatedBossName?.toUpperCase());
 
   // if KC is notable
   if (
     killCount % bossInterval === 0 ||
     killCount % 100 === 0 ||
-    (killCount === 1 &&
-      Constants.specialKills.includes(validatedBossName.toUpperCase()))
+    (killCount === 1 && specialKills.includes(validatedBossName.toUpperCase()))
   ) {
     msgMap.set(
-      { ID: 'KILL_COUNT', URL: URL },
+      { ID: KILL_COUNT, URL },
       killCountMsgConstructor(
         playerName,
         gameMessage,

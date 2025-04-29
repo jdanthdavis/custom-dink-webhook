@@ -1,5 +1,5 @@
 import { grumblerCheck, formatAsPercentage } from './helperFunctions';
-import { ALL_PETS } from '../constants';
+import { ALL_PETS, PET } from '../constants';
 
 /**
  * Gathers the pet information
@@ -58,7 +58,7 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
         ? `**${playerName}** has a funny feeling like they would have been followed!\n-# pet name or milestone missing!`
         : `**${playerName}** has a funny feeling like they're being followed!\n-# pet name or milestone missing!`;
 
-      msgMap.set({ ID: 'FALLBACK_PET', URL: URL }, fallbackMsg);
+      msgMap.set({ ID: PET, URL }, fallbackMsg);
       return msgMap;
     }
 
@@ -84,7 +84,7 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
             : ''
         }`;
 
-    msgMap.set({ ID: 'PET', URL: URL }, msg);
+    msgMap.set({ ID: PET, URL }, msg);
 
     return msgMap;
   })();

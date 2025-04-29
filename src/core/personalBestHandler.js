@@ -1,4 +1,5 @@
 import { grumblerCheck } from './helperFunctions';
+import { PERSONAL_BEST } from '../constants';
 
 /**
  * Formats the in-game ISO-8601 duration.
@@ -8,7 +9,7 @@ import { grumblerCheck } from './helperFunctions';
  * @param {*} URL - The associated URL
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
-function personalBestHandler(msgMap, playerName, extra, PB_URL) {
+function personalBestHandler(msgMap, playerName, extra, URL) {
   const bossName = grumblerCheck(extra?.boss);
   // Remove the leading PT
   let cleanedTime = extra?.time.replace('PT', '');
@@ -33,7 +34,7 @@ function personalBestHandler(msgMap, playerName, extra, PB_URL) {
   }
 
   msgMap.set(
-    { ID: 'PB', URL: PB_URL },
+    { ID: PERSONAL_BEST, URL },
     `**${playerName}** has defeated **${bossName}** with a new personal best of **${cleanedTime}**!`
   );
 

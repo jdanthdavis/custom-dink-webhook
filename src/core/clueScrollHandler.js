@@ -1,4 +1,5 @@
 import { formatPrice } from './helperFunctions';
+import { CLUE } from '../constants';
 
 /**
  * Formats a clue scroll's rewards
@@ -18,7 +19,8 @@ ${items
       `- x${item.quantity} ${item.name} - **${formatPrice(item.priceEach)}**`
   )
   .join('\n')}`;
-  msgMap.set({ ID: 'CLUE', URL }, message);
+
+  msgMap.set({ ID: CLUE, URL }, message);
 
   return msgMap;
 }

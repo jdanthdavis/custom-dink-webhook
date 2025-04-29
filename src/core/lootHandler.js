@@ -1,4 +1,5 @@
 import { grumblerCheck } from './helperFunctions';
+import { LOOT } from '../constants';
 
 /**
  * Formats loot drops into a message and updates the provided message map.
@@ -13,6 +14,7 @@ function lootHandler(msgMap, content, playerName, source, URL) {
   const lootItemMatch = content.match(
     /(\d+)\s*x\s*([[\w\s\(\)]+)\s*\(([\d\.\w]+)\)/
   );
+  const validatedSource = grumblerCheck(source);
 
   if (!lootItemMatch) {
     console.log('Error: Invalid loot format - ', content);
@@ -22,11 +24,9 @@ function lootHandler(msgMap, content, playerName, source, URL) {
   const item = lootItemMatch[2];
   const price = lootItemMatch[3];
 
-  const outputString = `**${playerName}** has received **${quantity}x ${item}(${price})** from **${grumblerCheck(
-    source
-  )}!**`;
+  const outputString = `**${playerName}** has received **${quantity}x ${item}(${price})** from **${validatedSource}!**`;
 
-  msgMap.set({ ID: 'LOOT', URL }, outputString);
+  msgMap.set({ ID: LOOT, URL }, outputString);
 
   return msgMap;
 }

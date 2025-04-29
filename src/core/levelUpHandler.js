@@ -6,6 +6,7 @@ import {
   DANSE_PARTY,
   FISHH,
 } from '../constants';
+import { formatPrice } from './helperFunctions';
 
 /**
  * Constructs special messages depending on the level information
@@ -68,10 +69,12 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   };
 
   if (isXpMilestone) {
-    for (const [skillName, skillLevel] of Object.entries(xpData)) {
+    for (const [skillName, xpInterval] of Object.entries(xpData)) {
       msgMap.set(
         { ID: XP_MILESTONE, URL },
-        `**${playerName}** has reached **${skillLevel}** XP in **${skillName}**`
+        `**${playerName}** has reached **${formatPrice(
+          xpInterval
+        )}** XP in **${skillName}!**`
       );
       break;
     }

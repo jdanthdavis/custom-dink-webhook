@@ -19,6 +19,7 @@ import {
 function levelUpHandler(msgMap, playerName, extra, URL) {
   const { allSkills = {}, levelledSkills = {}, xpData = {} } = extra;
 
+  /** Sends a custom message for an XP milestone */
   if (Object.keys(xpData).length > 0) {
     for (const [skillName, xp] of Object.entries(xpData)) {
       const cleanedInterval = formatValue(xp, true);

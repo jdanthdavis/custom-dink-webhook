@@ -94,15 +94,21 @@ Handles different types of chat messages by delegating the processing to the app
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 
-Constructs special messages for significant level-up milestones, including max total level, total level intervals of 25, and reaching level 99 in a skill. A key feature of this function is handling multiple level-ups in a single notification, ensuring all skills are listed in one message rather than separately.
+Constructs special messages for significant level-up milestones, including max total level, total level intervals of 25, and reaching level 99 in a skill. A key feature of this function is handling multiple level-ups in a single notification, ensuring all skills are listed in one message rather than separately. Additionally, it now tracks XP milestones for individual skills and generates messages when a player reaches certain XP thresholds.
+
 #### Example of a single skill level-up:<br/>
 
 > playerName has leveled Attack to 99!<br/>
 
 #### Examples of multiple skill level-ups:<br/>
 
->playerName has leveled Attack and Strength to 99!<br/>
->playerName has leveled Attack, Strength, and Defence to 99!<br/>
+> playerName has leveled Attack and Strength to 99!<br/>
+> playerName has leveled Attack, Strength, and Defence to 99!<br/>
+
+#### Example of XP milestone message for a skill:<br/>
+
+> playerName has reached 1,000,000 XP in Attack!<br/>
+> playerName has reached 2,000,000 XP in Strength!<br/>
 
 ## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
 

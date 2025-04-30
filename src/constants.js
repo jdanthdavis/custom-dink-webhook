@@ -1,19 +1,15 @@
-export const COLLECTION = 'COLLECTION';
-export const PET = 'PET';
-export const KILL_COUNT = 'KILL_COUNT';
-export const LEVEL = 'LEVEL';
+// misc
+export const THE_GRUMBLER = 'The Grumbler';
+export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
+export const MUPHIN = 'MUPHIN';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
-export const MAX_TOTAL_LEVEL = 2277;
-export const THE_GRUMBLER = 'The Grumbler';
-export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
-export const MUPHIN = 'MUPHIN';
-export const HALLOWED_SEPULCHRE = 'Hallowed Sepulchre';
-export const GRAND_HALLOWED_COFFIN = 'Grand Hallowed Coffin';
-export const ALL_PETS = 63;
-
+export const XP_MILESTONE = 'XP_MILESTONE';
+export const DANSE = '<a:danseParty:1281063903933104160>';
+export const DANSE_PARTY = '<a:danseParty:1281063903933104160>';
+export const FISHH = '<:fishh:1285367875531575306>';
 export const theBoys = [
   'LSX SWAP',
   'MOOREI',
@@ -26,7 +22,30 @@ export const theBoys = [
   'MOOREI',
   'FROSTY DAD',
 ];
+export const acceptedPayloads = [
+  'KILL_COUNT',
+  'CHAT',
+  'COLLECTION',
+  'PET',
+  'LEVEL',
+  'COMBAT_ACHIEVEMENT',
+  'CLUE',
+  'LOOT',
+  'CHAT',
+  'DEATH',
+];
 
+// pets
+export const PET = 'PET';
+export const ALL_PETS = 63;
+
+// levels
+export const LEVEL = 'LEVEL';
+export const MAX_TOTAL_LEVEL = 2277;
+
+// kill count
+export const KILL_COUNT = 'KILL_COUNT';
+export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
   ['SOL HEREDIT', 5],
@@ -39,42 +58,52 @@ export const bossMap = new Map([
   ['TEST', 1],
 ]);
 
-export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
+// collection log
+export const COLLECTION = 'COLLECTION';
+export const RANK_MAP = {
+  BRONZE: '<:bronze_rank:1353119905750192209>',
+  IRON: '<:iron_rank:1353119911643320390>',
+  STEEL: '<:steel_rank:1353119914403172363>',
+  BLACK: '<:black_rank:1353119904550883409>',
+  MITHRIL: '<:mithril_rank:1352512785191538708>',
+  ADAMANT: '<:adamant_rank:1353119902403137658>',
+  RUNE: '<:rune_rank:1353119913115521228>',
+  DRAGON: '<:dragon_rank:1353119907864121425>',
+  GILDED: '<:gilded_rank:1353119909844095016>',
+};
 
-export const acceptedPayloads = [
-  'KILL_COUNT',
-  'CHAT',
-  'COLLECTION',
-  'PET',
-  'LEVEL',
-  'COMBAT_ACHIEVEMENT',
-  'CLUE',
-  'LOOT',
-  'CHAT',
+// deaths
+export const DEATH = 'DEATH';
+export const DEATH_EMOJIS = [
+  '<:giggle:1024050755017130016>',
+  '<:bozo:1364661207960780800>',
+  '<a:itswill_bozo:1365315318318366770>',
 ];
 
+// chat
+export const PERSONAL_BEST = 'PERSONAL_BEST';
+export const HALLOWED_SEPULCHRE = 'Hallowed Sepulchre';
+export const GRAND_HALLOWED_COFFIN = 'Grand Hallowed Coffin';
 export const CHAT_MESSAGE_TYPES = {
   BIG_FISH: 'BIG_FISH',
   VESTIGE_DROP: 'VESTIGE_DROP',
   NEW_PERSONAL_BEST: 'NEW_PERSONAL_BEST',
 };
-
 export const VESTIGE_MAP = {
   Ultor: 'Vardorvis',
   Bellator: 'The Whisperer',
   Magus: 'Duke Sucellus',
   Venator: 'The Leviathan',
 };
-
 export const CHAT_REGEX = {
-  VESTIGE_TEXT: /Untradeable drop: (Ultor|Bellator|Magus|Venator) vestige/,
+  VESTIGE_TEXT:
+    /(?:Untradeable drop: |.+ received a drop: )(Ultor|Bellator|Magus|Venator) vestige/,
   OVERALL_TIME_TEXT:
     /Overall time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   FLOOR_TIME_TEXT:
     /Floor ([1-5]) time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   BIG_FISH: /You catch an enormous (.+)!/,
 };
-
 export const bigFishArr = [
   '[PLAYER] just wrangled a [FISH] bigger’n a damn johnboat—y’all better bring the grill and a tall tale ‘cause this one’s a whopper!',
   "Y’all ain't gonna believe this shit, but [PLAYER] just hauled in a [FISH] so big, I reckon it’s got its own zip code!",

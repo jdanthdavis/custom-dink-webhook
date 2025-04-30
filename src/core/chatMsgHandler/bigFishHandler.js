@@ -1,14 +1,14 @@
-import * as Constants from '../../constants';
+import { CHAT_MESSAGE_TYPES, bigFishArr } from '../../constants';
 
 export function bigFishHandler(message, playerName, msgMap, URL) {
-  const fishMatch = message.match(Constants.CHAT_MESSAGE_TYPES.BIG_FISH);
+  const fishMatch = message.match(CHAT_MESSAGE_TYPES.BIG_FISH);
   if (!fishMatch) return;
 
   const fish = fishMatch[1];
-  const randomIndex = Math.floor(Math.random() * Constants.bigFishArr.length);
-  const msg = Constants.bigFishArr[randomIndex]
+  const randomIndex = Math.floor(Math.random() * bigFishArr.length);
+  const msg = bigFishArr[randomIndex]
     .replace(/\[FISH\]/g, `**${fish}**`)
     .replace(/\[PLAYER\]/g, `**${playerName}**`);
 
-  msgMap.set({ ID: Constants.CHAT_MESSAGE_TYPES.BIG_FISH, URL }, msg);
+  msgMap.set({ ID: CHAT_MESSAGE_TYPES.BIG_FISH, URL }, msg);
 }

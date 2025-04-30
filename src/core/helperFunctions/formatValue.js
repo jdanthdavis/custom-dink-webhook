@@ -11,14 +11,21 @@
  * @param {number} value - The numeric value to be formatted.
  * @returns {string} - The formatted price as a string, or 'Very valuable' for extremely large values.
  */
-function formatPrice(value) {
+function formatValue(value, xpInterval = false) {
   if (value >= 2147e6) return 'Very valuable';
-  if (value >= 1e9)
-    return `(${(value / 1e9).toFixed(2).replace(/\.00$/, '')}B)`;
-  if (value >= 1e6)
-    return `(${(value / 1e6).toFixed(2).replace(/\.00$/, '')}M)`;
-  if (value >= 1e3) return `(${(value / 1e3).toFixed(1).replace(/\.0$/, '')}K)`;
-  return value;
+
+  let formatted;
+  if (value >= 1e9) {
+    formatted = `(${(value / 1e9).toFixed(2).replace(/\.00$/, '')}B)`;
+  } else if (value >= 1e6) {
+    formatted = `(${(value / 1e6).toFixed(2).replace(/\.00$/, '')}M)`;
+  } else if (value >= 1e3) {
+    formatted = `(${(value / 1e3).toFixed(1).replace(/\.0$/, '')}K)`;
+  } else {
+    formatted = value;
+  }
+
+  return xpInterval ? formatted.replace(/[()]/g, '') : formatted;
 }
 
-export default formatPrice;
+export default formatValue;

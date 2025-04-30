@@ -1,4 +1,5 @@
-import { formatPrice } from './helperFunctions';
+import { formatValue } from './helperFunctions';
+import { CLUE } from '../constants';
 
 /**
  * Formats a clue scroll's rewards
@@ -15,10 +16,11 @@ function clueScrollHandler(msgMap, playerName, extra, URL) {
 ${items
   .map(
     (item) =>
-      `- x${item.quantity} ${item.name} - **${formatPrice(item.priceEach)}**`
+      `- x${item.quantity} ${item.name} - **${formatValue(item.priceEach)}**`
   )
   .join('\n')}`;
-  msgMap.set({ ID: 'CLUE', URL }, message);
+
+  msgMap.set({ ID: CLUE, URL }, message);
 
   return msgMap;
 }

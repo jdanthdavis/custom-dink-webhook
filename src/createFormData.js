@@ -7,6 +7,7 @@ import {
   personalBestHandler,
   clueScrollHandler,
   lootHandler,
+  deathHandler,
 } from './core';
 import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
@@ -37,31 +38,45 @@ import * as Constants from './constants';
  * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
  */
 async function createFormData(extra, content, payloadType, playerName, env) {
-  const { TEST_URL, MONGO_MIDDLEWARE } = env;
+  const {
+    KC_URL,
+    PB_URL,
+    COLLECTION_URL,
+    PET_URL,
+    LEVEL_URL,
+    CA_URL,
+    CLUE_URL,
+    LOOT_URL,
+    DEATH_URL,
+    MONGO_MIDDLEWARE,
+  } = env;
 
   let msgMap = new Map();
 
   switch (payloadType) {
     case Constants.PET:
-      await petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, TEST_URL);
+      await petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, PET_URL);
       break;
     case Constants.COLLECTION:
-      collectionLogHandler(msgMap, playerName, extra, TEST_URL);
+      collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
       break;
     case Constants.LEVEL:
-      levelUpHandler(msgMap, playerName, extra, TEST_URL);
+      levelUpHandler(msgMap, playerName, extra, LEVEL_URL);
       break;
     case Constants.COMBAT_ACHIEVEMENT:
-      combatTaskHandler(msgMap, playerName, extra, TEST_URL);
+      combatTaskHandler(msgMap, playerName, extra, CA_URL);
       break;
     case Constants.KILL_COUNT:
-      killCountHandler(msgMap, playerName, extra, TEST_URL);
+      killCountHandler(msgMap, playerName, extra, KC_URL);
       break;
     case Constants.CLUE:
-      clueScrollHandler(msgMap, playerName, extra, TEST_URL);
+      clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
       break;
     case Constants.LOOT:
-      lootHandler(msgMap, content, playerName, extra.source, TEST_URL);
+      lootHandler(msgMap, content, playerName, extra.source, LOOT_URL);
+      break;
+    case Constants.DEATH:
+      deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.CHAT:
       const isPersonalBest = extra.message.includes('(new personal best)');
@@ -71,7 +86,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         ? Constants.CHAT_MESSAGE_TYPES.VESTIGE_DROP
         : Constants.CHAT_MESSAGE_TYPES.BIG_FISH;
 
-      const URL = isPersonalBest ? TEST_URL : TEST_URL;
+      const URL = isPersonalBest ? PB_URL : LOOT_URL;
 
       chatHandler(msgMap, playerName, extra, typeOfChat, URL);
 
@@ -81,7 +96,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
   }
 
   if (extra?.isPersonalBest) {
-    personalBestHandler(msgMap, playerName, extra, TEST_URL);
+    personalBestHandler(msgMap, playerName, extra, PB_URL);
   }
 
   return msgMap;

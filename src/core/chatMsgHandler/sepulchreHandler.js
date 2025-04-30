@@ -1,8 +1,8 @@
-import * as Constants from '../../constants';
+import { CHAT_REGEX, CHAT_MESSAGE_TYPES } from '../../constants';
 
 export function sepulchreHandler(message, playerName, msgMap, URL) {
-  const overallMatch = message.match(Constants.CHAT_REGEX.OVERALL_TIME_TEXT);
-  const floorMatch = message.match(Constants.CHAT_REGEX.FLOOR_TIME_TEXT);
+  const overallMatch = message.match(CHAT_REGEX.OVERALL_TIME_TEXT);
+  const floorMatch = message.match(CHAT_REGEX.FLOOR_TIME_TEXT);
 
   let msg;
   if (overallMatch) {
@@ -15,9 +15,6 @@ export function sepulchreHandler(message, playerName, msgMap, URL) {
   }
 
   if (msg) {
-    msgMap.set(
-      { ID: Constants.CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST, URL },
-      msg
-    );
+    msgMap.set({ ID: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST, URL }, msg);
   }
 }

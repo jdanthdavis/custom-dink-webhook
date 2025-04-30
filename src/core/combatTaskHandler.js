@@ -1,4 +1,5 @@
 import { formatAsPercentage } from './helperFunctions';
+import { COMBAT_ACHIEVEMENT } from '../constants';
 
 /**
  * Formats the player's CA completion % with the completion of a new collection log slot
@@ -40,7 +41,7 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
 
   if (justCompletedTier) {
     msgMap.set(
-      { ID: 'CA', URL },
+      { ID: COMBAT_ACHIEVEMENT, URL },
       `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**${
         justCompletedTier !== 'GRANDMASTER'
           ? `\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCACompletion}%) of total points for Grandmasters`
@@ -49,7 +50,7 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
     );
   } else {
     msgMap.set(
-      { ID: 'CA', URL },
+      { ID: COMBAT_ACHIEVEMENT, URL },
       `**${playerName}** has completed **${formattedTier}** combat task: **${task} | ${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%) of ${formattedCurrentTier} of tier completed!**`
     );
   }

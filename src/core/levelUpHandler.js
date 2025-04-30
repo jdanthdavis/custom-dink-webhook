@@ -17,7 +17,19 @@ import {
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function levelUpHandler(msgMap, playerName, extra, URL) {
-  const { allSkills = {}, levelledSkills = {} } = extra;
+  const { allSkills = {}, levelledSkills = {}, xpData = {} } = extra;
+
+  if (Object.keys(xpData).length > 0) {
+    for (const [skillName, xp] of Object.entries(xpData)) {
+      const cleanedInterval = formatValue(xp, true);
+      msgMap.set(
+        { ID: XP_MILESTONE, URL },
+        `**${playerName}** has reached **${cleanedInterval} XP** in **${skillName}!**`
+      );
+    }
+    return msgMap;
+  }
+
   const levelledSkillsLength = Object.keys(levelledSkills).length;
   const totalLevel = Object.values(allSkills).reduce(
     (sum, skillLevel) => sum + (skillLevel > 99 ? 99 : skillLevel),

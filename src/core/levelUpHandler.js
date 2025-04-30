@@ -18,6 +18,8 @@ import {
  */
 function levelUpHandler(msgMap, playerName, extra, URL) {
   const { allSkills = {}, levelledSkills = {}, xpData = {} } = extra;
+  if (!Object.keys(levelledSkills).length) return msgMap;
+
   const isXpMilestone = Boolean(Object.keys(xpData).length);
   const levelledSkillsLength = isXpMilestone
     ? Object.keys(xpData).length
@@ -139,8 +141,4 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     );
     return msgMap;
   }
-
-  return msgMap;
 }
-
-export default levelUpHandler;

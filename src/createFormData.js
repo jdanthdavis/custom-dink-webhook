@@ -61,6 +61,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
       break;
     case Constants.LEVEL:
+    case Constants.XP_MILESTONE:
       levelUpHandler(msgMap, playerName, extra, LEVEL_URL);
       break;
     case Constants.COMBAT_ACHIEVEMENT:

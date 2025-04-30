@@ -11,7 +11,7 @@
  * @param {number} value - The numeric value to be formatted.
  * @returns {string} - The formatted price as a string, or 'Very valuable' for extremely large values.
  */
-function formatPrice(value, xpInterval = false) {
+function formatValue(value, xpInterval = false) {
   if (value >= 2147e6) return 'Very valuable';
 
   let formatted;
@@ -28,4 +28,4 @@ function formatPrice(value, xpInterval = false) {
   return xpInterval ? formatted.replace(/[()]/g, '') : formatted;
 }
 
-export default formatPrice;
+export default formatValue;

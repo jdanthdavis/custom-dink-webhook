@@ -1,4 +1,4 @@
-import { formatPrice } from './helperFunctions';
+import { formatValue } from './helperFunctions';
 import { DEATH_EMOJIS, DEATH } from '../constants';
 
 /**
@@ -15,7 +15,7 @@ import { DEATH_EMOJIS, DEATH } from '../constants';
  */
 function deathHandler(msgMap, playerName, extra, URL) {
   const { isPvp, valueLost, killerName } = extra;
-  const formattedValueLost = formatPrice(valueLost);
+  const formattedValueLost = formatValue(valueLost);
   const randomIndex = Math.floor(Math.random() * DEATH_EMOJIS.length);
   const msg = isPvp
     ? `**${playerName}** has just been killed by **${killerName}** for **${formattedValueLost}** coins ${DEATH_EMOJIS[randomIndex]}`

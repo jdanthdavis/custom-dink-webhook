@@ -1,3 +1,4 @@
+import { formatValue } from './helperFunctions';
 import {
   MAX_TOTAL_LEVEL,
   LEVEL,
@@ -6,7 +7,6 @@ import {
   DANSE_PARTY,
   FISHH,
 } from '../constants';
-import { formatPrice } from './helperFunctions';
 
 /**
  * Constructs special messages depending on the level information
@@ -22,38 +22,55 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   const levelledSkillsLength = isXpMilestone
     ? Object.keys(xpData).length
     : Object.keys(levelledSkills).length;
-  // Calculate total level but cap values at 99
+
   const totalLevel = Object.values(allSkills).reduce(
     (sum, skillLevel) => sum + (skillLevel > 99 ? 99 : skillLevel),
     0
   );
 
-  /**
-   * Check if the total level is at an important interval (multiple of 25)
-   * @param {number} level
-   * @returns {boolean} - True if total level is divisible by 25 or max total level
-   */
-  const isImportantLevelInterval = (level) =>
+  /** Checks if player has reached the max total level */
+  const isMaxTotalLevel = (skillLevel, totalLevel, max) =>
+    skillLevel <= 99 && totalLevel === max;
+
+  /** Returns true if total level is at a milestone (divisible by 25 or max) */
+  const isTotalLevelInterval = (level) =>
     level % 25 === 0 || level === MAX_TOTAL_LEVEL;
 
-  /**
-   * TODO: Refactor into levelUpHandlerUtils
-   * Constructs a message based on multiple level-ups
-   * @returns {string} - The constructed message
-   */
+  /** Checks if player hit a milestone total level while skilling */
+  const isTotalLevelMilestone = (skillLevel, totalLevel) =>
+    skillLevel <= 99 && isTotalLevelInterval(totalLevel);
+
+  /** Checks if only one skill (Fishing) was levelled */
+  const isSingleFishingLevel = (skillName, skillCount) =>
+    skillName === 'Fishing' && skillCount < 2;
+
+  /** Returns a formatted total level message */
+  const getTotalLevelMessage = (
+    playerName,
+    totalLevel,
+    multiLvlStr,
+    skillLevel,
+    DANSE
+  ) =>
+    skillLevel === 99
+      ? `-# @everyone\n${DANSE} **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** ${DANSE}`
+      : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!**`;
+
+  /** Returns a default level-up message */
+  const getDefaultLevelMessage = (playerName, multiLvlStr) =>
+    `**${playerName}** has levelled **${multiLvlStr}**!`;
+
+  /** Builds the skill-level message string for 1+ skills */
   const multiLevelMsgConstructor = () => {
-    const isTotalLevelInterval = isImportantLevelInterval(totalLevel);
+    const isInterval = isTotalLevelInterval(totalLevel);
     const formatSkillMessage = (name, level) =>
-      isTotalLevelInterval ? `${level} in ${name}` : `${name} to ${level}`;
+      isInterval ? `${level} in ${name}` : `${name} to ${level}`;
 
     if (levelledSkillsLength === 1) {
       const [skillName, skillLevel] = Object.entries(levelledSkills)[0];
-      return isTotalLevelInterval
-        ? `${skillLevel} in ${skillName}`
-        : `${skillName} to ${skillLevel}`;
+      return formatSkillMessage(skillName, skillLevel);
     }
 
-    // Construct skill messages for multiple level-ups
     const skillMessages = Object.entries(levelledSkills).map(([name, level]) =>
       formatSkillMessage(name, level)
     );
@@ -62,60 +79,65 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
       return skillMessages.join(' and ');
     }
 
-    if (levelledSkillsLength > 2) {
-      const lastSkill = skillMessages.pop();
-      return `${skillMessages.join(', ')}, and ${lastSkill}`;
-    }
+    const lastSkill = skillMessages.pop();
+    return `${skillMessages.join(', ')}, and ${lastSkill}`;
   };
 
-  if (isXpMilestone) {
-    for (const [skillName, xpInterval] of Object.entries(xpData)) {
-      const cleanedInterval = formatPrice(xpInterval, true);
-      msgMap.set(
-        { ID: XP_MILESTONE, URL },
-        `**${playerName}** has reached **${cleanedInterval} XP** in **${skillName}!**`
-      );
-      break;
-    }
-  }
-
-  // Build the level-up message based on the player's skill level and total level
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
     const multiLvlStr = multiLevelMsgConstructor();
 
-    if (skillLevel <= 99 && totalLevel === MAX_TOTAL_LEVEL) {
+    if (isMaxTotalLevel(skillLevel, totalLevel, MAX_TOTAL_LEVEL)) {
       msgMap.set(
         { ID: MAX_TOTAL_LEVEL, URL },
         `-# @everyone\n${DANSE_PARTY} **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching **${multiLvlStr}!** ${DANSE_PARTY}`
       );
-      break;
-    } else if (skillLevel <= 99 && isImportantLevelInterval(totalLevel)) {
-      const levelMessage =
-        skillLevel === 99
-          ? `-# @everyone\n${DANSE} **${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!** ${DANSE}`
-          : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching **${multiLvlStr}!**`;
+      return msgMap;
+    }
 
-      msgMap.set({ ID: LEVEL, URL }, levelMessage);
-      break;
-    } else if (skillLevel === 99) {
+    if (isTotalLevelMilestone(skillLevel, totalLevel)) {
+      msgMap.set(
+        { ID: LEVEL, URL },
+        getTotalLevelMessage(
+          playerName,
+          totalLevel,
+          multiLvlStr,
+          skillLevel,
+          DANSE
+        )
+      );
+      return msgMap;
+    }
+
+    if (skillLevel === 99) {
       msgMap.set(
         { ID: LEVEL, URL },
         `-# @everyone\n${DANSE} **${playerName}** has levelled **${multiLvlStr}!** ${DANSE}`
       );
-      break;
-    } else if (skillName === 'Fishing' && levelledSkillsLength < 2) {
+      return msgMap;
+    }
+
+    if (isSingleFishingLevel(skillName, levelledSkillsLength)) {
       msgMap.set(
         { ID: LEVEL, URL },
         `**${playerName}** has levelled **${multiLvlStr}!** ${FISHH}`
       );
-      break;
-    } else {
-      msgMap.set(
-        { ID: LEVEL, URL },
-        `**${playerName}** has levelled **${multiLvlStr}**!`
-      );
-      break;
+      return msgMap;
     }
+
+    if (isXpMilestone) {
+      const cleanedInterval = formatValue(skillLevel, true);
+      msgMap.set(
+        { ID: XP_MILESTONE, URL },
+        `**${playerName}** has reached **${cleanedInterval} XP** in **${skillName}!**`
+      );
+      return msgMap;
+    }
+
+    msgMap.set(
+      { ID: LEVEL, URL },
+      getDefaultLevelMessage(playerName, multiLvlStr)
+    );
+    return msgMap;
   }
 
   return msgMap;

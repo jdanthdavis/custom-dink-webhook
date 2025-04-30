@@ -1,4 +1,4 @@
-import { formatPrice } from './helperFunctions';
+import { formatValue } from './helperFunctions';
 import { CLUE } from '../constants';
 
 /**
@@ -16,7 +16,7 @@ function clueScrollHandler(msgMap, playerName, extra, URL) {
 ${items
   .map(
     (item) =>
-      `- x${item.quantity} ${item.name} - **${formatPrice(item.priceEach)}**`
+      `- x${item.quantity} ${item.name} - **${formatValue(item.priceEach)}**`
   )
   .join('\n')}`;
 

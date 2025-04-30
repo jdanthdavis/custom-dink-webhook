@@ -1,4 +1,4 @@
-name = 'swap-meet-custom-dink-webhook-dev'
+name = 'swap-meet-custom-dink-webhook'
 main = "src/Index.js"
 compatibility_date = "2024-11-22"
 [observability.logs]

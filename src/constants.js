@@ -28,6 +28,7 @@ export const acceptedPayloads = [
   'COLLECTION',
   'PET',
   'LEVEL',
+  'XP_MILESTONE',
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',

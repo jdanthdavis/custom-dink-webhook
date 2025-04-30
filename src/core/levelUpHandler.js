@@ -142,3 +142,5 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     return msgMap;
   }
 }
+
+export default levelUpHandler;

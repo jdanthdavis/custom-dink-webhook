@@ -18,8 +18,6 @@ import {
  */
 function levelUpHandler(msgMap, playerName, extra, URL) {
   const { allSkills = {}, levelledSkills = {}, xpData = {} } = extra;
-  if (!Object.keys(levelledSkills).length) return msgMap;
-
   const isXpMilestone = Boolean(Object.keys(xpData).length);
   const levelledSkillsLength = isXpMilestone
     ? Object.keys(xpData).length
@@ -85,7 +83,14 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     return `${skillMessages.join(', ')}, and ${lastSkill}`;
   };
 
-  for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
+  const dataToIterate =
+    levelledSkills && Object.entries(levelledSkills).length
+      ? Object.entries(levelledSkills)
+      : Object.entries(xpData);
+
+  console.log({ dataToIterate, levelledSkills, xpData });
+
+  for (const [skillName, skillLevel] of Object.entries(dataToIterate)) {
     const multiLvlStr = multiLevelMsgConstructor();
 
     if (isMaxTotalLevel(skillLevel, totalLevel, MAX_TOTAL_LEVEL)) {

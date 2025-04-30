@@ -17,12 +17,8 @@ import {
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function levelUpHandler(msgMap, playerName, extra, URL) {
-  const { allSkills = {}, levelledSkills = {}, xpData = {} } = extra;
-  const isXpMilestone = Boolean(Object.keys(xpData).length);
-  const levelledSkillsLength = isXpMilestone
-    ? Object.keys(xpData).length
-    : Object.keys(levelledSkills).length;
-
+  const { allSkills = {}, levelledSkills = {} } = extra;
+  const levelledSkillsLength = Object.keys(levelledSkills).length;
   const totalLevel = Object.values(allSkills).reduce(
     (sum, skillLevel) => sum + (skillLevel > 99 ? 99 : skillLevel),
     0
@@ -83,14 +79,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     return `${skillMessages.join(', ')}, and ${lastSkill}`;
   };
 
-  const dataToIterate =
-    levelledSkills && Object.entries(levelledSkills).length
-      ? Object.entries(levelledSkills)
-      : Object.entries(xpData);
-
-  console.log({ dataToIterate, levelledSkills, xpData });
-
-  for (const [skillName, skillLevel] of Object.entries(dataToIterate)) {
+  for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
     const multiLvlStr = multiLevelMsgConstructor();
 
     if (isMaxTotalLevel(skillLevel, totalLevel, MAX_TOTAL_LEVEL)) {
@@ -127,15 +116,6 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
       msgMap.set(
         { ID: LEVEL, URL },
         `**${playerName}** has levelled **${multiLvlStr}!** ${FISHH}`
-      );
-      return msgMap;
-    }
-
-    if (isXpMilestone) {
-      const cleanedInterval = formatValue(skillLevel, true);
-      msgMap.set(
-        { ID: XP_MILESTONE, URL },
-        `**${playerName}** has reached **${cleanedInterval} XP** in **${skillName}!**`
       );
       return msgMap;
     }

@@ -28,9 +28,9 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   if (Object.keys(xpData).length > 0) {
     msgMap.set(
       { ID: XP_MILESTONE, URL },
-      `**${playerName}** has reached **${
+      `**${playerName}** has reached **${formatValue(
         xpData[milestoneAchieved[0]]
-      } XP** in **${milestoneAchieved[0]}!**`
+      )} XP** in **${milestoneAchieved[0]}!**`
     );
     return msgMap;
   }

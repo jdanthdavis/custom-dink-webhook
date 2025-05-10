@@ -9,7 +9,7 @@ export function tobKitHandler(message, playerName, msgMap, URL) {
   if (!kitMatch) return;
 
   const item = kitMatch[1];
-  const msg = `**${playerName}** has received **${item}** from **${THEATRE_OF_BLOOD_HM}!**`;
+  const msg = `**${playerName}** has received **1x ${item}** from **${THEATRE_OF_BLOOD_HM}!**`;
 
   msgMap.set({ ID: CHAT_MESSAGE_TYPES.TOB_KIT, URL }, msg);
 }

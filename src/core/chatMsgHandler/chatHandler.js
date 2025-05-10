@@ -4,14 +4,7 @@ import { vestigeHandler } from './vestigeHandler';
 import { tobKitHandler } from './tobKitHandler';
 import { CHAT_MESSAGE_TYPES } from '../../constants';
 
-function chatHandler(
-  msgMap,
-  playerName,
-  message,
-  typeOfChat,
-  PB_URL,
-  LOOT_URL
-) {
+function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
   const messageChecks = [
     {
       check: (msg) => msg.includes('(new personal best)'),

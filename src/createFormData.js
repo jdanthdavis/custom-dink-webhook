@@ -80,17 +80,14 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.CHAT:
-      const isPersonalBest = extra.message.includes('(new personal best)');
-      const typeOfChat = isPersonalBest
-        ? Constants.CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST
-        : extra.message.includes('vestige')
-        ? Constants.CHAT_MESSAGE_TYPES.VESTIGE_DROP
-        : Constants.CHAT_MESSAGE_TYPES.BIG_FISH;
-
-      const URL = isPersonalBest ? PB_URL : LOOT_URL;
-
-      chatHandler(msgMap, playerName, extra, typeOfChat, URL);
-
+      chatHandler(
+        msgMap,
+        playerName,
+        extra.message,
+        typeOfChat,
+        PB_URL,
+        LOOT_URL
+      );
       break;
     default:
       console.log(`Unknown payload type: ${payloadType}`);

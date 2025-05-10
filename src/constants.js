@@ -85,10 +85,12 @@ export const DEATH_EMOJIS = [
 export const PERSONAL_BEST = 'PERSONAL_BEST';
 export const HALLOWED_SEPULCHRE = 'Hallowed Sepulchre';
 export const GRAND_HALLOWED_COFFIN = 'Grand Hallowed Coffin';
+export const THEATRE_OF_BLOOD_HM = 'Theatre of Blood: Hard Mode';
 export const CHAT_MESSAGE_TYPES = {
   BIG_FISH: 'BIG_FISH',
   VESTIGE_DROP: 'VESTIGE_DROP',
   NEW_PERSONAL_BEST: 'NEW_PERSONAL_BEST',
+  TOB_KIT: 'TOB_KIT',
 };
 export const VESTIGE_MAP = {
   Ultor: 'Vardorvis',
@@ -104,6 +106,8 @@ export const CHAT_REGEX = {
   FLOOR_TIME_TEXT:
     /Floor ([1-5]) time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   BIG_FISH: /You catch an enormous (.+)!/,
+  TOB_KITS:
+    /.+ found something special: (Holy ornament kit|Sanguine ornament kit|Sanguine dust)/,
 };
 export const bigFishArr = [
   '[PLAYER] just wrangled a [FISH] bigger’n a damn johnboat—y’all better bring the grill and a tall tale ‘cause this one’s a whopper!',

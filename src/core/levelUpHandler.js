@@ -17,17 +17,22 @@ import {
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function levelUpHandler(msgMap, playerName, extra, URL) {
-  const { allSkills = {}, levelledSkills = {}, xpData = {} } = extra;
+  const {
+    allSkills = {},
+    levelledSkills = {},
+    xpData = {},
+    milestoneAchieved,
+  } = extra;
 
   /** Sends a custom message for an XP milestone */
   if (Object.keys(xpData).length > 0) {
-    for (const [skillName, xp] of Object.entries(xpData)) {
-      const cleanedInterval = formatValue(xp, true);
-      msgMap.set(
-        { ID: XP_MILESTONE, URL },
-        `**${playerName}** has reached **${cleanedInterval} XP** in **${skillName}!**`
-      );
-    }
+    msgMap.set(
+      { ID: XP_MILESTONE, URL },
+      `**${playerName}** has reached **${formatValue(
+        xpData[milestoneAchieved[0]],
+        true
+      )} XP** in **${milestoneAchieved[0]}!**`
+    );
     return msgMap;
   }
 

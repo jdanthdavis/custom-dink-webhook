@@ -51,7 +51,7 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
   } else {
     msgMap.set(
       { ID: COMBAT_ACHIEVEMENT, URL },
-      `**${playerName}** has completed **${formattedTier}** combat task: **${task} | ${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%) of ${formattedCurrentTier} of tier completed!**`
+      `**${playerName}** has completed **${formattedTier}** combat task: **${task} | ${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%) of ${formattedCurrentTier} tier completed!**`
     );
   }
 

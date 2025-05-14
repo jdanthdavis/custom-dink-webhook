@@ -11,7 +11,7 @@ function tempYama(message, playerName, msgMap, URL) {
     msg = `${playerName} has defeated Yama with a success count of **${kc}!**`;
   }
 
-  msgMap.set({ ID: 'TEMP_YAMA', URL }, msg);
+  return msgMap.set({ ID: 'TEMP_YAMA', URL }, msg);
 }
 
 export default tempYama;

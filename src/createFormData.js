@@ -80,7 +80,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.CHAT:
-      chatHandler(msgMap, playerName, extra.message, PB_URL, LOOT_URL);
+      chatHandler(msgMap, playerName, extra.message, PB_URL, LOOT_URL, KC_URL);
       break;
     default:
       console.log(`Unknown payload type: ${payloadType}`);

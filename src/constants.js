@@ -56,6 +56,7 @@ export const bossMap = new Map([
   ['THE NIGHTMARE', 25],
   ['CORPOREAL BEAST', 50],
   ['HERBIBOAR', 150],
+  ['YAMA', 25],
   ['TEST', 1],
 ]);
 

@@ -8,7 +8,7 @@ function tempYama(message, playerName, msgMap, URL) {
 
   if (match) {
     const kc = parseInt(match[1], 10);
-    msg = `${playerName} has defeated Yama with a success count of **${kc}!**`;
+    msg = `${playerName} has defeated **Yama** with a success count of **${kc}!**`;
   }
 
   return msgMap.set({ ID: 'TEMP_YAMA', URL }, msg);

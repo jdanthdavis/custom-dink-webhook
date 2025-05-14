@@ -38,7 +38,7 @@ export const acceptedPayloads = [
 
 // pets
 export const PET = 'PET';
-export const ALL_PETS = 63;
+export const ALL_PETS = 64;
 
 // levels
 export const LEVEL = 'LEVEL';

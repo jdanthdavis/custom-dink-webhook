@@ -2,7 +2,7 @@ import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { vestigeHandler } from './vestigeHandler';
 import { tobKitHandler } from './tobKitHandler';
-import { CHAT_MESSAGE_TYPES } from '../../constants';
+import { CHAT_MESSAGE_TYPES, LOOT } from '../../constants';
 
 function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
   const messageChecks = [
@@ -45,7 +45,7 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
     case 'YAMA_CONTRACT':
       //TODO: Refactor all untradable drops into their on function
       msgMap.set(
-        { ID: CHAT_MESSAGE_TYPES.TOB_KIT, LOOT_URL },
+        { ID: 'YAMA_CONTRACT', URL: LOOT_URL },
         `**${playerName}** has been offered a contract...`
       );
       break;

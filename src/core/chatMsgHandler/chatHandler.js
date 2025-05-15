@@ -46,7 +46,7 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
       //TODO: Refactor all untradable drops into their on function
       msgMap.set(
         { ID: 'YAMA_CONTRACT', URL: LOOT_URL },
-        `**${playerName}** has been offered a contract...`
+        `**${playerName}** has been offered a **contract...**`
       );
       break;
     default:

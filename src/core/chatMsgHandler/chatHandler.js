@@ -22,6 +22,10 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
       check: (msg) => msg.includes('enormous'),
       type: CHAT_MESSAGE_TYPES.BIG_FISH,
     },
+    {
+      check: (msg) => msg.includes('Dossier'),
+      type: 'YAMA_CONTRACT',
+    },
   ];
   const typeOfChat = messageChecks.find((entry) => entry.check(message))?.type;
 
@@ -37,6 +41,13 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
       break;
     case CHAT_MESSAGE_TYPES.TOB_KIT:
       tobKitHandler(message, playerName, msgMap, LOOT_URL);
+      break;
+    case 'YAMA_CONTRACT':
+      //TODO: Refactor all untradable drops into their on function
+      msgMap.set(
+        { ID: CHAT_MESSAGE_TYPES.TOB_KIT, LOOT_URL },
+        `**${playerName}** has been offered a contract...`
+      );
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

@@ -2,10 +2,9 @@ import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { vestigeHandler } from './vestigeHandler';
 import { tobKitHandler } from './tobKitHandler';
-import { tempYama } from '../helperFunctions';
 import { CHAT_MESSAGE_TYPES } from '../../constants';
 
-function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL, KC_URL) {
+function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
   const messageChecks = [
     {
       check: (msg) => msg.includes('(new personal best)'),
@@ -23,10 +22,6 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL, KC_URL) {
       check: (msg) => msg.includes('enormous'),
       type: CHAT_MESSAGE_TYPES.BIG_FISH,
     },
-    {
-      check: (msg) => msg.includes('Yama'),
-      type: 'YAMA',
-    },
   ];
   const typeOfChat = messageChecks.find((entry) => entry.check(message))?.type;
 
@@ -42,9 +37,6 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL, KC_URL) {
       break;
     case CHAT_MESSAGE_TYPES.TOB_KIT:
       tobKitHandler(message, playerName, msgMap, LOOT_URL);
-      break;
-    case 'YAMA':
-      tempYama(message, playerName, msgMap, KC_URL);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

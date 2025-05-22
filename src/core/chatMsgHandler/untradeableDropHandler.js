@@ -70,7 +70,7 @@ export function untradeableDropHandler(message, playerName, embeds) {
     fields: [
       {
         name: 'Total Value',
-        value: `\`\`\`${value}\`\`\``,
+        value: value && `\`\`\`${value}\`\`\``,
         inline: true,
       },
     ],

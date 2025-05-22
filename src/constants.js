@@ -68,6 +68,33 @@ export const UNTRADEABLE_MAP = Object.freeze({
       value: '5M',
     },
   },
+  purifying_sigils: {
+    top: {
+      itemName: 'Purifying sigil (top)',
+      boss: 'Yama',
+      thumbnail: '30789',
+    },
+    left: {
+      itemName: 'Purifying sigil (left)',
+      boss: 'Yama',
+      thumbnail: '30783',
+    },
+    right: {
+      itemName: 'Purifying sigil (right)',
+      boss: 'Yama',
+      thumbnail: '30785',
+    },
+    middle: {
+      itemName: 'Purifying sigil (middle)',
+      boss: 'Yama',
+      thumbnail: '30787',
+    },
+    bottom: {
+      itemName: 'Purifying sigil (bottom)',
+      boss: 'Yama',
+      thumbnail: '30791',
+    },
+  },
   araxyte: {
     araxyte_fang: {
       itemName: 'Araxyte fang',

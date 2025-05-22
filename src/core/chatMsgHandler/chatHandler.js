@@ -65,7 +65,7 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
       const sigil = match[1];
       msgMap.set(
         { ID: 'YAMA_CONTRACT', URL: LOOT_URL },
-        `**${playerName}** has has received **1x ${sigil} from **Yama!**`
+        `**${playerName}** has has received **1x ${sigil}** from **Yama!**`
       );
       break;
     default:

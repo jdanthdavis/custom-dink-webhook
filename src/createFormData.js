@@ -37,7 +37,7 @@ function createFormData(
 
   if (
     [Constants.CLUE, Constants.LOOT, Constants.CHAT].includes(payloadType) &&
-    ruleHandler(ruleBroken, payloadType, extra.items, extra.type)
+    ruleHandler(ruleBroken, payloadType, extra)
   ) {
     formDataMap.set('ruleBroken', true);
     return;

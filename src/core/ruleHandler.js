@@ -25,10 +25,17 @@ import { RULES, LOOT, CLUE, CHAT } from '../constants';
  *                      Otherwise, returns `false`.
  *
  */
-function ruleHandler(ruleBroken, payloadType, items, chatType) {
+function ruleHandler(ruleBroken, payloadType, extra) {
+  const { source, items, type: chatType } = extra;
   switch (payloadType) {
     case LOOT:
-      if (calculateTotalValue(items) < RULES.drops.minLootValue) {
+      if (
+        calculateTotalValue(items) < RULES.drops.minLootValue ||
+        (items.some((item) =>
+          item.name.toUpperCase().includes('CONTRACT OF')
+        ) &&
+          source === 'Black demon')
+      ) {
         ruleBroken = true;
         return ruleBroken;
       }

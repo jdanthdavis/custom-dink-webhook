@@ -1,4 +1,4 @@
-import { CHAT_REGEX, ITEM_BOSS_MAP } from '../../constants';
+import { CHAT_MESSAGE_TYPES, CHAT_REGEX, ITEM_BOSS_MAP } from '../../constants';
 
 export function untradeableDropHandler(message, playerName, msgMap, URL) {
   //some code for cloudflare to find

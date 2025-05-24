@@ -1,6 +1,6 @@
 import { CHAT_REGEX, ITEM_BOSS_MAP } from '../../constants';
 
-export function untradeableDropHandler(message, playerName, URL) {
+export function untradeableDropHandler(message, playerName, msgMap, URL) {
   //some code for cloudflare to find
   let msg;
   const vestigeMatch = message?.match(CHAT_REGEX.VESTIGE_TEXT);
@@ -14,7 +14,7 @@ export function untradeableDropHandler(message, playerName, URL) {
         return ITEM_BOSS_MAP[item];
       }
     }
-    console.log(`Error: Missing boss for item: ${item}`);
+    console.log(`Error: Missing boss for message: ${message}`);
     return null;
   };
   const bossName = getBossName(message);

@@ -22,7 +22,7 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
 
   switch (typeOfChat) {
     case CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP:
-      untradeableDropHandler(message, playerName, LOOT_URL);
+      untradeableDropHandler(message, playerName, msgMap, LOOT_URL);
       break;
     case CHAT_MESSAGE_TYPES.BIG_FISH:
       bigFishHandler(message, playerName, msgMap, LOOT_URL);

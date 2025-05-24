@@ -1,5 +1,6 @@
 import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
+import { untradeableDropHandler } from './untradeableDropHandler';
 import { CHAT_MESSAGE_TYPES, UNTRADEABLE_ITEMS } from '../../constants';
 
 function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {

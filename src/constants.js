@@ -107,8 +107,8 @@ export const ITEM_BOSS_MAP = {
 export const UNTRADEABLE_ITEMS = [
   'vestige',
   'Purifying sigil',
-  'Holy kit',
-  'Sanguine kit',
+  'Holy ornament kit',
+  'Sanguine ornament kit',
   'Sanguine dust',
 ];
 export const CHAT_REGEX = {

@@ -1,6 +1,7 @@
 import { CHAT_REGEX, ITEM_BOSS_MAP } from '../../constants';
 
-function untradeableDropHandler(message, playerName, URL) {
+export function untradeableDropHandler(message, playerName, URL) {
+  //some code for cloudflare to find
   let msg;
   const vestigeMatch = message?.match(CHAT_REGEX.VESTIGE_TEXT);
   const untradeableMatch = message?.match(CHAT_REGEX.UNTRADEABLE_DROP);
@@ -42,5 +43,3 @@ function untradeableDropHandler(message, playerName, URL) {
     return msgMap.set({ ID: CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP, URL }, msg);
   }
 }
-
-export default untradeableDropHandler;

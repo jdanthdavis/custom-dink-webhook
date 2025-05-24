@@ -91,13 +91,26 @@ export const CHAT_MESSAGE_TYPES = {
   VESTIGE_DROP: 'VESTIGE_DROP',
   NEW_PERSONAL_BEST: 'NEW_PERSONAL_BEST',
   TOB_KIT: 'TOB_KIT',
+  UNTRADEABLE_DROP: 'UNTRADEABLE_DROP',
+  PURIFYING_SIGIL: 'PURIFYING_SIGIL',
 };
-export const VESTIGE_MAP = {
+export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',
   Bellator: 'The Whisperer',
   Magus: 'Duke Sucellus',
   Venator: 'The Leviathan',
+  Purifying: 'Yama',
+  Holy: 'Theatre of Blood: Hard Mode',
+  Sanguine: 'Theatre of Blood: Hard Mode',
+  Dust: 'Theatre of Blood: Hard Mode',
 };
+export const UNTRADEABLE_ITEMS = [
+  'vestige',
+  'Purifying sigil',
+  'Holy kit',
+  'Sanguine kit',
+  'Sanguine dust',
+];
 export const CHAT_REGEX = {
   VESTIGE_TEXT:
     /(?:Untradeable drop: |.+ received a drop: )(Ultor|Bellator|Magus|Venator) vestige/,

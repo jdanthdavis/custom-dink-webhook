@@ -72,7 +72,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
 
   /** Returns a default level-up message */
   const getDefaultLevelMessage = (playerName, multiLvlStr) =>
-    `**${playerName}** has levelled ${multiLvlStr}!`;
+    `**${playerName}** has levelled ${multiLvlStr}**!**`;
 
   /** Builds the skill-level message string for 1+ skills */
   const multiLevelMsgConstructor = () => {

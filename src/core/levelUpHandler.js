@@ -67,8 +67,8 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     DANSE
   ) =>
     skillLevel === 99
-      ? `-# @everyone\n${DANSE} **${playerName}** has reached a new total level of **${totalLevel}**, by reaching ${multiLvlStr}! ${DANSE}`
-      : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching ${multiLvlStr}!`;
+      ? `-# @everyone\n${DANSE} **${playerName}** has reached a new total level of **${totalLevel}**, by reaching ${multiLvlStr} ${DANSE}`
+      : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching ${multiLvlStr}`;
 
   /** Returns a default level-up message */
   const getDefaultLevelMessage = (playerName, multiLvlStr) =>
@@ -105,7 +105,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     if (isMaxTotalLevel(skillLevel, totalLevel, MAX_TOTAL_LEVEL)) {
       msgMap.set(
         { ID: MAX_TOTAL_LEVEL, URL },
-        `-# @everyone\n${DANSE_PARTY} **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching ${multiLvlStr}! ${DANSE_PARTY}`
+          `-# @everyone\n${DANSE_PARTY} **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching ${multiLvlStr} ${DANSE_PARTY}`
       );
       return msgMap;
     }
@@ -127,7 +127,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     if (skillLevel === 99) {
       msgMap.set(
         { ID: LEVEL, URL },
-        `-# @everyone\n${DANSE} **${playerName}** has levelled ${multiLvlStr}! ${DANSE}`
+        `-# @everyone\n${DANSE} **${playerName}** has levelled ${multiLvlStr} ${DANSE}`
       );
       return msgMap;
     }
@@ -135,7 +135,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     if (isSingleFishingLevel(skillName, levelledSkillsLength)) {
       msgMap.set(
         { ID: LEVEL, URL },
-        `**${playerName}** has levelled ${multiLvlStr}! ${FISHH}`
+        `**${playerName}** has levelled ${multiLvlStr} ${FISHH}`
       );
       return msgMap;
     }

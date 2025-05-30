@@ -22,7 +22,7 @@ function lootHandler(msgMap, items, playerName, source, URL) {
   // const item = lootItemMatch[2];
   // const price = lootItemMatch[3];
 
-  const outputString = `**${playerName}** has received**${itemArr.map(
+  const outputString = `**${playerName}** has received**${items.map(
     (item) => ` ${item.quantity}x ${item.name} ${formatValue(item.priceEach)}`
   )}** from **${source}!**`;
 

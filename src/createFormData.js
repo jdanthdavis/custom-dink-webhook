@@ -74,7 +74,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
       break;
     case Constants.LOOT:
-      lootHandler(msgMap, content, playerName, extra.source, LOOT_URL);
+      lootHandler(msgMap, extra.items, playerName, extra.source, LOOT_URL);
       break;
     case Constants.DEATH:
       deathHandler(msgMap, playerName, extra, DEATH_URL);

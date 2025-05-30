@@ -10,19 +10,21 @@ import { LOOT } from '../constants';
  * @param {string} URL - The associated URL for the loot event.
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map with the formatted loot message.
  */
-function lootHandler(msgMap, content, playerName, source, URL) {
-  const lootItemMatch = content.match(/(\d+)\s*x\s*(.+?)\s*\(([\d.]+[MBK]?)\)/);
+function lootHandler(msgMap, items, playerName, source, URL) {
+  // const lootItemMatch = items.match(/(\d+)\s*x\s*(.+?)\s*\(([\d.]+[MBK]?)\)/);
   const validatedSource = grumblerCheck(source);
 
-  if (!lootItemMatch) {
-    console.log('Error: Invalid loot format:', content);
-  }
+  // if (!lootItemMatch) {
+  //   console.log('Error: Invalid loot format:', content);
+  // }
 
-  const quantity = lootItemMatch[1];
-  const item = lootItemMatch[2];
-  const price = lootItemMatch[3];
+  // const quantity = lootItemMatch[1];
+  // const item = lootItemMatch[2];
+  // const price = lootItemMatch[3];
 
-  const outputString = `**${playerName}** has received **${quantity}x ${item} (${price})** from **${validatedSource}!**`;
+  const outputString = `**${playerName}** has received**${itemArr.map(
+    (item) => ` ${item.quantity}x ${item.name} ${formatValue(item.priceEach)}`
+  )}** from **${source}!**`;
 
   msgMap.set({ ID: LOOT, URL }, outputString);
 

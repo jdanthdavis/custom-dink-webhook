@@ -37,9 +37,13 @@ function deathHandler(msgMap, playerName, extra, URL) {
     .map(([name, qty]) => `${qty}x ${name}`)
     .join(', ');
 
+  const lostFood = Boolean(foodLostString);
+
   const msg = isPvp
     ? `**${playerName}** has just been killed by **${killerName}** for **${formattedValueLost}** coins ${DEATH_EMOJIS[randomIndex]}`
-    : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]} \n-# ${foodLostString}`;
+    : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]}${
+        lostFood ? `\n-# ${foodLostString}` : ''
+      }`;
 
   msgMap.set({ ID: DEATH, URL }, msg);
 

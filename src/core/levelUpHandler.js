@@ -92,7 +92,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
       formatSkillMessage(name, level)
     );
 
-    return `${formatListWithGrammar(skillMessages)}!`;
+    return `${formatLists(skillMessages)}!`;
   };
 
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {

@@ -11,20 +11,18 @@ import { LOOT } from '../constants';
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map with the formatted loot message.
  */
 function lootHandler(msgMap, content, playerName, source, URL) {
-  const lootItemMatch = content.match(
-    /(\d+)\s*x\s*([[\w\s\(\)]+)\s*\(([\d\.\w]+)\)/
-  );
+  const lootItemMatch = content.match(/(\d+)\s*x\s*(.+?)\s*\(([\d.]+[MBK]?)\)/);
   const validatedSource = grumblerCheck(source);
 
   if (!lootItemMatch) {
-    console.log('Error: Invalid loot format - ', content);
+    console.log('Error: Invalid loot format:', content);
   }
 
   const quantity = lootItemMatch[1];
   const item = lootItemMatch[2];
   const price = lootItemMatch[3];
 
-  const outputString = `**${playerName}** has received **${quantity}x ${item}(${price})** from **${validatedSource}!**`;
+  const outputString = `**${playerName}** has received **${quantity}x ${item} (${price})** from **${validatedSource}!**`;
 
   msgMap.set({ ID: LOOT, URL }, outputString);
 

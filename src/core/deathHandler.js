@@ -32,7 +32,7 @@ function deathHandler(msgMap, playerName, extra, URL) {
     return acc;
   }, {});
 
-  const foodLostString = formatListWithGrammar(
+  const foodLostString = formatLists(
     Object.entries(countFood)
       .sort((a, b) => b[1] - a[1])
       .map(([name, qty]) => `${qty}x ${name}`)

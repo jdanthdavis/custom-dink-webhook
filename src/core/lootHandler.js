@@ -1,4 +1,5 @@
 import { grumblerCheck } from './helperFunctions';
+import formatValue from './helperFunctions';
 import { LOOT } from '../constants';
 
 /**

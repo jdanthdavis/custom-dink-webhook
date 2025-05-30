@@ -1,7 +1,40 @@
 import { formatValue, formatLists } from './helperFunctions';
 import { DEATH_EMOJIS, DEATH } from '../constants';
 
-const FOOD_ARR = ['Saradomin Brew', 'Anglerfish', 'Shark'];
+const FOOD_ARR = [
+  'Shark',
+  'Anglerfish',
+  'Peach',
+  'Jug of wine',
+  'Cake',
+  'Lobster',
+  'Plain pizza',
+  'Swordfish',
+  'Snowy knight',
+  'Monkfish',
+  'Cooked karambwan',
+  'Guthix rest',
+  'Sea turtle',
+  'Cooked sunlight antelope',
+  'Pineapple pizza',
+  'Summer pie',
+  'Manta ray',
+  'Tuna potato',
+  'Dark crab',
+  'Cooked dashing kebbit',
+  'Cooked moonlight antelope',
+  'Saradomin brew',
+  'Blighted karambwan',
+  'Blighted manta ray',
+  'Blighted anglerfish',
+  'Crystal paddlefish',
+  'Corrupted paddlefish',
+  "Xeric's aid",
+  'Nectar',
+  'Ambrosia',
+  'Honey locust',
+  'Silk dressing',
+];
 
 /**
  * Handles a player's death event and updates the message map with a formatted message.

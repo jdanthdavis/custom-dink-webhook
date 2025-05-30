@@ -1,6 +1,8 @@
 import { formatValue } from './helperFunctions';
 import { DEATH_EMOJIS, DEATH } from '../constants';
 
+const FOOD_ARR = ['Saradomin Brew', 'Anglerfish', 'Shark'];
+
 /**
  * Handles a player's death event and updates the message map with a formatted message.
  *
@@ -14,12 +16,30 @@ import { DEATH_EMOJIS, DEATH } from '../constants';
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map.
  */
 function deathHandler(msgMap, playerName, extra, URL) {
-  const { isPvp, valueLost, killerName } = extra;
+  const { isPvp, valueLost, killerName, keptItems, lostItems } = extra;
   const formattedValueLost = formatValue(valueLost);
   const randomIndex = Math.floor(Math.random() * DEATH_EMOJIS.length);
+
+  const combinedFoods = [...keptItems, ...lostItems];
+
+  const countFood = combinedFoods.reduce((acc, item) => {
+    const matched = FOOD_ARR.find((kw) =>
+      item.name.toLowerCase().startsWith(kw.toLowerCase())
+    );
+    if (matched) {
+      acc[matched] = (acc[matched] || 0) + item.quantity;
+    }
+    return acc;
+  }, {});
+
+  const foodLostString = Object.entries(countFood)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, qty]) => `${qty}x ${name}`)
+    .join(', ');
+
   const msg = isPvp
     ? `**${playerName}** has just been killed by **${killerName}** for **${formattedValueLost}** coins ${DEATH_EMOJIS[randomIndex]}`
-    : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]}`;
+    : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]} \n-# ${foodLostString}`;
 
   msgMap.set({ ID: DEATH, URL }, msg);
 

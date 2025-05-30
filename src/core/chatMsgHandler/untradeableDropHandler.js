@@ -21,8 +21,8 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
 
   const buildMessage = (playerName, item, isVestige = false) =>
     `**${playerName}** has received **x1 ${item}${
-      isVestige ? ' vestige (5M)' : ''
-    }** from **${bossName}!**`;
+      isVestige ? ' vestige (5M) ' : ' '
+    }**from **${bossName}!**`;
 
   if (vestigeMatch) {
     const item = vestigeMatch[1];

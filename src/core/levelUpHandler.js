@@ -1,4 +1,4 @@
-import { formatValue } from './helperFunctions';
+import { formatValue, formatLists } from './helperFunctions';
 import {
   MAX_TOTAL_LEVEL,
   LEVEL,
@@ -91,12 +91,9 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
       formatSkillMessage(name, level)
     );
 
-    if (levelledSkillsLength === 2) {
-      return skillMessages.join(' and ');
+    if (levelledSkillsLength > 1) {
+      return formatLists(skillMessages);
     }
-
-    const lastSkill = skillMessages.pop();
-    return `${skillMessages.join(', ')}, and ${lastSkill}`;
   };
 
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {

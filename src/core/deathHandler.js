@@ -1,4 +1,4 @@
-import { formatValue } from './helperFunctions';
+import { formatValue, formatLists } from './helperFunctions';
 import { DEATH_EMOJIS, DEATH } from '../constants';
 
 const FOOD_ARR = ['Saradomin Brew', 'Anglerfish', 'Shark'];
@@ -32,10 +32,11 @@ function deathHandler(msgMap, playerName, extra, URL) {
     return acc;
   }, {});
 
-  const foodLostString = Object.entries(countFood)
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, qty]) => `${qty}x ${name}`)
-    .join(', ');
+  const foodLostString = formatListWithGrammar(
+    Object.entries(countFood)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, qty]) => `${qty}x ${name}`)
+  );
 
   const lostFood = Boolean(foodLostString);
 

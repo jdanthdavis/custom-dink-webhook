@@ -77,23 +77,22 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   /** Builds the skill-level message string for 1+ skills */
   const multiLevelMsgConstructor = () => {
     const isInterval = isTotalLevelInterval(totalLevel);
+
     const formatSkillMessage = (name, level) =>
       isInterval
-        ? `**${level}** in **${name}!**`
-        : `**${name}** to **${level}!**`;
+        ? `**${level}** in **${name}**`
+        : `**${name}** to **${level}**`;
 
     if (levelledSkillsLength === 1) {
       const [skillName, skillLevel] = Object.entries(levelledSkills)[0];
-      return formatSkillMessage(skillName, skillLevel);
+      return `${formatSkillMessage(skillName, skillLevel)}!`;
     }
 
     const skillMessages = Object.entries(levelledSkills).map(([name, level]) =>
       formatSkillMessage(name, level)
     );
 
-    if (levelledSkillsLength > 1) {
-      return formatLists(skillMessages);
-    }
+    return `${formatListWithGrammar(skillMessages)}!`;
   };
 
   for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {

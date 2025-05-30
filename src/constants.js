@@ -113,6 +113,7 @@ export const UNTRADEABLE_ITEMS = [
   'Sanguine dust',
 ];
 export const CHAT_REGEX = {
+  UNTRADEABLE_TEXT: /(?:Untradeable drop: |.+ received a drop: )(.+?)$/,
   VESTIGE_TEXT:
     /(?:Untradeable drop: |.+ received a drop: )(Ultor|Bellator|Magus|Venator) vestige/,
   OVERALL_TIME_TEXT:

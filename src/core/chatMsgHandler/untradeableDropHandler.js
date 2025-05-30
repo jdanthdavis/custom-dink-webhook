@@ -4,7 +4,7 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   //some code for cloudflare to find
   let msg;
   const vestigeMatch = message?.match(CHAT_REGEX.VESTIGE_TEXT);
-  const untradeableMatch = message?.match(CHAT_REGEX.UNTRADEABLE_DROP);
+  const untradeableMatch = message?.match(CHAT_REGEX.UNTRADEABLE_TEXT);
   const tobKitMatch = message?.match(CHAT_REGEX.TOB_KITS);
   if (!vestigeMatch && !untradeableMatch && !tobKitMatch) return;
 
@@ -21,8 +21,8 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
 
   const buildMessage = (playerName, item, isVestige = false) =>
     `**${playerName}** has received **x1 ${item}${
-      isVestige ? ' vestige (5M)' : ''
-    }** from **${bossName}!**`;
+      isVestige ? ' vestige (5M) ' : ' '
+    }**from **${bossName}!**`;
 
   if (vestigeMatch) {
     const item = vestigeMatch[1];

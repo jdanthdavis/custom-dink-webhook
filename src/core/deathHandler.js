@@ -1,4 +1,4 @@
-import { formatValue } from './helperFunctions';
+import { formatValue, formatLists } from './helperFunctions';
 import { DEATH_EMOJIS, DEATH } from '../constants';
 
 const FOOD_ARR = ['Saradomin Brew', 'Anglerfish', 'Shark'];
@@ -32,14 +32,19 @@ function deathHandler(msgMap, playerName, extra, URL) {
     return acc;
   }, {});
 
-  const foodLostString = Object.entries(countFood)
-    .sort((a, b) => b[1] - a[1])
-    .map(([name, qty]) => `${qty}x ${name}`)
-    .join(', ');
+  const foodLostString = formatLists(
+    Object.entries(countFood)
+      .sort((a, b) => b[1] - a[1])
+      .map(([name, qty]) => `${qty}x ${name}`)
+  );
+
+  const lostFood = Boolean(foodLostString);
 
   const msg = isPvp
     ? `**${playerName}** has just been killed by **${killerName}** for **${formattedValueLost}** coins ${DEATH_EMOJIS[randomIndex]}`
-    : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]} \n-# ${foodLostString}`;
+    : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]}${
+        lostFood ? `\n-# ${foodLostString}` : ''
+      }`;
 
   msgMap.set({ ID: DEATH, URL }, msg);
 

@@ -22,7 +22,7 @@ function formatValue(value, xpInterval = false) {
   } else if (value >= 1e3) {
     formatted = `(${(value / 1e3).toFixed(1).replace(/\.0$/, '')}K)`;
   } else {
-    formatted = value;
+    formatted = `(${value})`;
   }
 
   return xpInterval ? formatted.replace(/[()]/g, '') : formatted;

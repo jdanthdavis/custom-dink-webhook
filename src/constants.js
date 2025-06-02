@@ -123,10 +123,10 @@ export const CHAT_REGEX = Object.freeze({
 
 export const RULES = Object.freeze({
   drops: {
-    minLootValue: 1000000,
+    minLootValue: 1_000_000,
   },
   clueScrolls: {
-    minValue: 500000,
+    minValue: 500_000,
   },
   chat: {
     messageTypes: ['GAMEMESSAGE'],

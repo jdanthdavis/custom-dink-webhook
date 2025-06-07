@@ -1,59 +1,47 @@
 name: Deploy to Cloudflare
 
 on:
-  workflow_dispatch: # Allows manual triggering
+  workflow_dispatch:
   pull_request:
     branches:
       - main
       - dev
-    # Only trigger if the pull request is merged
-    if: github.event.pull_request.merged == true
+    types: [closed]  # Only trigger when PRs are closed
 
 jobs:
   deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set Environment Variables for Main
-        if: github.ref == 'refs/heads/main'
+      - name: Set Environment Variables
         run: |
-          echo "KC_URL=${{ secrets.KC_URL }}" >> $GITHUB_ENV
-          echo "PB_URL=${{ secrets.PB_URL }}" >> $GITHUB_ENV
-          echo "PET_URL=${{ secrets.PET_URL }}" >> $GITHUB_ENV
-
-      - name: Set Environment Variables for Dev
-        if: github.ref == 'refs/heads/dev'
-        run: |
-          echo "KC_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
-          echo "PB_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
-          echo "PET_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
-          echo "CA_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
-          echo "COLLECTION_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
-          echo "LEVEL_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
-
-      - name: Ensure correct wrangler.toml name for main branch
-        if: github.ref == 'refs/heads/main'
-        run: |
-          # Ensure wrangler.toml has the correct name for main
-          sed -i 's/name = "swap-meet-custom-dink-webhook-dev"/name = "swap-meet-custom-dink-webhook"/' wrangler.toml
-
-      - name: Ensure correct wrangler.toml name for dev branch
-        if: github.ref == 'refs/heads/dev'
-        run: |
-          # Ensure wrangler.toml has the correct name for dev
-          sed -i 's/name = "swap-meet-custom-dink-webhook"/name = "swap-meet-custom-dink-webhook-dev"/' wrangler.toml
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "KC_URL=${{ secrets.KC_URL }}" >> $GITHUB_ENV
+            echo "PB_URL=${{ secrets.PB_URL }}" >> $GITHUB_ENV
+            echo "PET_URL=${{ secrets.PET_URL }}" >> $GITHUB_ENV
+          else
+            echo "KC_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+            echo "PB_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+            echo "PET_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+            echo "CA_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+            echo "COLLECTION_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+            echo "LEVEL_URL=${{ secrets.DEV_URL }}" >> $GITHUB_ENV
+          fi
 
       - name: Install Wrangler
         run: npm install -g wrangler
 
-      - name: Build & Deploy Worker
+      - name: Build & Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerArgs: >-
+            ${{ github.ref == 'refs/heads/dev' && '--config wrangler.dev.toml' || '' }}
         env:
           KC_URL: ${{ env.KC_URL }}
           PB_URL: ${{ env.PB_URL }}
@@ -61,3 +49,4 @@ jobs:
           CA_URL: ${{ env.CA_URL }}
           COLLECTION_URL: ${{ env.COLLECTION_URL }}
           LEVEL_URL: ${{ env.LEVEL_URL }}
+          

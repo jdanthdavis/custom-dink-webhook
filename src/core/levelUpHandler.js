@@ -80,12 +80,12 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
 
     const formatSkillMessage = (name, level) =>
       isInterval
-        ? `**${level}** in **${name}**`
-        : `**${name}** to **${level}**`;
+        ? `**${level}** in **${name}!**`
+        : `**${name}** to **${level}!**`;
 
     if (levelledSkillsLength === 1) {
       const [skillName, skillLevel] = Object.entries(levelledSkills)[0];
-      return `${formatSkillMessage(skillName, skillLevel)}!`;
+      return `${formatSkillMessage(skillName, skillLevel)}`;
     }
 
     const skillMessages = Object.entries(levelledSkills).map(([name, level]) =>

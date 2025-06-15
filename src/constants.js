@@ -57,6 +57,7 @@ export const bossMap = new Map([
   ['CORPOREAL BEAST', 50],
   ['HERBIBOAR', 150],
   ['YAMA', 25],
+  ["SKOTIZO", 5],
   ['TEST', 1],
 ]);
 

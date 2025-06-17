@@ -12,7 +12,7 @@ import { CLUE } from '../constants';
 function clueScrollHandler(msgMap, playerName, extra, URL) {
   const { clueType, numberCompleted, items } = extra;
   const message = `**${playerName}** has completed a **${clueType} clue!** | **Total: ${numberCompleted}**
-  **Rewards:**
+**Rewards:**
 ${items
   .map(
     (item) =>

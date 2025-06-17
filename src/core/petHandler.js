@@ -73,14 +73,14 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
 
     // Happy path with all information.
     const msg = isDuplicate
-      ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}** at **${milestone}! ${
+      ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}** at **${milestone}!** ${
           totalPets
-            ? `| ${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+            ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
             : ''
         }`
-      : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}** at **${milestone}! ${
+      : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}** at **${milestone}!** ${
           totalPets
-            ? `| ${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+            ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
             : ''
         }`;
 

@@ -35,7 +35,7 @@ function personalBestHandler(msgMap, playerName, extra, URL) {
 
   msgMap.set(
     { ID: PERSONAL_BEST, URL },
-    `**${playerName}** has defeated **${bossName}** with a new personal best of **${cleanedTime}**!`
+    `**${playerName}** has defeated **${bossName}** with a new personal best of **${cleanedTime}!**`
   );
 
   return msgMap;

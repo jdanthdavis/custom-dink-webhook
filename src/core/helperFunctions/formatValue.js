@@ -12,7 +12,7 @@
  * @returns {string} - The formatted price as a string, or 'Very valuable' for extremely large values.
  */
 function formatValue(value, xpInterval = false) {
-  if (value >= 2147e6) return 'Very valuable';
+  if (value >= 2147e6) return 'Very valuable!';
 
   let formatted;
   if (value >= 1e9) {

@@ -12,8 +12,8 @@ import { CLUE } from '../constants';
 function clueScrollHandler(msgMap, playerName, extra, URL) {
   const { clueType, numberCompleted, items } = extra;
   const totalValue = items.reduce((acc, item) => acc + item.quantity * item.priceEach, 0);
-  const message = `**${playerName}** has completed a **${clueType}** clue! | Completed: **${numberCompleted}**
-Total Value: **${formatValue(totalValue)}** | Rewards:
+  const message = `**${playerName}** has completed **${numberCompleted ${clueType}** clues! | Total Value: **${formatValue(totalValue)}**
+Rewards:
 ${items
   .map(
     (item) =>

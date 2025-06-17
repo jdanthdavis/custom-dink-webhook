@@ -13,11 +13,9 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
   const {
     tier,
     task,
-    totalPoints,
     tierProgress,
     tierTotalPoints,
     justCompletedTier,
-    totalPossiblePoints,
     currentTier,
   } = extra;
 
@@ -30,10 +28,6 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
     tierProgress,
     tierTotalPoints
   );
-  const formattedTotalCACompletion = formatAsPercentage(
-    totalPoints,
-    totalPossiblePoints
-  );
 
   const formattedTier = formatTierText(tier);
   const formattedCurrentTier = formatTierText(currentTier);
@@ -42,16 +36,12 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
   if (justCompletedTier) {
     msgMap.set(
       { ID: COMBAT_ACHIEVEMENT, URL },
-      `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**${
-        justCompletedTier !== 'GRANDMASTER'
-          ? `\n-# ${totalPoints}/${totalPossiblePoints} (${formattedTotalCACompletion}%) of total points for Grandmasters`
-          : ``
-      }`
+      `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**`
     );
   } else {
     msgMap.set(
       { ID: COMBAT_ACHIEVEMENT, URL },
-      `**${playerName}** has completed **${formattedTier}** combat task: **${task} | ${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%) of ${formattedCurrentTier} tier completed!**`
+      `**${playerName}** has completed **${formattedTier}** combat task: **${task}** | **${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%)** of **${formattedCurrentTier}** tier completed!`
     );
   }
 

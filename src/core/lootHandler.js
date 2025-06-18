@@ -15,15 +15,20 @@ const LOOT_THRESHOLD = 1_000_000;
  */
 function lootHandler(msgMap, items, playerName, source, URL) {
   const validatedSource = grumblerCheck(source);
-  const filteredLoot = items.filter((item) => item.priceEach > LOOT_THRESHOLD);
-  const msg = `**${playerName}** has received**${filteredLoot
-    .map(
-      (item) =>
-        ` ${item.quantity}x ${item.name} ${formatValue(
-          item.priceEach * item.quantity
-        )}`
-    )
-    .join(',')}** from **${validatedSource}!**`;
+
+  const filteredItems = items.reduce((acc, item) => {
+    const totalValue = item.priceEach * item.quantity;
+    if (totalValue > LOOT_THRESHOLD) {
+      acc.push(`${item.quantity}x ${item.name} ${formatValue(totalValue)}`);
+    }
+    return acc;
+  }, []);
+
+  if (!msg.length) return;
+
+  const msg = `**${playerName}** has received** ${filteredItems.join(
+    ','
+  )}** from **${validatedSource}!**`;
 
   msgMap.set({ ID: LOOT, URL }, msg);
 

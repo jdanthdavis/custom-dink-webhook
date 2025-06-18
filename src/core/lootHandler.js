@@ -24,11 +24,11 @@ function lootHandler(msgMap, items, playerName, source, URL) {
     return acc;
   }, []);
 
-  if (!msg.length) return;
-
   const msg = `**${playerName}** has received** ${filteredItems.join(
     ','
   )}** from **${validatedSource}!**`;
+
+  if (!msg.length) return;
 
   msgMap.set({ ID: LOOT, URL }, msg);
 

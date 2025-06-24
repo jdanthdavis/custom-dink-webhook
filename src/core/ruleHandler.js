@@ -31,7 +31,9 @@ function ruleHandler(ruleBroken, payloadType, extra) {
     case LOOT:
       if (
         calculateTotalValue(items) < RULES.drops.minLootValue ||
-        items.some((item) => item.name.toUpperCase().includes('CONTRACT OF'))
+        items.some((item) =>
+          ['CONTRACT OF', 'OATHPLATE SHARDS'].includes(item.toUpperCase())
+        )
       ) {
         ruleBroken = true;
         return ruleBroken;

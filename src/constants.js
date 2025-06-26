@@ -57,7 +57,7 @@ export const bossMap = new Map([
   ['CORPOREAL BEAST', 50],
   ['HERBIBOAR', 150],
   ['YAMA', 25],
-  ["SKOTIZO", 5],
+  ['SKOTIZO', 5],
   ['TEST', 1],
 ]);
 
@@ -81,6 +81,7 @@ export const DEATH_EMOJIS = [
   '<:giggle:1024050755017130016>',
   '<:bozo:1364661207960780800>',
   '<a:itswill_bozo:1365315318318366770>',
+  '<:sludge:1387592695341387938> ',
 ];
 
 // chat

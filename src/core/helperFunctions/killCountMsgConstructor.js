@@ -1,4 +1,4 @@
-import { addCommas } from './addCommas';
+import { addCommas } from '../helperFunctions';
 
 /**
  * Adds the correct wording for specific kill count messages

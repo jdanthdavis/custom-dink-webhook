@@ -1,3 +1,5 @@
+import { addCommas } from './addCommas';
+
 /**
  * Adds the correct wording for specific kill count messages
  * @param {*} playerName
@@ -22,7 +24,9 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
     fallBackType = secondaryMatch.groups.type;
   }
 
-  return `**${playerName}** has defeated **${bossName}** with a ${fallBackType} count of **${killCount}!**`;
+  return `**${playerName}** has defeated **${bossName}** with a ${fallBackType} count of **${addCommas(
+    killCount
+  )}!**`;
 }
 
 export default killCountMsgConstructor;

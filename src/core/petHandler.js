@@ -52,6 +52,23 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
   }
 
   return (async () => {
+    // Special case for Abyssal orphan
+    if (validatedPetName === 'Abyssal orphan') {
+      const msg = isDuplicate
+        ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}!** ${
+            totalPets
+              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+              : ''
+          }`
+        : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}!** ${
+            totalPets
+              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+              : ''
+          }`;
+      msgMap.set({ ID: PET, URL }, msg);
+      return msgMap;
+    }
+
     // Fallback for when the game message does not contain the pet's name or the milestone it was acquired at.
     if (!validatedPetName || !milestone) {
       const fallbackMsg = isDuplicate

@@ -60,7 +60,13 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     case Constants.COLLECTION:
       if (extra.item === 'Abyssal orphan') {
         // Dink does not fire pet notifications for Abyssal orphan so check here for first instance of it
-        await petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, PET_URL);
+        await petHandler(
+          msgMap,
+          playerName,
+          { duplicate: false, petName: 'Abyssal orphan' },
+          MONGO_MIDDLEWARE,
+          PET_URL
+        );
       }
       collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
       break;

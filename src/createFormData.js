@@ -80,7 +80,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.CHAT:
-      chatHandler(
+      await chatHandler(
         msgMap,
         playerName,
         extra.message,

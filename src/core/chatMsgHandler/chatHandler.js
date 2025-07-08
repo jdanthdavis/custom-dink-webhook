@@ -4,7 +4,7 @@ import { untradeableDropHandler } from './untradeableDropHandler';
 import { petGraph } from './petGraph';
 import { CHAT_MESSAGE_TYPES, UNTRADEABLE_ITEMS } from '../../constants';
 
-function chatHandler(
+async function chatHandler(
   msgMap,
   playerName,
   message,
@@ -38,6 +38,7 @@ function chatHandler(
       type: 'FETCH_PETS',
     },
   ];
+
   const typeOfChat = messageChecks.find((entry) => entry.check(message))?.type;
 
   switch (typeOfChat) {
@@ -51,7 +52,7 @@ function chatHandler(
       sepulchreHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
-      petGraph(message, playerName, msgMap, MONGO_MIDDLEWARE);
+      await petGraph(message, playerName, msgMap, MONGO_MIDDLEWARE);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

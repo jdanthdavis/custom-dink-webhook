@@ -32,38 +32,51 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
     }
   }
 
-  async function incrementPetCount(playername, petName) {
-    const url = `${MONGO_MIDDLEWARE}/increment-pets`;
-    console.log(url);
+  app.post('/increment-pets', async (req, res) => {
+    const { playername, petName, dateGot } = req.body;
 
-    const today = new Date();
-    // Format as MM/DD/YYYY
-    const formattedDate = `${String(today.getMonth() + 1).padStart(
-      2,
-      '0'
-    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
+    if (!playername) {
+      return res.status(400).json({ error: 'Missing playername' });
+    }
 
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          playername,
-          petName,
-          dateGot: formattedDate,
-        }),
-      });
+      const update = {
+        $inc: { [`players.${playername}.totalPets`]: 1 },
+      };
 
-      if (!res.ok)
-        throw new Error(`Failed to increment pet count: ${res.status}`);
-      const json = await res.json();
-      console.log(
-        `Pet count and recent pet successfully updated for ${json.playername}`
+      if (petName && dateGot) {
+        update.$set = {
+          [`players.${playername}.mostRecentPet`]: {
+            name: petName,
+            dateGot,
+          },
+        };
+      }
+
+      update.$setOnInsert = {
+        [`players.${playername}.totalPets`]: 0,
+        [`players.${playername}.mostRecentPet`]: {
+          name: petName || '',
+          dateGot: dateGot || '',
+        },
+      };
+
+      const result = await petsCollection.updateOne(
+        {}, // Assuming a single document contains all players
+        update,
+        { upsert: true }
       );
+
+      if (result.matchedCount === 0 && result.upsertedCount === 0) {
+        return res.status(404).json({ error: 'Player not found or created' });
+      }
+
+      res.json({ success: true, playername });
     } catch (error) {
-      console.log('incrementPetCount ', error.message);
+      console.error('Increment error:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-  }
+  });
 
   return (async () => {
     if (!isDuplicate) {

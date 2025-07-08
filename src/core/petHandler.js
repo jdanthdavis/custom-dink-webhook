@@ -24,7 +24,8 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
       }
 
       const json = await res.json();
-      return json.score;
+      // Extract updated totalPets field
+      return json.player?.totalPets ? Number(json.player.totalPets) : null;
     } catch (error) {
       console.log('getTotalPets ', error.message);
       return null;

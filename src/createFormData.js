@@ -86,6 +86,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         extra.message,
         PB_URL,
         LOOT_URL,
+        PET_URL,
         MONGO_MIDDLEWARE
       );
       break;

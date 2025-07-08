@@ -10,6 +10,7 @@ async function chatHandler(
   message,
   PB_URL,
   LOOT_URL,
+  PET_URL,
   MONGO_MIDDLEWARE
 ) {
   const messageChecks = [
@@ -52,7 +53,7 @@ async function chatHandler(
       sepulchreHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
-      await petGraph(message, playerName, msgMap, MONGO_MIDDLEWARE);
+      await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

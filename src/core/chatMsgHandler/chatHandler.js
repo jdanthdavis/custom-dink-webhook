@@ -34,7 +34,7 @@ function chatHandler(
       type: 'YAMA_SIGIL',
     },
     {
-      check: (msg) => msg.includes('!fetchpets'),
+      check: (msg) => msg.includes('!Fetchpets'),
       type: 'FETCH_PETS',
     },
   ];
@@ -52,6 +52,7 @@ function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
       petGraph(message, playerName, msgMap, MONGO_MIDDLEWARE);
+      break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);
       break;

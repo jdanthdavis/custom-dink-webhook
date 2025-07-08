@@ -1,6 +1,4 @@
-import { CHAT_REGEX, CHAT_MESSAGE_TYPES } from '../../constants';
-
-export function petGraph(message, playerName, msgMap, URL) {
+export async function petGraph(message, playerName, msgMap, URL) {
   async function getAllPets() {
     const url = `${MONGO_MIDDLEWARE}/get-pets`;
 
@@ -18,19 +16,21 @@ export function petGraph(message, playerName, msgMap, URL) {
     }
   }
 
-  console.log('ALL_PETS: ', getAllPets());
-
-  let msg;
-  if (overallMatch) {
-    const time = overallMatch[1];
-    msg = `**${playerName}** has achieved a new **Hallowed Sepulchre (Overall)** personal best of **${time}!**`;
-  } else if (floorMatch) {
-    const floorNumber = floorMatch[1];
-    const time = floorMatch[2];
-    msg = `**${playerName}** has achieved a new **Hallowed Sepulchre (Floor ${floorNumber})** personal best of **${time}!**`;
+  function formatPlayers(players) {
+    let lines = ['**All Pets Scores**'];
+    for (const [player, score] of Object.entries(players)) {
+      lines.push(`${player}: ${score}`);
+    }
+    return lines.join('\n');
   }
 
-  if (msg) {
-    msgMap.set({ ID: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST, URL }, msg);
+  // ✅ Await the async function
+  const allPlayers = await getAllPets();
+
+  if (allPlayers) {
+    const formatted = formatPlayers(allPlayers);
+    console.log(formatted);
+  } else {
+    console.log('No players data found.');
   }
 }

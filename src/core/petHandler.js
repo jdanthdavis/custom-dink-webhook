@@ -32,23 +32,36 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
     }
   }
 
-  async function incrementPetCount(playername) {
+  async function incrementPetCount(playername, petName) {
     const url = `${MONGO_MIDDLEWARE}/increment-pets`;
     console.log(url);
+
+    const today = new Date();
+    // Format as MM/DD/YYYY
+    const formattedDate = `${String(today.getMonth() + 1).padStart(
+      2,
+      '0'
+    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
 
     try {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ playername }),
+        body: JSON.stringify({
+          playername,
+          petName,
+          dateGot: formattedDate,
+        }),
       });
 
       if (!res.ok)
         throw new Error(`Failed to increment pet count: ${res.status}`);
       const json = await res.json();
-      console.log(`Pet count successfully incremented for ${json.playername}`);
+      console.log(
+        `Pet count and recent pet successfully updated for ${json.playername}`
+      );
     } catch (error) {
-      console.log('incrementPetcount ', error.message);
+      console.log('incrementPetCount ', error.message);
     }
   }
 

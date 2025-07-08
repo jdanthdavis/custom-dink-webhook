@@ -52,41 +52,31 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
   }
 
   return (async () => {
-    // Special case for Abyssal orphan
-    if (validatedPetName === 'Abyssal orphan') {
-      const msg = isDuplicate
-        ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}!** ${
-            totalPets
-              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
-              : ''
-          }`
-        : `**${playerName}** has a funny feeling like they're being followed by **${validatedPetName}!** ${
-            totalPets
-              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
-              : ''
-          }`;
-      msgMap.set({ ID: PET, URL }, msg);
-      return msgMap;
-    }
-
-    // Fallback for when the game message does not contain the pet's name or the milestone it was acquired at.
-    if (!validatedPetName || !milestone) {
-      const fallbackMsg = isDuplicate
-        ? `**${playerName}** has a funny feeling like they would have been followed!\n-# pet name or milestone missing!`
-        : `**${playerName}** has a funny feeling like they're being followed!\n-# pet name or milestone missing!`;
-
-      msgMap.set({ ID: PET, URL }, fallbackMsg);
-      return msgMap;
-    }
-
     if (!isDuplicate) {
       await incrementPetCount(playerName);
     }
-
     const totalPets = await getTotalPets(playerName);
     const totalPetsPercentage = totalPets
       ? formatAsPercentage(totalPets, ALL_PETS)
       : '';
+
+    // Fallback for when the game message does not contain the pet's name or the milestone it was acquired at.
+    if (!validatedPetName || !milestone) {
+      const fallbackMsg = isDuplicate
+        ? `**${playerName}** has a funny feeling like they would have been followed! ${
+            totalPets
+              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+              : ''
+          }\n-# Pet name or milestone missing!`
+        : `**${playerName}** has a funny feeling like they're being followed! ${
+            totalPets
+              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+              : ''
+          }\n-# Pet name or milestone missing!`;
+
+      msgMap.set({ ID: PET, URL }, fallbackMsg);
+      return msgMap;
+    }
 
     // Happy path with all information.
     const msg = isDuplicate

@@ -1,8 +1,8 @@
 import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { untradeableDropHandler } from './untradeableDropHandler';
+import { petGraph } from './petGraph';
 import { CHAT_MESSAGE_TYPES, UNTRADEABLE_ITEMS } from '../../constants';
-import petGraph from './petGraph';
 
 function chatHandler(
   msgMap,

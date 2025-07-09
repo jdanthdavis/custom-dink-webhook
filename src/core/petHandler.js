@@ -66,7 +66,7 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
     }
     const totalPets = await getTotalPets(playerName);
     const totalPetsPercentage = totalPets
-      ? formatAsPercentage_default(totalPets, ALL_PETS)
+      ? formatAsPercentage(totalPets, ALL_PETS)
       : '';
     if (!validatedPetName || !milestone) {
       const fallbackMsg = isDuplicate

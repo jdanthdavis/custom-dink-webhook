@@ -1,7 +1,6 @@
 import { CHAT_MESSAGE_TYPES, CHAT_REGEX, ITEM_BOSS_MAP } from '../../constants';
 
 export function untradeableDropHandler(message, playerName, msgMap, URL) {
-  //some code for cloudflare to find
   let msg;
   const vestigeMatch = message?.match(CHAT_REGEX.VESTIGE_TEXT);
   const untradeableMatch = message?.match(CHAT_REGEX.UNTRADEABLE_TEXT);
@@ -33,7 +32,6 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   if (tobKitMatch) {
     const item = tobKitMatch[1];
     msg = buildMessage(playerName, item);
-    console.log(msg);
     return msgMap.set({ ID: CHAT_MESSAGE_TYPES.TOB_KITS, URL }, msg);
   }
 

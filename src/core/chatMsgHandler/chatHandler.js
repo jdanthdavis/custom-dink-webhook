@@ -1,9 +1,18 @@
 import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { untradeableDropHandler } from './untradeableDropHandler';
+import { petGraph } from './petGraph';
 import { CHAT_MESSAGE_TYPES, UNTRADEABLE_ITEMS } from '../../constants';
 
-function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
+async function chatHandler(
+  msgMap,
+  playerName,
+  message,
+  PB_URL,
+  LOOT_URL,
+  PET_URL,
+  MONGO_MIDDLEWARE
+) {
   const messageChecks = [
     {
       check: (msg) => msg.includes('(new personal best)'),
@@ -25,7 +34,12 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
       check: (msg) => msg.includes('Purifying sigil'),
       type: 'YAMA_SIGIL',
     },
+    {
+      check: (msg) => msg.includes('!Fetchpets'),
+      type: 'FETCH_PETS',
+    },
   ];
+
   const typeOfChat = messageChecks.find((entry) => entry.check(message))?.type;
 
   switch (typeOfChat) {
@@ -37,6 +51,9 @@ function chatHandler(msgMap, playerName, message, PB_URL, LOOT_URL) {
       break;
     case CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST:
       sepulchreHandler(message, playerName, msgMap, PB_URL);
+      break;
+    case CHAT_MESSAGE_TYPES.FETCH_PETS:
+      await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

@@ -39,8 +39,8 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     // The player has ranked up
     const msg =
       currentRank === 'GILDED'
-        ? `**${playerName}** has reached the highest possible rank of **${formattedCurrentRank}**, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${RANK_MAP[currentRank]}`
-        : `**${playerName}** has completed the **${formattedJustCompletedRank}** rank, by adding **${validatedItemName}** to their collection log **| ${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${RANK_MAP[currentRank]}`;
+        ? `**${playerName}** has reached the highest possible rank of **${formattedCurrentRank}**, by adding **${validatedItemName}** to their collection log | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${RANK_MAP[currentRank]}`
+        : `**${playerName}** has completed the **${formattedJustCompletedRank}** rank, by adding **${validatedItemName}** to their collection log | **${completedEntries}/${totalEntries} (${percentageCompleted}%)** ${RANK_MAP[currentRank]}`;
     msgMap.set({ ID: COLLECTION, URL }, msg);
   } else {
     msgMap.set(

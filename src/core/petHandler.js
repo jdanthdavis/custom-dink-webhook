@@ -11,67 +11,80 @@ import { ALL_PETS, PET } from '../constants';
 async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
   const { milestone, duplicate: isDuplicate, petName } = extra;
   const validatedPetName = grumblerCheck(petName);
-
   async function getTotalPets(playername) {
     const url = `${MONGO_MIDDLEWARE}/get-pets?playername=${encodeURIComponent(
       playername
     )}`;
-
     try {
       const res = await fetch(url);
       if (!res.ok) {
         throw new Error(`/get-pets response status: ${res.status}`);
       }
-
       const json = await res.json();
-      return json.score;
+      return json.player?.totalPets != null
+        ? Number(json.player.totalPets)
+        : null;
     } catch (error) {
       console.log('getTotalPets ', error.message);
       return null;
     }
   }
 
-  async function incrementPetCount(playername) {
+  async function incrementPetCount(playername, petName) {
     const url = `${MONGO_MIDDLEWARE}/increment-pets`;
-    console.log(url);
+    const today = new Date();
+    const formattedDate = `${String(today.getMonth() + 1).padStart(
+      2,
+      '0'
+    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
 
     try {
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ playername }),
+        body: JSON.stringify({
+          playername,
+          petName,
+          dateGot: formattedDate,
+        }),
       });
 
       if (!res.ok)
         throw new Error(`Failed to increment pet count: ${res.status}`);
       const json = await res.json();
-      console.log(`Pet count successfully incremented for ${json.playername}`);
+      console.log(
+        `Pet count and recent pet successfully updated for ${json.playername}`
+      );
     } catch (error) {
-      console.log('incrementPetcount ', error.message);
+      console.log('incrementPetCount ', error.message);
     }
   }
 
   return (async () => {
-    // Fallback for when the game message does not contain the pet's name or the milestone it was acquired at.
-    if (!validatedPetName || !milestone) {
-      const fallbackMsg = isDuplicate
-        ? `**${playerName}** has a funny feeling like they would have been followed!\n-# pet name or milestone missing!`
-        : `**${playerName}** has a funny feeling like they're being followed!\n-# pet name or milestone missing!`;
-
-      msgMap.set({ ID: PET, URL }, fallbackMsg);
-      return msgMap;
-    }
-
     if (!isDuplicate) {
-      await incrementPetCount(playerName);
+      await incrementPetCount(playerName, validatedPetName);
     }
-
     const totalPets = await getTotalPets(playerName);
     const totalPetsPercentage = totalPets
       ? formatAsPercentage(totalPets, ALL_PETS)
       : '';
-
-    // Happy path with all information.
+    if (!validatedPetName || !milestone) {
+      const fallbackMsg = isDuplicate
+        ? `**${playerName}** has a funny feeling like they would have been followed! ${
+            totalPets
+              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+              : ''
+          }
+-# Pet name or milestone missing!`
+        : `**${playerName}** has a funny feeling like they're being followed! ${
+            totalPets
+              ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
+              : ''
+          }
+-# Pet name or milestone missing!`;
+      msgMap.set({ ID: PET, URL }, fallbackMsg);
+      return msgMap;
+    }
     const msg = isDuplicate
       ? `**${playerName}** has a funny feeling like they would have been followed by **${validatedPetName}** at **${milestone}!** ${
           totalPets
@@ -83,9 +96,7 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
             ? `| **${totalPets}/${ALL_PETS} (${totalPetsPercentage}%)**`
             : ''
         }`;
-
     msgMap.set({ ID: PET, URL }, msg);
-
     return msgMap;
   })();
 }

@@ -36,7 +36,7 @@ const FOOD_ARR = [
   'Silk dressing',
 ];
 
-INVALID_FOOD_ARR = ['Shark lure'];
+const INVALID_FOOD_ARR = ['Shark lure'];
 
 /**
  * Handles a player's death event and updates the message map with a formatted message.

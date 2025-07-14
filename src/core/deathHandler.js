@@ -36,6 +36,8 @@ const FOOD_ARR = [
   'Silk dressing',
 ];
 
+INVALID_FOOD_ARR = ['Shark lure'];
+
 /**
  * Handles a player's death event and updates the message map with a formatted message.
  *
@@ -56,8 +58,10 @@ function deathHandler(msgMap, playerName, extra, URL) {
   const combinedFoods = [...keptItems, ...lostItems];
 
   const countFood = combinedFoods.reduce((acc, item) => {
-    const matched = FOOD_ARR.find((kw) =>
-      item.name.toLowerCase().startsWith(kw.toLowerCase())
+    const matched = FOOD_ARR.find(
+      (kw) =>
+        item.name.toLowerCase().startsWith(kw.toLowerCase()) &&
+        !INVALID_FOOD_ARR.includes(item.name)
     );
     if (matched) {
       acc[matched] = (acc[matched] || 0) + item.quantity;

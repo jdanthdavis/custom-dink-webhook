@@ -53,8 +53,15 @@ const GRUMBLER_REGION = 11330;
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map.
  */
 function deathHandler(msgMap, playerName, extra, URL) {
-  const { isPvp, valueLost, killerName, keptItems, lostItems, regionId } =
-    extra;
+  const {
+    isPvp,
+    valueLost,
+    killerName,
+    keptItems,
+    lostItems,
+    location: { regionId },
+  } = extra;
+
   const formattedValueLost = formatValue(valueLost);
   const randomIndex = Math.floor(Math.random() * DEATH_EMOJIS.length);
   const combinedFoods = [...keptItems, ...lostItems];

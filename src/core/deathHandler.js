@@ -38,6 +38,8 @@ const FOOD_ARR = [
 
 const INVALID_FOOD_ARR = ['Shark lure'];
 
+const GRUMBLER_REGION = 11330;
+
 /**
  * Handles a player's death event and updates the message map with a formatted message.
  *
@@ -51,11 +53,12 @@ const INVALID_FOOD_ARR = ['Shark lure'];
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map.
  */
 function deathHandler(msgMap, playerName, extra, URL) {
-  const { isPvp, valueLost, killerName, keptItems, lostItems } = extra;
+  const { isPvp, valueLost, killerName, keptItems, lostItems, regionId } =
+    extra;
   const formattedValueLost = formatValue(valueLost);
   const randomIndex = Math.floor(Math.random() * DEATH_EMOJIS.length);
-
   const combinedFoods = [...keptItems, ...lostItems];
+  let msg;
 
   const countFood = combinedFoods.reduce((acc, item) => {
     const matched = FOOD_ARR.find(
@@ -77,11 +80,17 @@ function deathHandler(msgMap, playerName, extra, URL) {
 
   const lostFood = Boolean(foodLostString);
 
-  const msg = isPvp
-    ? `**${playerName}** has just been killed by **${killerName}** for **${formattedValueLost}** coins ${DEATH_EMOJIS[randomIndex]}`
-    : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]}${
-        lostFood ? `\n-# ${foodLostString}` : ''
-      }`;
+  if (regionId === GRUMBLER_REGION) {
+    msg = `**${playerName}** has been grumbled ${DEATH_EMOJIS[randomIndex]}${
+      lostFood ? `\n-# ${foodLostString}` : ''
+    }`;
+  } else {
+    msg = isPvp
+      ? `**${playerName}** has just been killed by **${killerName}** for **${formattedValueLost}** coins ${DEATH_EMOJIS[randomIndex]}`
+      : `**${playerName}** has died ${DEATH_EMOJIS[randomIndex]}${
+          lostFood ? `\n-# ${foodLostString}` : ''
+        }`;
+  }
 
   msgMap.set({ ID: DEATH, URL }, msg);
 

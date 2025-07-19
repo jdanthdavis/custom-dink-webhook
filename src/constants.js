@@ -2,6 +2,8 @@
 export const THE_GRUMBLER = 'The Grumbler';
 export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
+export const GG = 'Grotesque Guardians';
+export const DUSK = 'DUSK';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';

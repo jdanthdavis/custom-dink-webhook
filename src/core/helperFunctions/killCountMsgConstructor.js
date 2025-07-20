@@ -1,4 +1,4 @@
-import { addCommas } from '../helperFunctions';
+import * as Constants from '../../constants';
 
 /**
  * Adds the correct wording for specific kill count messages
@@ -13,6 +13,10 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
   const secondary_regex =
     /Your (?<type>completed|subdued) (?<key>.+?) count is: [\d,]+\b/i;
 
+  if (bossName === Constants.THE_GRUMBLER) {
+    return `**${playerName}** has defeated **${bossName}** with a grumble count of **${killCount.toLocalString()}!**`;
+  }
+
   const primaryMatch = gameMessage.match(primary_regex);
   const secondaryMatch = gameMessage.match(secondary_regex);
 
@@ -24,9 +28,7 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
     fallBackType = secondaryMatch.groups.type;
   }
 
-  return `**${playerName}** has defeated **${bossName}** with a ${fallBackType} count of **${addCommas(
-    killCount
-  )}!**`;
+  return `**${playerName}** has defeated **${bossName}** with a ${fallBackType} count of **${killCount.toLocalString()}!**`;
 }
 
 export default killCountMsgConstructor;

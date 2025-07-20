@@ -1,4 +1,4 @@
-import { formatValue, addCommas } from './helperFunctions';
+import { formatValue } from './helperFunctions';
 import { CLUE } from '../constants';
 
 /**
@@ -15,9 +15,7 @@ function clueScrollHandler(msgMap, playerName, extra, URL) {
     (acc, item) => acc + item.quantity * item.priceEach,
     0
   );
-  const message = `**${playerName}** has completed **${addCommas(
-    numberCompleted
-  )} ${clueType}** clue${
+  const message = `**${playerName}** has completed **${numberCompleted.toLocalString()} ${clueType}** clue${
     numberCompleted > 1 ? `s` : ``
   }! | Total Value: **${formatValue(totalValue).replace(/[()]/g, '')}**
 **Rewards:**

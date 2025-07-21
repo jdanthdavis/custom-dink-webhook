@@ -15,7 +15,7 @@ function clueScrollHandler(msgMap, playerName, extra, URL) {
     (acc, item) => acc + item.quantity * item.priceEach,
     0
   );
-  const message = `**${playerName}** has completed **${numberCompleted.toLocalString()} ${clueType}** clue${
+  const message = `**${playerName}** has completed **${numberCompleted.toLocaleString()} ${clueType}** clue${
     numberCompleted > 1 ? `s` : ``
   }! | Total Value: **${formatValue(totalValue).replace(/[()]/g, '')}**
 **Rewards:**

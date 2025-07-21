@@ -16,7 +16,9 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
   } = extra;
   const validatedPetName = grumblerCheck(petName);
   let milestone =
-    validatedPetName === THE_GRUMBLER ? 'grumbles' : initialMilestone;
+    validatedPetName === THE_GRUMBLER
+      ? milestone.replace('killcount', 'grumbles')
+      : initialMilestone;
 
   async function getTotalPets(playername) {
     const url = `${MONGO_MIDDLEWARE}/get-pets?playername=${encodeURIComponent(

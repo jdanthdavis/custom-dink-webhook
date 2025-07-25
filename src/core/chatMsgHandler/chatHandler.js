@@ -3,6 +3,7 @@ import { sepulchreHandler } from './sepulchreHandler';
 import { untradeableDropHandler } from './untradeableDropHandler';
 import { petGraph } from './petGraph';
 import { CHAT_MESSAGE_TYPES, UNTRADEABLE_ITEMS } from '../../constants';
+import { delveHandler } from './delveHandler';
 
 async function chatHandler(
   msgMap,
@@ -27,8 +28,8 @@ async function chatHandler(
       type: CHAT_MESSAGE_TYPES.BIG_FISH,
     },
     {
-      check: (msg) => msg.includes('Dossier'),
-      type: 'YAMA_CONTRACT',
+      check: (msg) => msg.includes('Delve'),
+      type: 'DELVE_PB',
     },
     {
       check: (msg) => msg.includes('Purifying sigil'),
@@ -54,6 +55,9 @@ async function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
       await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
+      break;
+    case 'DELVE_PB':
+      delveHandler(message, playerName, msgMap, PB_URL);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

@@ -16,7 +16,8 @@ async function chatHandler(
 ) {
   const messageChecks = [
     {
-      check: (msg) => msg.includes('(new personal best)'),
+      check: (msg) =>
+        msg.includes('(new personal best)') || msg.includes('Delve'),
       type: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST,
     },
     {
@@ -26,14 +27,6 @@ async function chatHandler(
     {
       check: (msg) => msg.includes('enormous'),
       type: CHAT_MESSAGE_TYPES.BIG_FISH,
-    },
-    {
-      check: (msg) => msg.includes('Delve'),
-      type: 'DELVE_PB',
-    },
-    {
-      check: (msg) => msg.includes('Purifying sigil'),
-      type: 'YAMA_SIGIL',
     },
     {
       check: (msg) => msg.includes('!Fetchpets'),
@@ -51,13 +44,14 @@ async function chatHandler(
       bigFishHandler(message, playerName, msgMap, LOOT_URL);
       break;
     case CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST:
-      sepulchreHandler(message, playerName, msgMap, PB_URL);
+      if (message.includes('Delve')) {
+        delveHandler(message, playerName, msgMap, PB_URL);
+      } else {
+        sepulchreHandler(message, playerName, msgMap, PB_URL);
+      }
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
       await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
-      break;
-    case 'DELVE_PB':
-      delveHandler(message, playerName, msgMap, PB_URL);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

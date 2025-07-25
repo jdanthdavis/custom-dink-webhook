@@ -1,13 +1,14 @@
 export function delveHandler(message, playerName, msgMap, URL) {
-  const match = message?.match(/^(.*?duration):\s*(\d{1,2}:\d{2}\.\d{2})/);
-  const floor = match[1];
-  const time = match[2];
+  const match = message?.match(
+    /^(Delve level(?:(?:\:|\s)[^:]+)):\s*(\d{1,2}:\d{2}\.\d{2})/
+  );
 
   if (!match) return;
 
-  const msg = `**${playerName}** has achieved a new **Doom of Mokhaiotl ${floor} personal best of **${time}!**`;
+  const floor = match[1].trim();
+  const time = match[2];
 
-  if (msg) {
-    msgMap.set({ ID: 'DELVE_PB', URL }, msg);
-  }
+  const msg = `**${playerName}** has defeated **Doom of Mokhaiotl (${floor})** with a new personal best of **${time}!**`;
+
+  msgMap.set({ ID: 'DELVE_PB', URL }, msg);
 }

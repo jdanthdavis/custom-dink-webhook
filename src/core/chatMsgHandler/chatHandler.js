@@ -12,6 +12,7 @@ async function chatHandler(
   PB_URL,
   LOOT_URL,
   PET_URL,
+  KC_URL,
   MONGO_MIDDLEWARE
 ) {
   const messageChecks = [
@@ -45,7 +46,7 @@ async function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST:
       if (message.includes('Delve')) {
-        delveHandler(message, playerName, msgMap, PB_URL);
+        delveHandler(message, playerName, msgMap, PB_URL, KC_URL);
       } else {
         sepulchreHandler(message, playerName, msgMap, PB_URL);
       }

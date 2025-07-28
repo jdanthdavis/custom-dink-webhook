@@ -48,7 +48,12 @@ export const MAX_TOTAL_LEVEL = 2277;
 
 // kill count
 export const KILL_COUNT = 'KILL_COUNT';
-export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
+export const specialKills = [
+  'SOL HEREDIT',
+  'TZKAL-ZUK',
+  'TZTOK-JAD',
+  'Doom of Mokhaiotl',
+];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
   ['SOL HEREDIT', 5],
@@ -60,6 +65,7 @@ export const bossMap = new Map([
   ['HERBIBOAR', 150],
   ['YAMA', 25],
   ['SKOTIZO', 5],
+  ['Doom of Mokhaiotl', 25],
   ['TEST', 1],
 ]);
 

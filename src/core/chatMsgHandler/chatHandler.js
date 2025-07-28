@@ -18,7 +18,9 @@ async function chatHandler(
   const messageChecks = [
     {
       check: (msg) =>
-        msg.includes('(new personal best)') || msg.includes('Delve'),
+        msg.includes('(new personal best)') ||
+        msg.includes('Delve') ||
+        msg.includes('Deep'),
       type: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST,
     },
     {

@@ -7,11 +7,11 @@ export function delveHandler(message, playerName, msgMap, PB_URL, KC_URL) {
   );
 
   if (!delvePersonalBest) {
-    const personalBest = ([left, right] = str.split(/\s*:\s*/));
+    const personalBest = message?.split(/\s*:\s*/);
     const extra = {
       boss: 'Doom of Mokhaiotl',
-      count: Number(right),
-      gameMessage,
+      count: Number(personalBest[1]),
+      gameMessage: message,
     };
     killCountHandler(msgMap, playerName, extra, KC_URL);
   }

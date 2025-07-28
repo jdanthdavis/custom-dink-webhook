@@ -47,7 +47,7 @@ async function chatHandler(
       bigFishHandler(message, playerName, msgMap, LOOT_URL);
       break;
     case CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST:
-      if (message.includes('Delve')) {
+      if (message.includes('Delve') || message.includes('Deep')) {
         delveHandler(message, playerName, msgMap, PB_URL, KC_URL);
       } else {
         sepulchreHandler(message, playerName, msgMap, PB_URL);

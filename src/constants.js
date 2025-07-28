@@ -52,7 +52,7 @@ export const specialKills = [
   'SOL HEREDIT',
   'TZKAL-ZUK',
   'TZTOK-JAD',
-  'Doom of Mokhaiotl',
+  'DOOM OF MOKHAIOTL',
 ];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
@@ -65,7 +65,7 @@ export const bossMap = new Map([
   ['HERBIBOAR', 150],
   ['YAMA', 25],
   ['SKOTIZO', 5],
-  ['Doom of Mokhaiotl', 25],
+  ['DOOM OF MOKHAIOTL', 25],
   ['TEST', 1],
 ]);
 

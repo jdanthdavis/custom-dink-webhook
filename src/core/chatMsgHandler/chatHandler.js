@@ -21,13 +21,14 @@ async function chatHandler(
   MONGO_MIDDLEWARE
 ) {
   const messageChecks = [
-    // {
-    //   check: (msg) =>
-    //     msg.includes('(new personal best)') ||
-    //     msg.includes('Delve') ||
-    //     msg.includes('Deep'),
-    //   type: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST,
-    // },
+    {
+      check: (msg) => msg.includes('(new personal best)'),
+      type: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST,
+    },
+    {
+      check: (msg) => msg.includes('Deep delves'),
+      type: 'DELVE_KC',
+    },
     {
       check: (msg) => msg.includes('gemstone crab'),
       type: GEMSTONE_CRAB,
@@ -56,11 +57,7 @@ async function chatHandler(
       bigFishHandler(message, playerName, msgMap, LOOT_URL);
       break;
     case CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST:
-      if (message.includes('Delve') || message.includes('Deep')) {
-        delveHandler(message, playerName, msgMap, PB_URL, KC_URL);
-      } else {
-        sepulchreHandler(message, playerName, msgMap, PB_URL);
-      }
+      sepulchreHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
       await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
@@ -68,6 +65,8 @@ async function chatHandler(
     case GEMSTONE_CRAB:
       await crabHandler(msgMap, playerName, KC_URL, MONGO_MIDDLEWARE);
       break;
+    case 'DELVE_KC':
+      delveHandler(message, playerName, msgMap, KC_URL);
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);
       break;

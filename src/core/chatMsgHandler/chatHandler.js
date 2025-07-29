@@ -28,7 +28,7 @@ async function chatHandler(
     },
     {
       check: (msg) => msg.includes('Deep delves'),
-      type: 'DELVE_KC',
+      type: DELVE_KC,
     },
     {
       check: (msg) => msg.includes('gemstone crab'),
@@ -44,7 +44,7 @@ async function chatHandler(
     },
     {
       check: (msg) => msg.includes('!Fetchpets'),
-      type: 'FETCH_PETS',
+      type: CHAT_MESSAGE_TYPES.FETCH_PETS,
     },
   ];
 
@@ -68,6 +68,7 @@ async function chatHandler(
       break;
     case DELVE_KC:
       delveHandler(message, playerName, msgMap, KC_URL);
+      break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);
       break;

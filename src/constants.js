@@ -5,6 +5,7 @@ export const MUPHIN = 'MUPHIN';
 export const GG = 'Grotesque Guardians';
 export const DUSK = 'DUSK';
 export const GEMSTONE_CRAB = 'Gemstone Crab';
+export const DELVE_KC = 'DELVE_KC';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';

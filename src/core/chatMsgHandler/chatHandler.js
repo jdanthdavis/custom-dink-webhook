@@ -4,6 +4,7 @@ import { untradeableDropHandler } from './untradeableDropHandler';
 import { petGraph } from './petGraph';
 import {
   CHAT_MESSAGE_TYPES,
+  DELVE_KC,
   GEMSTONE_CRAB,
   UNTRADEABLE_ITEMS,
 } from '../../constants';
@@ -65,7 +66,7 @@ async function chatHandler(
     case GEMSTONE_CRAB:
       await crabHandler(msgMap, playerName, KC_URL, MONGO_MIDDLEWARE);
       break;
-    case 'DELVE_KC':
+    case DELVE_KC:
       delveHandler(message, playerName, msgMap, KC_URL);
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

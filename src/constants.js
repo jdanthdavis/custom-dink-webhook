@@ -67,7 +67,7 @@ export const bossMap = new Map([
   ['YAMA', 25],
   ['SKOTIZO', 5],
   ['DOOM OF MOKHAIOTL', 25],
-  ['GEMSTONE CRAB', 25],
+  ['GEMSTONE CRAB', 10],
   ['TEST', 1],
 ]);
 

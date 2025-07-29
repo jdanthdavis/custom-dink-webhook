@@ -2,9 +2,13 @@ import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { untradeableDropHandler } from './untradeableDropHandler';
 import { petGraph } from './petGraph';
-import { CHAT_MESSAGE_TYPES, UNTRADEABLE_ITEMS } from '../../constants';
+import {
+  CHAT_MESSAGE_TYPES,
+  GEMSTONE_CRAB,
+  UNTRADEABLE_ITEMS,
+} from '../../constants';
 import { delveHandler } from './delveHandler';
-import crabHandler from '../crabHandler';
+import { crabHandler } from './crabHandler';
 
 async function chatHandler(
   msgMap,
@@ -26,7 +30,7 @@ async function chatHandler(
     // },
     {
       check: (msg) => msg.includes('gemstone crab'),
-      type: 'GEMCRAB_KC',
+      type: GEMSTONE_CRAB,
     },
     {
       check: (msg) => UNTRADEABLE_ITEMS.some((item) => msg.includes(item)),
@@ -61,8 +65,8 @@ async function chatHandler(
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
       await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
       break;
-    case 'GEMCRAB_KC':
-      await crabHandler(msgMap, playerName, KC_URL);
+    case GEMSTONE_CRAB:
+      await crabHandler(msgMap, playerName, KC_URL, MONGO_MIDDLEWARE);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

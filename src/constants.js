@@ -4,6 +4,7 @@ export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
 export const GG = 'Grotesque Guardians';
 export const DUSK = 'DUSK';
+export const GEMSTONE_CRAB = 'Gemstone Crab';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
@@ -66,6 +67,7 @@ export const bossMap = new Map([
   ['YAMA', 25],
   ['SKOTIZO', 5],
   ['DOOM OF MOKHAIOTL', 25],
+  ['GEMSTONE CRAB', 25],
   ['TEST', 1],
 ]);
 

@@ -11,9 +11,7 @@ async function crabHandler(msgMap, playerName, URL) {
         throw new Error(`/get-crab response status: ${res.status}`);
       }
       const json = await res.json();
-      return json.player?.totalCrab != null
-        ? Number(json.player.totalPets)
-        : null;
+      return json.player?.totalCrab != null ? Number(json.player.count) : null;
     } catch (error) {
       console.log('getTotalCrabKc ', error.message);
       return null;

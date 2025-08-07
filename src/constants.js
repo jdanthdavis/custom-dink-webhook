@@ -4,6 +4,8 @@ export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
 export const GG = 'Grotesque Guardians';
 export const DUSK = 'DUSK';
+export const GEMSTONE_CRAB = 'Gemstone Crab';
+export const DELVE_KC = 'DELVE_KC';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
@@ -40,7 +42,12 @@ export const acceptedPayloads = [
 
 // pets
 export const PET = 'PET';
-export const ALL_PETS = 64;
+export const ALL_PETS = 65;
+export const DOM = 'Dom';
+export const PET_MILESTONE_MAP = {
+  [THE_GRUMBLER]: ['killcount', 'grumbles'],
+  [DOM]: ['levels', 'delves'],
+};
 
 // levels
 export const LEVEL = 'LEVEL';
@@ -48,7 +55,12 @@ export const MAX_TOTAL_LEVEL = 2277;
 
 // kill count
 export const KILL_COUNT = 'KILL_COUNT';
-export const specialKills = ['SOL HEREDIT', 'TZKAL-ZUK', 'TZTOK-JAD'];
+export const specialKills = [
+  'SOL HEREDIT',
+  'TZKAL-ZUK',
+  'TZTOK-JAD',
+  'DOOM OF MOKHAIOTL',
+];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
   ['SOL HEREDIT', 5],
@@ -60,6 +72,8 @@ export const bossMap = new Map([
   ['HERBIBOAR', 150],
   ['YAMA', 25],
   ['SKOTIZO', 5],
+  ['DOOM OF MOKHAIOTL', 25],
+  ['GEMSTONE CRAB', 10],
   ['TEST', 1],
 ]);
 

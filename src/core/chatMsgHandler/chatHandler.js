@@ -2,7 +2,14 @@ import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { untradeableDropHandler } from './untradeableDropHandler';
 import { petGraph } from './petGraph';
-import { CHAT_MESSAGE_TYPES, UNTRADEABLE_ITEMS } from '../../constants';
+import {
+  CHAT_MESSAGE_TYPES,
+  DELVE_KC,
+  GEMSTONE_CRAB,
+  UNTRADEABLE_ITEMS,
+} from '../../constants';
+import { delveHandler } from './delveHandler';
+import { crabHandler } from './crabHandler';
 
 async function chatHandler(
   msgMap,
@@ -11,12 +18,21 @@ async function chatHandler(
   PB_URL,
   LOOT_URL,
   PET_URL,
+  KC_URL,
   MONGO_MIDDLEWARE
 ) {
   const messageChecks = [
     {
       check: (msg) => msg.includes('(new personal best)'),
       type: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST,
+    },
+    {
+      check: (msg) => msg.includes('Deep delves'),
+      type: DELVE_KC,
+    },
+    {
+      check: (msg) => msg.includes('gemstone crab'),
+      type: GEMSTONE_CRAB,
     },
     {
       check: (msg) => UNTRADEABLE_ITEMS.some((item) => msg.includes(item)),
@@ -27,16 +43,8 @@ async function chatHandler(
       type: CHAT_MESSAGE_TYPES.BIG_FISH,
     },
     {
-      check: (msg) => msg.includes('Dossier'),
-      type: 'YAMA_CONTRACT',
-    },
-    {
-      check: (msg) => msg.includes('Purifying sigil'),
-      type: 'YAMA_SIGIL',
-    },
-    {
       check: (msg) => msg.includes('!Fetchpets'),
-      type: 'FETCH_PETS',
+      type: CHAT_MESSAGE_TYPES.FETCH_PETS,
     },
   ];
 
@@ -54,6 +62,12 @@ async function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
       await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
+      break;
+    case GEMSTONE_CRAB:
+      await crabHandler(msgMap, playerName, KC_URL, MONGO_MIDDLEWARE);
+      break;
+    case DELVE_KC:
+      delveHandler(message, playerName, msgMap, KC_URL);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

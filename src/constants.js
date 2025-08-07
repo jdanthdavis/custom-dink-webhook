@@ -43,6 +43,11 @@ export const acceptedPayloads = [
 // pets
 export const PET = 'PET';
 export const ALL_PETS = 65;
+export const DOM = 'Dom';
+export const PET_MILESTONE_MAP = {
+  [THE_GRUMBLER]: ['killcount', 'grumbles'],
+  [DOM]: ['levels', 'delves'],
+};
 
 // levels
 export const LEVEL = 'LEVEL';

@@ -1,5 +1,5 @@
 import { grumblerCheck, formatAsPercentage } from './helperFunctions';
-import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
+import { ALL_PETS, PET, PET_MILESTONE_MAP } from '../constants';
 
 /**
  * Gathers the pet information
@@ -14,11 +14,10 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
     duplicate: isDuplicate,
     petName,
   } = extra;
-  const validatedPetName = grumblerCheck(petName);
-  let milestone =
-    validatedPetName === THE_GRUMBLER
-      ? initialMilestone.replace('killcount', 'grumbles')
-      : initialMilestone;
+  const validatedPetName = PET_MILESTONE_MAP[grumblerCheck(petName)];
+  let milestone = validatedPetName
+    ? initialMilestone.replace(validatedPetName[0], validatedPetName[1])
+    : initialMilestone;
 
   async function getTotalPets(playername) {
     const url = `${MONGO_MIDDLEWARE}/get-pets?playername=${encodeURIComponent(

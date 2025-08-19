@@ -18,6 +18,7 @@ export const theBoys = [
   'LSX SWAP',
   'MOOREI',
   'GOUT HAVER',
+  '6out',
   'GLASSFACE',
   'Z4M',
   'Z4M I',

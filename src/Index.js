@@ -1,6 +1,3 @@
-import createFormData from './createFormData.js';
-import { acceptedPayloads } from './constants.js';
-
 export default {
   async fetch(request, env) {
     if (!isValidAgent(request.headers.get('User-Agent'))) {
@@ -31,7 +28,6 @@ export default {
     ) {
       for (const { url, embeds } of urls) {
         let formData = new FormData();
-        let response;
         const payloadToSend = {
           content: '',
           embeds: embeds.map((embed) => ({
@@ -48,28 +44,30 @@ export default {
           formData.append('file', file, file.name || 'attachment');
         }
 
-        try {
-          response = await fetch(url, {
-            method: 'post',
-            body: formData,
-          });
-        } catch (error) {
-          console.log('Failed to post: ', error);
-          continue;
-        }
-
-        if (!response.ok) {
-          console.log(`Response Code: ${response?.status}`);
-        }
+        await sendWithRateLimit(url, formData);
       }
     }
+
     return new Response();
   },
 };
 
-function isValidAgent(ua) {
-  if (typeof ua !== 'string') return false;
-  if (ua.includes('PostmanRuntime/')) return true;
-  if (!ua.startsWith('RuneLite/') && !ua.startsWith('HDOS/')) return false;
-  return ua.includes('Dink/');
+async function sendWithRateLimit(url, formData) {
+  let response = await fetch(url, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (response.status === 429) {
+    const retryAfter = parseFloat(response.headers.get('Retry-After')) || 1;
+    console.log(`Rate limited by Discord. Retrying after ${retryAfter}s...`);
+    await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+    return sendWithRateLimit(url, formData); // ✅ Retry after waiting
+  }
+
+  if (!response.ok) {
+    console.log(`Failed to send: ${response.status}`);
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, 400)); // ~5 requests per 2 seconds
 }

@@ -43,11 +43,11 @@ export const acceptedPayloads = [
 
 // pets
 export const PET = 'PET';
-export const ALL_PETS = 65;
+export const ALL_PETS = 67;
 
 // levels
 export const LEVEL = 'LEVEL';
-export const MAX_TOTAL_LEVEL = 2277;
+export const MAX_TOTAL_LEVEL = 2376;
 
 // kill count
 export const KILL_COUNT = 'KILL_COUNT';

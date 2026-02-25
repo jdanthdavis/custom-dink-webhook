@@ -43,7 +43,7 @@ export const acceptedPayloads = [
 
 // pets
 export const PET = 'PET';
-export const ALL_PETS = 67;
+export const ALL_PETS = 68;
 
 // levels
 export const LEVEL = 'LEVEL';
@@ -56,6 +56,7 @@ export const specialKills = [
   'TZKAL-ZUK',
   'TZTOK-JAD',
   'DOOM OF MOKHAIOTL',
+  'DEMONIC BRUTUS',
 ];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],

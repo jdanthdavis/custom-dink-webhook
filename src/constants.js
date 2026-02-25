@@ -4,6 +4,7 @@ export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
 export const GG = 'Grotesque Guardians';
 export const DUSK = 'DUSK';
+export const BRUTUS = 'BRUTUS';
 export const GEMSTONE_CRAB = 'Gemstone Crab';
 export const DELVE_KC = 'DELVE_KC';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
@@ -43,7 +44,7 @@ export const acceptedPayloads = [
 
 // pets
 export const PET = 'PET';
-export const ALL_PETS = 67;
+export const ALL_PETS = 68;
 
 // levels
 export const LEVEL = 'LEVEL';
@@ -56,6 +57,8 @@ export const specialKills = [
   'TZKAL-ZUK',
   'TZTOK-JAD',
   'DOOM OF MOKHAIOTL',
+  'DEMONIC BRUTUS',
+  'BRUTUS',
 ];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
@@ -70,6 +73,7 @@ export const bossMap = new Map([
   ['SKOTIZO', 5],
   ['DOOM OF MOKHAIOTL', 25],
   ['GEMSTONE CRAB', 10],
+  ['DEMONIC BRUTUS', 10],
   ['TEST', 1],
 ]);
 

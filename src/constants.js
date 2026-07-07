@@ -11,6 +11,7 @@ export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
+export const EXTERNAL_PLUGIN = 'EXTERNAL_PLUGIN';
 export const XP_MILESTONE = 'XP_MILESTONE';
 export const DANSE = '<a:danseParty:1281063903933104160>';
 export const DANSE_PARTY = '<a:danseParty:1281063903933104160>';
@@ -25,7 +26,6 @@ export const theBoys = [
   'Z4M I',
   'THEMILDEST1',
   'CAN IT WORM',
-  'MOOREI',
   'FROSTY DAD',
 ];
 export const acceptedPayloads = [
@@ -38,8 +38,8 @@ export const acceptedPayloads = [
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',
-  'CHAT',
   'DEATH',
+  'EXTERNAL_PLUGIN',
 ];
 
 // pets

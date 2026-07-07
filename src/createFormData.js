@@ -82,7 +82,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.EXTERNAL_PLUGIN:
-      externalPluginHandler(msgMap, playerName, content, extra.metaData, EXTERNAL_URL);
+      externalPluginHandler(msgMap, playerName, content, extra, EXTERNAL_URL);
       break;
     case Constants.CHAT:
       await chatHandler(

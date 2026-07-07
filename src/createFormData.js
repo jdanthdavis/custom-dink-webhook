@@ -8,7 +8,7 @@ import {
   clueScrollHandler,
   lootHandler,
   deathHandler,
-  externalPluginHandler
+  tcgHandler,
 } from './core';
 import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
@@ -82,7 +82,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.EXTERNAL_PLUGIN:
-      externalPluginHandler(msgMap, playerName, content, extra, EXTERNAL_URL);
+      tcgHandler(msgMap, playerName, content, extra, EXTERNAL_URL);
       break;
     case Constants.CHAT:
       await chatHandler(

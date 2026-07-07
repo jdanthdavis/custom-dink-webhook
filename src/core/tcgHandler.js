@@ -1,27 +1,28 @@
 import { EXTERNAL_PLUGIN } from "../constants";
 
 /**
- * Extracts the "Unique cards" (or "Unique foil cards") progress from the
- * raw content string and reformats it, e.g. "812 / 6 376 (12.7%)" becomes
- * "812/6,376 (12.7%)".
+ * Extracts the total number of cards the game has (e.g. "6 376" from
+ * "Unique cards: 372 / 6 376 (5.8%)") and pairs it with the "Total cards"
+ * count (e.g. "386"), returning e.g. "386/6,376 (6.1%)".
  * @param {string} content
- * @param {boolean} foil
  */
-function extractCardProgress(content, foil) {
-  const label = foil ? "Unique foil cards" : "Unique cards";
-  const regex = new RegExp(`${label}: ([\\d ]+) / ([\\d ]+) \\(([\\d.]+%)\\)`);
-  const match = content?.match(regex);
-  if (!match) return null;
-
-  const [, owned, total, percentage] = match;
-  const formattedOwned = Number(owned.replace(/ /g, "")).toLocaleString(
-    "en-US",
+function extractCardProgress(content) {
+  const gameTotalMatch = content?.match(
+    /Unique cards: [\d ]+ \/ ([\d ]+) \([\d.]+%\)/,
   );
-  const formattedTotal = Number(total.replace(/ /g, "")).toLocaleString(
-    "en-US",
-  );
+  if (!gameTotalMatch) return null;
 
-  return `${formattedOwned}/${formattedTotal} (${percentage})`;
+  const totalCardsMatch = content?.match(/Total cards: ([\d ]+)/);
+  if (!totalCardsMatch) return null;
+
+  const gameTotal = Number(gameTotalMatch[1].replace(/ /g, ""));
+  const totalCards = Number(totalCardsMatch[1].replace(/ /g, ""));
+
+  const formattedOwned = totalCards.toLocaleString("en-US");
+  const formattedTotal = gameTotal.toLocaleString("en-US");
+  const percentage = ((totalCards / gameTotal) * 100).toFixed(1);
+
+  return `${formattedOwned}/${formattedTotal} (${percentage}%)`;
 }
 
 /**
@@ -33,7 +34,7 @@ function extractOpenedPacks(content) {
   return match ? Number(match[1]).toLocaleString("en-US") : null;
 }
 
-function externalPluginHandler(msgMap, playerName, content, extra, URL) {
+function tcgHandler(msgMap, playerName, content, extra, URL) {
   const { cardName, rarityTier, newForCollection, foil } = extra.metadata;
   const acceptedRarity = ["Mythic", "Godly", "Legendary"];
 
@@ -42,7 +43,7 @@ function externalPluginHandler(msgMap, playerName, content, extra, URL) {
   const isAcceptedNonFoil = !foil && acceptedRarity.includes(rarityTier);
 
   if (!foil && !isAcceptedNonFoil) return;
-  const cardProgress = extractCardProgress(content, foil);
+  const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
   const msg = foil
     ? `**${playerName}** has pulled a **${rarityTier} ${cardName}** foil :sparkles: on pack **${openedPacks} | ${cardProgress}**`
@@ -53,4 +54,4 @@ function externalPluginHandler(msgMap, playerName, content, extra, URL) {
   return msgMap;
 }
 
-export default externalPluginHandler;
+export default tcgHandler;

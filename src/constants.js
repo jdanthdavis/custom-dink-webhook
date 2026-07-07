@@ -25,7 +25,6 @@ export const theBoys = [
   'Z4M I',
   'THEMILDEST1',
   'CAN IT WORM',
-  'MOOREI',
   'FROSTY DAD',
 ];
 export const acceptedPayloads = [
@@ -38,7 +37,6 @@ export const acceptedPayloads = [
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',
-  'CHAT',
   'DEATH',
 ];
 

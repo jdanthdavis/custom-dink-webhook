@@ -8,6 +8,7 @@ import {
   clueScrollHandler,
   lootHandler,
   deathHandler,
+  externalPluginHandler
 } from './core';
 import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
@@ -48,6 +49,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     CLUE_URL,
     LOOT_URL,
     DEATH_URL,
+    EXTERNAL_URL,
     MONGO_MIDDLEWARE,
   } = env;
 
@@ -78,6 +80,9 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       break;
     case Constants.DEATH:
       deathHandler(msgMap, playerName, extra, DEATH_URL);
+      break;
+    case Constants.EXTERNAL_PLUGIN:
+      externalPluginHandler(msgMap, playerName, extra, EXTERNAL_URL);
       break;
     case Constants.CHAT:
       await chatHandler(

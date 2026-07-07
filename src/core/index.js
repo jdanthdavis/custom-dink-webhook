@@ -7,3 +7,4 @@ export { default as combatTaskHandler } from './combatTaskHandler';
 export { default as lootHandler } from './lootHandler';
 export { default as petHandler } from './petHandler';
 export { default as deathHandler } from './deathHandler';
+export { default as externalPluginHandler } from './externalPluginHandler';

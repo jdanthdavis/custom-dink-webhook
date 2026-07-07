@@ -35,16 +35,18 @@ function extractOpenedPacks(content) {
 
 function externalPluginHandler(msgMap, playerName, content, extra, URL) {
   const { cardName, rarityTier, newForCollection, foil } = extra.metadata;
-  const acceptedRarity = ["Epic", "Mythic", "Godly", "Legendary"];
+  const acceptedRarity = ["Mythic", "Godly", "Legendary"];
 
-  if (!newForCollection || !acceptedRarity.includes(rarityTier)) return;
+  if (!newForCollection) return;
 
+  const isAcceptedNonFoil = !foil && acceptedRarity.includes(rarityTier);
+
+  if (!foil && !isAcceptedNonFoil) return;
   const cardProgress = extractCardProgress(content, foil);
   const openedPacks = extractOpenedPacks(content);
-
   const msg = foil
-    ? `**${playerName}** has pulled a **${cardName}** foil :sparkles: on pack **${openedPacks} | ${cardProgress}**`
-    : `**${playerName}** has pulled a **${cardName}** on pack **${openedPacks} | ${cardProgress}**`;
+    ? `**${playerName}** has pulled a **${rarityTier} ${cardName}** foil :sparkles: on pack **${openedPacks} | ${cardProgress}**`
+    : `**${playerName}** has pulled a **${rarityTier} ${cardName}** on pack **${openedPacks} | ${cardProgress}**`;
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);
 

@@ -46,7 +46,7 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
   const msg = foil
-    ? `**${playerName}** has pulled a **${rarityTier} ${cardName}** foil :sparkles: on pack **${openedPacks} | ${cardProgress}**`
+    ? `**${playerName}** has pulled a **${rarityTier} ${cardName}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
     : `**${playerName}** has pulled a **${rarityTier} ${cardName}** on pack **${openedPacks} | ${cardProgress}**`;
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);

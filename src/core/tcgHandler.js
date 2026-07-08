@@ -1,10 +1,10 @@
 import { EXTERNAL_PLUGIN } from "../constants";
 
 /**
- * Extracts the total number of cards the game has (e.g. "6 376" from
- * "Unique cards: 372 / 6 376 (5.8%)") and pairs it with the "Total cards"
- * count (e.g. "386"), returning e.g. "386/6,376 (6.1%)".
- * @param {string} content
+ * Extracts the total number of cards the game has from the content string and
+ * pairs it with the "Total cards" count.
+ * @param {string} content - The raw content from the TCG message
+ * @returns {string|null} A formatted string in the format "owned/total (percentage%)", or null if data is missing
  */
 function extractCardProgress(content) {
   const gameTotalMatch = content?.match(
@@ -27,13 +27,23 @@ function extractCardProgress(content) {
 
 /**
  * Extracts the "Opened packs" count from the raw content string.
- * @param {string} content
+ * @param {string} content - The raw content from the TCG message
+ * @returns {string|null} The opened packs count formatted with thousands separators, or null if not found
  */
 function extractOpenedPacks(content) {
   const match = content?.match(/Opened packs: (\d+)/);
   return match ? Number(match[1]).toLocaleString("en-US") : null;
 }
 
+/**
+ * Creates a TCG pull notification message when a qualifying card is found.
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
+ * @param {string} playerName - The player's name
+ * @param {string} content - The raw content string containing card collection progress
+ * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean } }} extra - Additional information about the card pull
+ * @param {string} URL - The associated URL
+ * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ */
 function tcgHandler(msgMap, playerName, content, extra, URL) {
   const { cardName, rarityTier, newForCollection, foil } = extra.metadata;
   const acceptedRarity = ["Mythic", "Godly", "Legendary"];
@@ -46,7 +56,7 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
   const msg = foil
-    ? `**${playerName}** has pulled a **${rarityTier} ${cardName}** foil :sparkles: on pack **${openedPacks} | ${cardProgress}**`
+    ? `**${playerName}** has pulled a **${rarityTier} ${cardName}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
     : `**${playerName}** has pulled a **${rarityTier} ${cardName}** on pack **${openedPacks} | ${cardProgress}**`;
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);

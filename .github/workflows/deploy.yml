@@ -40,8 +40,8 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          wranglerArgs: >-
-            ${{ github.ref == 'refs/heads/dev' && '--config wrangler.dev.toml' || '' }}
+          command: >-
+            deploy${{ github.ref == 'refs/heads/dev' && ' --config wrangler.dev.toml' || '' }}
         env:
           KC_URL: ${{ env.KC_URL }}
           PB_URL: ${{ env.PB_URL }}

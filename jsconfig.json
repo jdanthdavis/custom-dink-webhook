@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "checkJs": true,
-    "lib": ["es2020", "webworker"]
+    "lib": ["es2022", "webworker"]
   },
   "include": ["**/*.js"]
 }

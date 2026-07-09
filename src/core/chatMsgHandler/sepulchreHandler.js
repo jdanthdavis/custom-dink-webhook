@@ -1,5 +1,12 @@
 import { CHAT_REGEX, CHAT_MESSAGE_TYPES } from '../../constants';
 
+/**
+ * Handles Hallowed Sepulchre "(new personal best)" chat messages.
+ * @param {string} message - The raw chat message text
+ * @param {string} playerName - The player's name
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
+ * @param {string} URL - The associated URL
+ */
 export function sepulchreHandler(message, playerName, msgMap, URL) {
   const overallMatch = message.match(CHAT_REGEX.OVERALL_TIME_TEXT);
   const floorMatch = message.match(CHAT_REGEX.FLOOR_TIME_TEXT);

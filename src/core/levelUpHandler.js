@@ -42,23 +42,38 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     0
   );
 
-  /** Checks if player has reached the max total level */
+  /**
+   * Checks if player has reached the max total level
+   * @param {number} skillLevel @param {number} totalLevel @param {number} max
+   */
   const isMaxTotalLevel = (skillLevel, totalLevel, max) =>
     skillLevel <= 99 && totalLevel === max;
 
-  /** Returns true if total level is at a milestone (divisible by 25 or max) */
+  /**
+   * Returns true if total level is at a milestone (divisible by 25 or max)
+   * @param {number} level
+   */
   const isTotalLevelInterval = (level) =>
     level % 25 === 0 || level === MAX_TOTAL_LEVEL;
 
-  /** Checks if player hit a milestone total level while skilling */
+  /**
+   * Checks if player hit a milestone total level while skilling
+   * @param {number} skillLevel @param {number} totalLevel
+   */
   const isTotalLevelMilestone = (skillLevel, totalLevel) =>
     skillLevel <= 99 && isTotalLevelInterval(totalLevel);
 
-  /** Checks if only one skill (Fishing) was levelled */
+  /**
+   * Checks if only one skill (Fishing) was levelled
+   * @param {string} skillName @param {number} skillCount
+   */
   const isSingleFishingLevel = (skillName, skillCount) =>
     skillName === 'Fishing' && skillCount < 2;
 
-  /** Returns a formatted total level message */
+  /**
+   * Returns a formatted total level message
+   * @param {string} playerName @param {number} totalLevel @param {string} multiLvlStr @param {number} skillLevel @param {string} DANSE
+   */
   const getTotalLevelMessage = (
     playerName,
     totalLevel,
@@ -70,7 +85,10 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
       ? `-# @everyone\n${DANSE} **${playerName}** has reached a new total level of **${totalLevel}**, by reaching ${multiLvlStr} ${DANSE}`
       : `**${playerName}** has reached a new total level of **${totalLevel}**, by reaching ${multiLvlStr}`;
 
-  /** Returns a default level-up message */
+  /**
+   * Returns a default level-up message
+   * @param {string} playerName @param {string} multiLvlStr
+   */
   const getDefaultLevelMessage = (playerName, multiLvlStr) =>
     `**${playerName}** has levelled ${multiLvlStr}`;
 
@@ -78,6 +96,7 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   const multiLevelMsgConstructor = () => {
     const isInterval = isTotalLevelInterval(totalLevel);
 
+    /** @param {string} name @param {number} level */
     const formatSkillMessage = (name, level) =>
       isInterval
         ? `**${level}** in **${name}!**`
@@ -95,53 +114,55 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     return `${formatLists(skillMessages)}!`;
   };
 
-  for (const [skillName, skillLevel] of Object.entries(levelledSkills)) {
-    const multiLvlStr = multiLevelMsgConstructor();
+  const firstLevelledEntry = Object.entries(levelledSkills)[0];
+  if (!firstLevelledEntry) return msgMap;
 
-    if (isMaxTotalLevel(skillLevel, totalLevel, MAX_TOTAL_LEVEL)) {
-      msgMap.set(
-        { ID: MAX_TOTAL_LEVEL, URL },
-        `-# @everyone\n${DANSE_PARTY} **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching ${multiLvlStr} ${DANSE_PARTY}`
-      );
-      return msgMap;
-    }
+  const [skillName, skillLevel] = firstLevelledEntry;
+  const multiLvlStr = multiLevelMsgConstructor();
 
-    if (isTotalLevelMilestone(skillLevel, totalLevel)) {
-      msgMap.set(
-        { ID: LEVEL, URL },
-        getTotalLevelMessage(
-          playerName,
-          totalLevel,
-          multiLvlStr,
-          skillLevel,
-          DANSE
-        )
-      );
-      return msgMap;
-    }
-
-    if (skillLevel === 99) {
-      msgMap.set(
-        { ID: LEVEL, URL },
-        `-# @everyone\n${DANSE} **${playerName}** has levelled ${multiLvlStr} ${DANSE}`
-      );
-      return msgMap;
-    }
-
-    if (isSingleFishingLevel(skillName, levelledSkillsLength)) {
-      msgMap.set(
-        { ID: LEVEL, URL },
-        `**${playerName}** has levelled ${multiLvlStr} ${FISHH}`
-      );
-      return msgMap;
-    }
-
+  if (isMaxTotalLevel(skillLevel, totalLevel, MAX_TOTAL_LEVEL)) {
     msgMap.set(
-      { ID: LEVEL, URL },
-      getDefaultLevelMessage(playerName, multiLvlStr)
+      { ID: MAX_TOTAL_LEVEL, URL },
+      `-# @everyone\n${DANSE_PARTY} **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching ${multiLvlStr} ${DANSE_PARTY}`
     );
     return msgMap;
   }
+
+  if (isTotalLevelMilestone(skillLevel, totalLevel)) {
+    msgMap.set(
+      { ID: LEVEL, URL },
+      getTotalLevelMessage(
+        playerName,
+        totalLevel,
+        multiLvlStr,
+        skillLevel,
+        DANSE
+      )
+    );
+    return msgMap;
+  }
+
+  if (skillLevel === 99) {
+    msgMap.set(
+      { ID: LEVEL, URL },
+      `-# @everyone\n${DANSE} **${playerName}** has levelled ${multiLvlStr} ${DANSE}`
+    );
+    return msgMap;
+  }
+
+  if (isSingleFishingLevel(skillName, levelledSkillsLength)) {
+    msgMap.set(
+      { ID: LEVEL, URL },
+      `**${playerName}** has levelled ${multiLvlStr} ${FISHH}`
+    );
+    return msgMap;
+  }
+
+  msgMap.set(
+    { ID: LEVEL, URL },
+    getDefaultLevelMessage(playerName, multiLvlStr)
+  );
+  return msgMap;
 }
 
 export default levelUpHandler;

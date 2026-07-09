@@ -5,12 +5,14 @@ import { CLUE } from '../constants';
  * Formats a clue scroll's rewards
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
- * @param {Object<string, any>} extra - Additional information
+ * @param {*} extra - Additional information
  * @param {string} URL - The associated URL
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function clueScrollHandler(msgMap, playerName, extra, URL) {
-  const { clueType, numberCompleted, items } = extra;
+  const { clueType, numberCompleted } = extra;
+  /** @type {Array<{ name: string, quantity: number, priceEach: number }>} */
+  const items = extra.items ?? [];
   const totalValue = items.reduce(
     (acc, item) => acc + item.quantity * item.priceEach,
     0

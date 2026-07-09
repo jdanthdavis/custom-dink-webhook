@@ -1,5 +1,13 @@
 import { CHAT_MESSAGE_TYPES } from '../../constants';
 
+/**
+ * Handles the "!Fetchpets" chat command, reporting either a single player's
+ * pet stats or a leaderboard of all tracked players.
+ * @param {string} message - The raw chat message text
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
+ * @param {string} URL - The associated URL
+ * @param {string} MONGO_MIDDLEWARE - The pet-tracking middleware base URL
+ */
 export async function petGraph(message, msgMap, URL, MONGO_MIDDLEWARE) {
   const commandPrefix = '!Fetchpets';
 
@@ -14,6 +22,7 @@ export async function petGraph(message, msgMap, URL, MONGO_MIDDLEWARE) {
     singlePlayerName = null;
   }
 
+  /** @param {string|null} player */
   async function getPets(player) {
     const url = player
       ? `${MONGO_MIDDLEWARE}/get-pets?playername=${encodeURIComponent(player)}`
@@ -27,11 +36,12 @@ export async function petGraph(message, msgMap, URL, MONGO_MIDDLEWARE) {
       const json = await res.json();
       return json; // Return full JSON so we can access properName and data
     } catch (error) {
-      console.log('getPets error:', error.message);
+      console.log('getPets error:', error instanceof Error ? error.message : error);
       return null;
     }
   }
 
+  /** @param {Object<string, { totalPets?: number, mostRecentPet?: { name?: string, dateGot?: string } }>} players */
   function formatPlayersList(players) {
     // Sort entries by totalPets descending
     const entries = Object.entries(players).sort(([, aData], [, bData]) => {

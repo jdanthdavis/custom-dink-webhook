@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { petGraph } from './petGraph';
+import { petGraph } from '../core/chatMsgHandler/petGraph';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import lootHandler from './lootHandler';
+import lootHandler from '../core/lootHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

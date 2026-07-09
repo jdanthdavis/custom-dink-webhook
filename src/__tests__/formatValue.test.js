@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import formatValue from './formatValue';
+import formatValue from '../core/helperFunctions/formatValue';
 
 describe('formatValue', () => {
   it('formats small values in parens', () => {

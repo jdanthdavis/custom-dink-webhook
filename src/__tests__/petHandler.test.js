@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import petHandler from './petHandler';
+import petHandler from '../core/petHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bigFishHandler } from './bigFishHandler';
+import { bigFishHandler } from '../core/chatMsgHandler/bigFishHandler';
 
 describe('bigFishHandler', () => {
   it('sets a randomized message with the fish and player name substituted in', () => {

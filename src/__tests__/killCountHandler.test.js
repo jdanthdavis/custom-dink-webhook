@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import killCountHandler from './killCountHandler';
+import killCountHandler from '../core/killCountHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

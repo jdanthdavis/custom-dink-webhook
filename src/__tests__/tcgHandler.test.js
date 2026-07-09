@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import tcgHandler from './tcgHandler';
+import tcgHandler from '../core/tcgHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

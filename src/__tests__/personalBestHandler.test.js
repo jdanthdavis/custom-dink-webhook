@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import personalBestHandler from './personalBestHandler';
+import personalBestHandler from '../core/personalBestHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import formatAsPercentage from './formatAsPercentage';
+import formatAsPercentage from '../core/helperFunctions/formatAsPercentage';
 
 describe('formatAsPercentage', () => {
   it('uses 2 decimal places for single-digit percentages', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import killCountMsgConstructor from './killCountMsgConstructor';
+import killCountMsgConstructor from '../core/helperFunctions/killCountMsgConstructor';
 
 describe('killCountMsgConstructor', () => {
   it('uses a special "grumble count" phrasing for The Grumbler', () => {

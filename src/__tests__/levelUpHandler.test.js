@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import levelUpHandler from './levelUpHandler';
+import levelUpHandler from '../core/levelUpHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

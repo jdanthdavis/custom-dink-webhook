@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { delveHandler } from './delveHandler';
+import { delveHandler } from '../core/chatMsgHandler/delveHandler';
 
 describe('delveHandler', () => {
   it('reports a Doom of Mokhaiotl kill count from a plain "Deep delves: N" message', () => {

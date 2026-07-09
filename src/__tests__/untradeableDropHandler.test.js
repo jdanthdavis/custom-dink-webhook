@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { untradeableDropHandler } from './untradeableDropHandler';
-import { CHAT_MESSAGE_TYPES } from '../../constants';
+import { untradeableDropHandler } from '../core/chatMsgHandler/untradeableDropHandler';
+import { CHAT_MESSAGE_TYPES } from '../constants';
 
 describe('untradeableDropHandler', () => {
   it('formats a vestige drop with its 5M note and mapped boss', () => {

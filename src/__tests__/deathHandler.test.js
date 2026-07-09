@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import deathHandler from './deathHandler';
+import deathHandler from '../core/deathHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

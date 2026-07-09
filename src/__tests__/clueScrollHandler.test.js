@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import clueScrollHandler from './clueScrollHandler';
+import clueScrollHandler from '../core/clueScrollHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

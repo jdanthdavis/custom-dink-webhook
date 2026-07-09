@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import combatTaskHandler from './combatTaskHandler';
+import combatTaskHandler from '../core/combatTaskHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

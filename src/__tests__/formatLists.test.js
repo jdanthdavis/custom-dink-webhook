@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import formatLists from './formatLists';
+import formatLists from '../core/helperFunctions/formatLists';
 
 describe('formatLists', () => {
   it('returns an empty string for an empty list', () => {

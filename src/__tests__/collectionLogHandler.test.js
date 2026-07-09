@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import collectionLogHandler from './collectionLogHandler';
+import collectionLogHandler from '../core/collectionLogHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

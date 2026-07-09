@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import worker, { isValidAgent } from './index.js';
+import worker, { isValidAgent } from '../index.js';
 
 describe('isValidAgent', () => {
   it('accepts RuneLite user agents that mention Dink', () => {

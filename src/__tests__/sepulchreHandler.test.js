@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { sepulchreHandler } from './sepulchreHandler';
+import { sepulchreHandler } from '../core/chatMsgHandler/sepulchreHandler';
 
 describe('sepulchreHandler', () => {
   it('formats an overall personal best', () => {

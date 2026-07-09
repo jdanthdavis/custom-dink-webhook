@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { crabHandler } from './crabHandler';
+import { crabHandler } from '../core/chatMsgHandler/crabHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {

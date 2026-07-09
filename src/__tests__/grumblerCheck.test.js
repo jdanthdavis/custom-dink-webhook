@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import grumblerCheck from './grumblerCheck';
+import grumblerCheck from '../core/helperFunctions/grumblerCheck';
 
 describe('grumblerCheck', () => {
   it('maps Phantom Muspah to The Grumbler', () => {

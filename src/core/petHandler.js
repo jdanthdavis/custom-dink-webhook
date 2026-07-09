@@ -6,6 +6,7 @@ import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
  * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
  * @param {*} playerName - The player's name
  * @param {*} extra - Additional information. See {@link https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#pets} for all the information.
+ * @param {string} MONGO_MIDDLEWARE - The pet-tracking middleware base URL
  * @param {*} URL - The associated URL
  */
 async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
@@ -20,6 +21,7 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
       ? initialMilestone.replace('killcount', 'grumbles')
       : initialMilestone;
 
+  /** @param {string} playername */
   async function getTotalPets(playername) {
     const url = `${MONGO_MIDDLEWARE}/get-pets?playername=${encodeURIComponent(
       playername
@@ -34,11 +36,12 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
         ? Number(json.player.totalPets)
         : null;
     } catch (error) {
-      console.log('getTotalPets ', error.message);
+      console.log('getTotalPets ', error instanceof Error ? error.message : error);
       return null;
     }
   }
 
+  /** @param {string} playername @param {string} petName */
   async function incrementPetCount(playername, petName) {
     const url = `${MONGO_MIDDLEWARE}/increment-pets`;
     const today = new Date();
@@ -65,7 +68,10 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
         `Pet count and recent pet successfully updated for ${json.playername}`
       );
     } catch (error) {
-      console.log('incrementPetCount ', error.message);
+      console.log(
+        'incrementPetCount ',
+        error instanceof Error ? error.message : error
+      );
     }
   }
 

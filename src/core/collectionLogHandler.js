@@ -22,6 +22,7 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     completedEntries,
     totalEntries
   );
+  /** @param {string} rank */
   const formatedRanks = (rank) =>
     rank.charAt(0).toUpperCase() + rank.slice(1).toLowerCase();
   const formattedJustCompletedRank =

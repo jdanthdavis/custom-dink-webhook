@@ -48,7 +48,7 @@ const GRUMBLER_REGION = 11330;
  *
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The map to update with the death message.
  * @param {string} playerName - The name of the player who died.
- * @param {{ isPvp?: boolean, valueLost?: number, killerName?: string }} extra - Additional death information.
+ * @param {{ isPvp?: boolean, valueLost?: number, killerName?: string, keptItems?: Array<{ name: string, quantity: number }>, lostItems?: Array<{ name: string, quantity: number }>, location?: { regionId?: number } }} extra - Additional death information.
  * @param {string} URL - The associated URL for the death event.
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map.
  */
@@ -57,16 +57,19 @@ function deathHandler(msgMap, playerName, extra, URL) {
     isPvp,
     valueLost,
     killerName,
-    keptItems,
-    lostItems,
-    location: { regionId },
+    keptItems = [],
+    lostItems = [],
+    location,
   } = extra;
+  const regionId = location?.regionId;
 
-  const formattedValueLost = formatValue(valueLost);
+  const formattedValueLost = formatValue(valueLost ?? 0);
   const randomIndex = Math.floor(Math.random() * DEATH_EMOJIS.length);
   const combinedFoods = [...keptItems, ...lostItems];
   let msg;
 
+  /** @type {Record<string, number>} */
+  const emptyFoodCount = {};
   const countFood = combinedFoods.reduce((acc, item) => {
     const matched = FOOD_ARR.find(
       (kw) =>
@@ -77,7 +80,7 @@ function deathHandler(msgMap, playerName, extra, URL) {
       acc[matched] = (acc[matched] || 0) + item.quantity;
     }
     return acc;
-  }, {});
+  }, emptyFoodCount);
 
   const foodLostString = formatLists(
     Object.entries(countFood)

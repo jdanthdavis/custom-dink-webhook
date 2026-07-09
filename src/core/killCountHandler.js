@@ -13,7 +13,7 @@ import { bossMap, specialKills, KILL_COUNT, BRUTUS } from '../constants';
 function killCountHandler(msgMap, playerName, extra, URL) {
   const { boss, count: killCount, gameMessage } = extra || {};
   const validatedBossName = grumblerCheck(boss);
-  const bossInterval = bossMap.get(validatedBossName?.toUpperCase());
+  const bossInterval = bossMap.get(validatedBossName?.toUpperCase()) ?? 0;
 
   // if KC is notable
   if (
@@ -21,8 +21,9 @@ function killCountHandler(msgMap, playerName, extra, URL) {
     killCount % 100 === 0 ||
     (killCount === 1 &&
       validatedBossName === BRUTUS &&
-      playerName === "THEMILDEST1") ||
-    (killCount === 1 && specialKills.includes(validatedBossName.toUpperCase()))
+      playerName?.toUpperCase() === "THEMILDEST1") ||
+    (killCount === 1 &&
+      specialKills.includes(validatedBossName?.toUpperCase()))
   ) {
     msgMap.set(
       { ID: KILL_COUNT, URL },

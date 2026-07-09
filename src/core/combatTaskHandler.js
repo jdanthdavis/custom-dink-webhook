@@ -39,10 +39,17 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
       `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**`
     );
   } else {
-    msgMap.set(
-      { ID: COMBAT_ACHIEVEMENT, URL },
-      `**${playerName}** has completed **${formattedTier}** combat task: **${task}** | **${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%)** of **${formattedCurrentTier}** tier completed!`
-    );
+    if (!currentTier) {
+      msgMap.set(
+        { ID: COMBAT_ACHIEVEMENT, URL },
+        `**${playerName}** has completed **${formattedTier}** combat task: **${task}** | **${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%)** completed til **Bronze!**`
+      );
+    } else {
+      msgMap.set(
+        { ID: COMBAT_ACHIEVEMENT, URL },
+        `**${playerName}** has completed **${formattedTier}** combat task: **${task}** | **${tierProgress}/${tierTotalPoints} (${formattedTaskPercentageCompleted}%)** of **${formattedCurrentTier}** tier completed!`
+      );
+    }
   }
 
   return msgMap;

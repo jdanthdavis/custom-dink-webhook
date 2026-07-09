@@ -132,6 +132,29 @@ Handles player death events by formatting and updating a death message based on 
 
 3. **Randomized Humor**: Each death message is enhanced with a randomly selected emoji for humor and personalization.
 
+## [tcgHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js)
+
+Handles notifications for the Trading Card Game (TCG) pack-opening feature. When a player pulls a card that is new to their collection, the handler checks whether it meets the notification criteria and constructs a message with the player's overall collection progress and total packs opened.
+
+### Card Notification Logic
+
+- **New Cards Only**: Only cards that are new for the player's collection trigger a notification; duplicates are ignored.
+- **Rarity Filtering**: Non-foil cards only trigger a notification if their rarity is **Mythic**, **Godly**, or **Legendary**. All foil cards trigger a notification regardless of rarity.
+- **Collection Progress**: The message includes the player's unique card total against the game's total card count, along with the completion percentage.
+- **Packs Opened**: The message includes the total number of packs the player has opened.
+
+#### Example Workflow
+
+1. **Non-Foil, Unqualified Rarity**: A new, non-foil card that isn't Mythic, Godly, or Legendary is ignored.
+
+2. **Non-Foil, Qualified Rarity**:
+
+   > **playerName** has pulled a **Legendary cardName** on pack **150 | 320/500 (64.0%)**
+
+3. **Foil Card** (any rarity):
+
+   > **playerName** has pulled a **Rare cardName** :sparkles: *foil* :sparkles: on pack **150 | 320/500 (64.0%)**
+
 ## Credits
 
 This handler wouldn't have been possible without the help from the team at [DinkPlugin](https://github.com/pajlads/DinkPlugin).

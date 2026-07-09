@@ -1,5 +1,5 @@
 import { grumblerCheck, killCountMsgConstructor } from './helperFunctions';
-import { bossMap, specialKills, KILL_COUNT } from '../constants';
+import { bossMap, specialKills, KILL_COUNT, BRUTUS } from '../constants';
 
 /**
  * Check if the current killCount is divisible by 100.
@@ -19,6 +19,9 @@ function killCountHandler(msgMap, playerName, extra, URL) {
   if (
     killCount % bossInterval === 0 ||
     killCount % 100 === 0 ||
+    (killCount === 1 &&
+      validatedBossName === BRUTUS &&
+      playerName === "THEMILDEST1") ||
     (killCount === 1 && specialKills.includes(validatedBossName.toUpperCase()))
   ) {
     msgMap.set(

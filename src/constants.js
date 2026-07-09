@@ -4,12 +4,14 @@ export const PHANTOM_MUSPAH = 'PHANTOM MUSPAH';
 export const MUPHIN = 'MUPHIN';
 export const GG = 'Grotesque Guardians';
 export const DUSK = 'DUSK';
+export const BRUTUS = 'BRUTUS';
 export const GEMSTONE_CRAB = 'Gemstone Crab';
 export const DELVE_KC = 'DELVE_KC';
 export const COMBAT_ACHIEVEMENT = 'COMBAT_ACHIEVEMENT';
 export const CLUE = 'CLUE';
 export const LOOT = 'LOOT';
 export const CHAT = 'CHAT';
+export const EXTERNAL_PLUGIN = 'EXTERNAL_PLUGIN';
 export const XP_MILESTONE = 'XP_MILESTONE';
 export const DANSE = '<a:danseParty:1281063903933104160>';
 export const DANSE_PARTY = '<a:danseParty:1281063903933104160>';
@@ -18,12 +20,12 @@ export const theBoys = [
   'LSX SWAP',
   'MOOREI',
   'GOUT HAVER',
+  '6OUT',
   'GLASSFACE',
   'Z4M',
   'Z4M I',
   'THEMILDEST1',
   'CAN IT WORM',
-  'MOOREI',
   'FROSTY DAD',
 ];
 export const acceptedPayloads = [
@@ -36,17 +38,17 @@ export const acceptedPayloads = [
   'COMBAT_ACHIEVEMENT',
   'CLUE',
   'LOOT',
-  'CHAT',
   'DEATH',
+  'EXTERNAL_PLUGIN',
 ];
 
 // pets
 export const PET = 'PET';
-export const ALL_PETS = 65;
+export const ALL_PETS = 69;
 
 // levels
 export const LEVEL = 'LEVEL';
-export const MAX_TOTAL_LEVEL = 2277;
+export const MAX_TOTAL_LEVEL = 2376;
 
 // kill count
 export const KILL_COUNT = 'KILL_COUNT';
@@ -55,6 +57,8 @@ export const specialKills = [
   'TZKAL-ZUK',
   'TZTOK-JAD',
   'DOOM OF MOKHAIOTL',
+  'DEMONIC BRUTUS',
+  'BRUTUS',
 ];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
@@ -69,6 +73,7 @@ export const bossMap = new Map([
   ['SKOTIZO', 5],
   ['DOOM OF MOKHAIOTL', 25],
   ['GEMSTONE CRAB', 10],
+  ['DEMONIC BRUTUS', 10],
   ['TEST', 1],
 ]);
 

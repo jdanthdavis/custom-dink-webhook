@@ -20,7 +20,7 @@ export default {
 
     if (
       acceptedPayloads.includes(payloadType) &&
-      theBoys.includes(playerName.toUpperCase())
+      theBoys.includes(playerName?.toUpperCase())
     ) {
       msgMap = await createFormData(
         extra,
@@ -49,7 +49,7 @@ export default {
           console.log('There was an error - ', error);
         }
 
-        if (!response.ok) {
+        if (!response?.ok) {
           console.log(`Response Code: ${response?.status}`);
         }
       }

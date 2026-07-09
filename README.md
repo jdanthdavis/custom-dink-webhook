@@ -160,3 +160,4 @@ Handles notifications for the Trading Card Game (TCG) pack-opening feature. When
 ## Credits
 
 This handler wouldn't have been possible without the help from the team at [DinkPlugin](https://github.com/pajlads/DinkPlugin).
+

@@ -71,6 +71,13 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
     skillName === 'Fishing' && skillCount < 2;
 
   /**
+   * Checks if allSkills contains exactly one skill at level 99 (i.e. a player's first ever 99)
+   * @param {Record<string, number>} allSkills
+   */
+  const isFirstNinetyNine = (allSkills) =>
+    Object.values(allSkills).filter((level) => level === 99).length === 1;
+
+  /**
    * Returns a formatted total level message
    * @param {string} playerName @param {number} totalLevel @param {string} multiLvlStr @param {number} skillLevel @param {string} DANSE
    */
@@ -120,9 +127,14 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   const [skillName, skillLevel] = firstLevelledEntry;
   const multiLvlStr = multiLevelMsgConstructor();
 
+  if (skillLevel === 99 && isFirstNinetyNine(allSkills)) {
+    msgMap.set({ ID: LEVEL, URL }, `-# @everyone\n${DANSE} **${playerName}** has achieved their first **99** in **${skillName}!** ${DANSE}`);
+    return msgMap;
+  }
+
   if (isMaxTotalLevel(skillLevel, totalLevel, MAX_TOTAL_LEVEL)) {
     msgMap.set(
-      { ID: MAX_TOTAL_LEVEL, URL },
+      { ID: MAX_TOTAL_LEVEL.toString(), URL },
       `-# @everyone\n${DANSE_PARTY} **${playerName}** has reached the highest possible total level of **${MAX_TOTAL_LEVEL}**, by reaching ${multiLvlStr} ${DANSE_PARTY}`
     );
     return msgMap;

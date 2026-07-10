@@ -55,13 +55,13 @@ describe('levelUpHandler', () => {
     );
   });
 
-  it('announces reaching level 99 in a single skill (non-milestone total)', () => {
+  it('announces reaching level 99 in a single skill (non-milestone total, not a first 99)', () => {
     const msgMap = new Map();
     levelUpHandler(
       msgMap,
       'Swap',
       {
-        allSkills: { Attack: 99 },
+        allSkills: { Attack: 99, Strength: 99 },
         levelledSkills: { Attack: 99 },
       },
       'url'
@@ -69,6 +69,51 @@ describe('levelUpHandler', () => {
     expect(firstMessage(msgMap)).toContain(
       '**Swap** has levelled **Attack** to **99!**'
     );
+  });
+
+  it("announces a player's first ever 99", () => {
+    const msgMap = new Map();
+    levelUpHandler(
+      msgMap,
+      'Swap',
+      {
+        allSkills: { Attack: 99, Strength: 50 },
+        levelledSkills: { Attack: 99 },
+      },
+      'url'
+    );
+    expect(firstMessage(msgMap)).toBe(
+      '-# @everyone\n<a:danseParty:1281063903933104160> **Swap** has achieved their first **99** in **Attack!** <a:danseParty:1281063903933104160>'
+    );
+  });
+
+  it('prioritizes the first-99 message over a total-level milestone', () => {
+    const msgMap = new Map();
+    levelUpHandler(
+      msgMap,
+      'Swap',
+      {
+        // totalLevel = 99 + 26 = 125, divisible by 25, but this is still the player's first 99
+        allSkills: { Attack: 99, Strength: 26 },
+        levelledSkills: { Attack: 99 },
+      },
+      'url'
+    );
+    expect(firstMessage(msgMap)).toContain('has achieved their first **99**');
+  });
+
+  it('does not treat a second 99 as a first 99', () => {
+    const msgMap = new Map();
+    levelUpHandler(
+      msgMap,
+      'Swap',
+      {
+        allSkills: { Attack: 99, Strength: 99 },
+        levelledSkills: { Attack: 99 },
+      },
+      'url'
+    );
+    expect(firstMessage(msgMap)).not.toContain('first **99**');
   });
 
   it('uses a default message for a non-milestone level-up', () => {

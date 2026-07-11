@@ -19,6 +19,7 @@ function combatTaskHandler(msgMap, playerName, extra, URL) {
     currentTier,
   } = extra;
 
+  /** @param {string} [tier] */
   const formatTierText = (tier) => {
     if (!tier) return '';
     return tier[0] + tier.slice(1).toLowerCase();

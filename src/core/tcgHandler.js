@@ -42,7 +42,7 @@ function extractOpenedPacks(content) {
  * @param {string} content - The raw content string containing card collection progress
  * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean } }} extra - Additional information about the card pull
  * @param {string} URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ * @returns {Map<{ ID: string, URL: string }, string>|undefined} The updated message map, or undefined if the pull doesn't qualify for a notification
  */
 function tcgHandler(msgMap, playerName, content, extra, URL) {
   const { cardName, rarityTier, newForCollection, foil } = extra.metadata;

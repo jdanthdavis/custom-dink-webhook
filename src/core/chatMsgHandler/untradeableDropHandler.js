@@ -1,5 +1,13 @@
 import { CHAT_MESSAGE_TYPES, CHAT_REGEX, ITEM_BOSS_MAP } from '../../constants';
 
+/**
+ * Handles untradeable-drop chat messages (vestiges, ToB kits, and other
+ * untradeable items), mapping the item to its source boss.
+ * @param {string} message - The raw chat message text
+ * @param {string} playerName - The player's name
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
+ * @param {string} URL - The associated URL
+ */
 export function untradeableDropHandler(message, playerName, msgMap, URL) {
   let msg;
   const vestigeMatch = message?.match(CHAT_REGEX.VESTIGE_TEXT);
@@ -7,8 +15,11 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   const tobKitMatch = message?.match(CHAT_REGEX.TOB_KITS);
   if (!vestigeMatch && !untradeableMatch && !tobKitMatch) return;
 
+  /** @param {string} message */
   const getBossName = (message) => {
-    for (const item in ITEM_BOSS_MAP) {
+    for (const item of /** @type {(keyof typeof ITEM_BOSS_MAP)[]} */ (
+      Object.keys(ITEM_BOSS_MAP)
+    )) {
       if (message.includes(item)) {
         return ITEM_BOSS_MAP[item];
       }
@@ -18,6 +29,7 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   };
   const bossName = getBossName(message);
 
+  /** @param {string} playerName @param {string} item @param {boolean} [isVestige] */
   const buildMessage = (playerName, item, isVestige = false) =>
     `**${playerName}** has received **x1 ${item}${
       isVestige ? ' vestige (5M) ' : ' '
@@ -32,7 +44,7 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   if (tobKitMatch) {
     const item = tobKitMatch[1];
     msg = buildMessage(playerName, item);
-    return msgMap.set({ ID: CHAT_MESSAGE_TYPES.TOB_KITS, URL }, msg);
+    return msgMap.set({ ID: CHAT_MESSAGE_TYPES.TOB_KIT, URL }, msg);
   }
 
   if (untradeableMatch) {

@@ -30,6 +30,8 @@ Processes pet-related notifications, particularly for incrementing and retrievin
 
 ### Routes
 
+> **Note:** the routes below are served by the external pet-tracking middleware (`MONGO_MIDDLEWARE`) that `petHandler.js` calls out to, not by this Worker directly. This Worker's own `Index.js` has no routing of its own — every request is treated as a Dink webhook.
+
 #### **POST `/increment-pets`**
 
 This endpoint allows the pet count for a given player to be incremented by 1. The player’s name is sent as part of the request body. It ensures that the pet count is updated in the database, and returns a success message if the operation is successful.
@@ -158,3 +160,4 @@ Handles notifications for the Trading Card Game (TCG) pack-opening feature. When
 ## Credits
 
 This handler wouldn't have been possible without the help from the team at [DinkPlugin](https://github.com/pajlads/DinkPlugin).
+

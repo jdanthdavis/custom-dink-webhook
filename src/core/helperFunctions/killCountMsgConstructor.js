@@ -5,6 +5,7 @@ import * as Constants from '../../constants';
  * @param {*} playerName
  * @param {*} gameMessage
  * @param {*} bossName
+ * @param {number} killCount
  * @returns
  */
 function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {

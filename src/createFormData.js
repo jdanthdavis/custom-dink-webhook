@@ -32,11 +32,12 @@ import * as Constants from './constants';
  * For more information on the payload types, see [here](https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#all).
  *
  * @param {*} extra - Additional information required for formatting the message.
+ * @param {*} content - The raw content string, used by payload types like EXTERNAL_PLUGIN.
  * @param {*} payloadType - The type of payload (e.g., Pet, Collection, Level, etc.).
  *                          For more details, see the link provided in the description.
  * @param {string} playerName - The name of the player.
  * @param {*} env - The URLs used for each payload type.
- * @returns {Map<{ ID: string, URL: string }, string>} - The updated message map containing the formatted message.
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>} - The updated message map containing the formatted message.
  */
 async function createFormData(extra, content, payloadType, playerName, env) {
   const {

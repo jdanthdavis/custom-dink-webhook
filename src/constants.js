@@ -79,6 +79,7 @@ export const bossMap = new Map([
 
 // collection log
 export const COLLECTION = 'COLLECTION';
+/** @type {Record<string, string>} */
 export const RANK_MAP = {
   BRONZE: '<:bronze_rank:1353119905750192209>',
   IRON: '<:iron_rank:1353119911643320390>',

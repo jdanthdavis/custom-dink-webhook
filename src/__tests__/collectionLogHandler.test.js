@@ -52,7 +52,44 @@ describe('collectionLogHandler', () => {
     expect(firstMessage(msgMap)).toContain('has reached the highest possible rank of **Gilded**');
   });
 
-  it('formats a normal collection log update with the current rank icon', () => {
+  it('announces achieving the current rank when justCompletedRank is "NONE"', () => {
+    const msgMap = new Map();
+    collectionLogHandler(
+      msgMap,
+      'Swap',
+      {
+        itemName: 'Twisted bow',
+        totalEntries: 100,
+        completedEntries: 50,
+        currentRank: 'IRON',
+        justCompletedRank: 'NONE',
+      },
+      'url'
+    );
+    const msg = firstMessage(msgMap);
+    expect(msg).toContain('has achieved the **Iron** rank');
+    expect(msg).toContain('50/100');
+  });
+
+  it('omits the rank icon (not "undefined") when currentRank and justCompletedRank are both "NONE"', () => {
+    const msgMap = new Map();
+    collectionLogHandler(
+      msgMap,
+      'Swap',
+      {
+        itemName: 'Twisted bow',
+        totalEntries: 100,
+        completedEntries: 1,
+        currentRank: 'NONE',
+        justCompletedRank: 'NONE',
+      },
+      'url'
+    );
+    const msg = firstMessage(msgMap);
+    expect(msg).not.toContain('undefined');
+  });
+
+  it('treats a missing justCompletedRank as a normal update, not a rank completion', () => {
     const msgMap = new Map();
     collectionLogHandler(
       msgMap,
@@ -67,7 +104,7 @@ describe('collectionLogHandler', () => {
     );
     const msg = firstMessage(msgMap);
     expect(msg).toContain('has added a new item to their collection log: **Twisted bow**');
-    expect(msg).toContain('50/100');
+    expect(msg).not.toContain('has completed the');
   });
 
   it('formats a normal update with no rank icon when currentRank is NONE', () => {
@@ -80,6 +117,7 @@ describe('collectionLogHandler', () => {
         totalEntries: 100,
         completedEntries: 1,
         currentRank: 'NONE',
+        justCompletedRank: 'NONE',
       },
       'url'
     );

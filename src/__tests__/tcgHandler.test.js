@@ -62,4 +62,19 @@ describe('tcgHandler', () => {
     const msg = firstMessage(msgMap);
     expect(msg).toContain('**Common Goblin** :sparkles: *foil* :sparkles:');
   });
+
+  it('handles space-delimited thousands separators in the content', () => {
+    const spacedContent =
+      "6out just added Statius's platelegs to their collection!\n\nCollection score: 181 289 545 (54.2%), Unique cards: 3 455 / 6 376 (54.2%), Unique foil cards: 54 / 6 376 (0.8%), Opened packs: 1 048, Total cards: 3 458";
+    const msgMap = new Map();
+    tcgHandler(
+      msgMap,
+      '6out',
+      spacedContent,
+      { metadata: { cardName: "Statius's platelegs", rarityTier: 'Mythic', newForCollection: true, foil: false } },
+      'url'
+    );
+    const msg = firstMessage(msgMap);
+    expect(msg).toContain('pack **1,048 | 3,458/6,376 (54.2%)**');
+  });
 });

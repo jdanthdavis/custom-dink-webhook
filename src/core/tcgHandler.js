@@ -31,8 +31,10 @@ function extractCardProgress(content) {
  * @returns {string|null} The opened packs count formatted with thousands separators, or null if not found
  */
 function extractOpenedPacks(content) {
-  const match = content?.match(/Opened packs: (\d+)/);
-  return match ? Number(match[1]).toLocaleString("en-US") : null;
+  const match = content?.match(/Opened packs: ([\d ]+)/);
+  return match
+    ? Number(match[1].replace(/ /g, "")).toLocaleString("en-US")
+    : null;
 }
 
 /**

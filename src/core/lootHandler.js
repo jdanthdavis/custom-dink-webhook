@@ -1,4 +1,4 @@
-import { grumblerCheck, formatValue } from './helperFunctions';
+import { grumblerCheck, formatValue, formatLists } from './helperFunctions';
 import { LOOT } from '../constants';
 
 const LOOT_THRESHOLD = 1_000_000;
@@ -25,8 +25,8 @@ function lootHandler(msgMap, items, playerName, source, URL) {
     return acc;
   }, emptyFilteredItems);
 
-  const msg = `**${playerName}** has received** ${filteredItems.join(
-    ','
+  const msg = `**${playerName}** has received **${formatLists(
+    filteredItems
   )}** from **${validatedSource}!**`;
 
   if (!filteredItems.length) return;

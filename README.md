@@ -4,21 +4,32 @@ A custom webhook that takes in requests from Dink and constructs custom messages
 
 ## [killCountHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/killCountHandler.js)
 
-Checks if a player's kill count for a boss is a notable milestone (every 100 kills, specific boss-defined intervals, or first kills of special bosses) and updates the message map with a formatted notification if applicable. It ensures the boss name is validated and retrieves interval data from constants before constructing and storing the message.
+Checks if a player's kill count for a boss is a notable milestone (every 100 kills, a boss-specific interval, or a first kill of certain "special" bosses) and updates the message map with a formatted notification if applicable. It ensures the boss name is validated and retrieves interval data from constants before constructing and storing the message. This handler is also invoked indirectly from the chat message flow — [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) and [delveHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/delveHandler.js) report Gemstone Crab and Doom of Mokhaiotl kill counts (parsed from chat text) through this same function.
 
 ### Boss Map
 
-For select NPCs, the milestone check follows a custom `killCount` interval instead of the default `100`.  
+For select bosses, the milestone check uses a custom `killCount` interval instead of the default every-100-kills check. Boss names are matched case-insensitively against `bossMap` in [constants.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/constants.js).
 
-#### Example  
-The following configuration triggers notifications every 5 kills for **TzKal-Zuk** and every 25 kills for **Phosani's Nightmare**:  
+| Boss | Interval |
+|---|---|
+| TzKal-Zuk | 5 |
+| Sol Heredit | 5 |
+| Skotizo | 5 |
+| Theatre of Blood: Hard Mode | 10 |
+| Chambers of Xeric: Challenge Mode | 10 |
+| Gemstone Crab | 10 |
+| Demonic Brutus | 10 |
+| Phosani's Nightmare | 25 |
+| The Nightmare | 25 |
+| Yama | 25 |
+| Doom of Mokhaiotl | 25 |
+| Corporeal Beast | 50 |
+| Herbiboar | 150 |
 
-```javascript
-[
-  ['TzKal-Zuk', 5],
-  ['Phosani’s Nightmare', 25]
-]
-```
+### First-Kill Notifications
+
+A first kill of any of the following "special" bosses always triggers a notification, regardless of interval: **Sol Heredit, TzKal-Zuk, TzTok-Jad, Doom of Mokhaiotl, Demonic Brutus, Brutus**. There's also a one-off case for a first Brutus kill outside that list — it only notifies if the player is `themildest1`.
+
 ## [petHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/petHandler.js)
 
 Processes pet-related notifications, particularly for incrementing and retrieving a player's pet count in a MongoDB database. The handler supports both first-time pet drops and duplicate pet drops, adjusting the format and message accordingly. It ensures that the pet name is validated, and provides a system for tracking the pet count. The handler also includes a route for directly updating pet counts, so players can modify their progress in real-time. 
@@ -27,10 +38,12 @@ Processes pet-related notifications, particularly for incrementing and retrievin
 
 - **Incrementing Pet Count**: The handler supports the ability to increment a player's pet count when a new pet is obtained, ensuring the pet's milestone is recognized.
 - **Duplicate Pet Drops**: The handler differentiates between first-time and duplicate drops and updates the message map with appropriate notifications.
+- **The Grumbler Special Case**: For this specific pet, the word "killcount" in the milestone text is swapped for "grumbles" (e.g. "at 500 grumbles!" instead of "at 500 killcount!").
+- **Missing Data Fallback**: If the pet name or milestone text can't be resolved, a fallback message is sent instead ("has a funny feeling like they're being followed!") noting that the pet name or milestone is missing.
 
 ### Routes
 
-> **Note:** the routes below are served by the external pet-tracking middleware (`MONGO_MIDDLEWARE`) that `petHandler.js` calls out to, not by this Worker directly. This Worker's own `Index.js` has no routing of its own — every request is treated as a Dink webhook.
+> **Note:** the routes below are served by the external pet-tracking middleware (`MONGO_MIDDLEWARE`) that `petHandler.js` calls out to, not by this Worker directly. This Worker's own `src/index.js` has no routing of its own — every request is treated as a Dink webhook. The same middleware also backs `/increment-crab` and `/get-crab` (used by [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) for Gemstone Crab tracking) and `/get-pets` (also used by [petGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) for the `!Fetchpets` leaderboard).
 
 #### **POST `/increment-pets`**
 
@@ -50,7 +63,7 @@ This endpoint allows the pet count for a given player to be incremented by 1. Th
 ```bash
 curl -X POST "http://localhost:3000/increment-pets" \
 -H "Content-Type: application/json" \
--d '{"playername": "player1"}'
+-d '{"playername": "player1", "petName": "Baby mole", "dateGot": "07/19/2026"}'
 ```
 #### Example response
 ```json
@@ -59,6 +72,7 @@ curl -X POST "http://localhost:3000/increment-pets" \
   "playername": "player1"
 }
 ```
+> Note: the request body above reflects what `petHandler.js` actually sends (`playername`, `petName`, `dateGot`). The response shape is defined by the external middleware, which lives outside this repo.
 
 ## [collectionLogHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/collectionLogHandler.js)
 
@@ -90,49 +104,101 @@ Processes and formats in-game ISO-8601 duration strings for personal best times,
 
 Formats and constructs a message for a completed clue scroll, listing the type of clue, the number completed, and the rewards received. Each reward is displayed with its quantity, name, and formatted price.
 
+## [lootHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/lootHandler.js)
+
+Handles generic loot-drop notifications. Items are filtered down to only those whose total value (`quantity × priceEach`) exceeds a 1,000,000 gp threshold — if nothing clears that bar, no message is sent. Surviving items are formatted into a grammatical list with shorthand values (e.g. `1.2B`) and combined into a single "received from" message.
+
+#### Example
+
+> **playerName** has received **2x Twisted bow (1.2B) and 1x Elysian sigil (300M)** from **Vorkath!**
+
 ## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
-Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type (e.g., [Big Fish](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/bigFishHandler.js), [Vestige Drop](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/vestigeHandler.js), [Sepulchre Personal Best](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/sepulchreHandler.js)).
+Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type:
+
+- [bigFishHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/bigFishHandler.js) — "You catch an enormous X!" catches.
+- [sepulchreHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/sepulchreHandler.js) — Hallowed Sepulchre personal bests (overall and per-floor).
+- [untradeableDropHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/untradeableDropHandler.js) — untradeable item drops (vestiges, Theatre of Blood ornament kits/dust, and other untradeables), mapped to their source boss.
+- [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) — increments and reports a player's Gemstone Crab kill count via the pet-tracking middleware, then formats the milestone through [killCountHandler](#killcounthandler).
+- [delveHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/delveHandler.js) — reports a player's Doom of Mokhaiotl (Deep Delves) kill count through [killCountHandler](#killcounthandler).
+- [petGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) — responds to the `!Fetchpets` chat command with either a single player's pet stats or a full leaderboard of all tracked players.
+
+### Untradeable Drop Example
+
+> **playerName** has received **x1 Ultor vestige (5M)** from **Vardorvis!**
+
+### `!Fetchpets` Example
+
+> **playerName** -> Total Pets: **12** -> Most Recent: **Baby mole** on **07/19/2026**
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 
-Constructs special messages for significant level-up milestones, including max total level, total level intervals of 25, and reaching level 99 in a skill. A key feature of this function is handling multiple level-ups in a single notification, ensuring all skills are listed in one message rather than separately. Additionally, it now tracks XP milestones for individual skills and generates messages when a player reaches certain XP thresholds.
+Constructs special messages for level-up milestones: a player's first-ever level 99, reaching level 99 in any skill thereafter, max total level (2376), total level intervals of 25, and XP thresholds for individual skills. A key feature of this function is handling multiple level-ups in a single notification, ensuring all skills are listed in one message rather than separately. Significant milestones (first 99, any 99, max total level) are wrapped in an `@everyone` ping with an animated dance-party emoji; a solo Fishing level-up gets a custom fish emoji appended instead.
 
-#### Example of a single skill level-up:<br/>
+Note: messages use British spelling ("levelled"), and XP amounts are formatted in shorthand (`1M`, `2M`), not full digits.
 
-> playerName has leveled Attack to 99!<br/>
+#### Example of a single skill reaching 99:
 
-#### Examples of multiple skill level-ups:<br/>
+> -# @everyone
+> :danseParty: **playerName** has levelled **Attack** to **99!** :danseParty:
 
-> playerName has leveled Attack and Strength to 99!<br/>
-> playerName has leveled Attack, Strength, and Defence to 99!<br/>
+#### Example of a player's first-ever 99:
 
-#### Example of XP milestone message for a skill:<br/>
+> -# @everyone
+> :danseParty: **playerName** has achieved their first **99** in **Attack!** :danseParty:
 
-> playerName has reached 1,000,000 XP in Attack!<br/>
-> playerName has reached 2,000,000 XP in Strength!<br/>
+#### Example of multiple skill level-ups combined into one message:
+
+> **playerName** has levelled **Attack** to **99!** and **Strength** to **99!**!
+
+#### Example of max total level:
+
+> -# @everyone
+> :danseParty: **playerName** has reached the highest possible total level of **2376**, by reaching **99** in **Attack!** :danseParty:
+
+#### Example of a total level milestone (every 25 levels):
+
+> -# @everyone
+> :danseParty: **playerName** has reached a new total level of **1500**, by reaching **99** in **Attack!** :danseParty:
+
+#### Example of a solo Fishing level-up:
+
+> **playerName** has levelled **Fishing** to **50!** :fishh:
+
+#### Example of XP milestone messages for a skill:
+
+> **playerName** has reached **1M XP** in **Attack!**
+> **playerName** has reached **2M XP** in **Strength!**
 
 ## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
 
-Handles player death events by formatting and updating a death message based on whether the death occurred in PvP or PvM. If the player was killed by another player, the message includes the killer’s name and the amount of coins lost. Otherwise, it generates a standard death message. Random humorous emojis are appended to each death message for added flavor.
+Handles player death events by formatting and updating a death message based on whether the death occurred in PvP or PvM, or within a specific in-game region. If the player was killed by another player, the message includes the killer's name and the amount of coins lost. Otherwise, it generates a standard death message. Random humorous emojis are appended to each death message for added flavor.
 
 ### Death Message Logic
 
+- **Grumbled Death**: Dying within a specific hardcoded region (region ID `11330`) always produces a special "has been grumbled" message, taking priority over the PvP/PvM checks below.
 - **PvP Death**: Includes the killer's name and the value of coins lost.
-- **PvM or Other Death**: Displays a simple death message without financial loss or killer information.
+- **PvM Death**: Displays a simple death message without financial loss or killer information.
+- **Food Lost/Kept**: For both Grumbled and PvM deaths, any recognized food items from the player's kept/lost item lists (matched against a large hardcoded food list) are tallied and appended as a secondary line, sorted by quantity.
 - **Randomized Emojis**: Each message randomly selects an emoji from a predefined list to add character to the notification.
 
 #### Example Workflow
 
-1. **PvP Death**: If the death was player-vs-player (PvP), the message follows the format:
+1. **Grumbled Death**: If the death occurred in The Grumbler's region, the message follows the format:
+
+   > **playerName** has been grumbled 😄
+   > -# 2x Shark, 1x Cake
+
+2. **PvP Death**: If the death was player-vs-player (PvP), the message follows the format:
 
    > **playerName** has just been killed by **killerName** for **valueLost** coins 😄
 
-2. **PvM Death**: If not PvP, the message follows the simpler format:
+3. **PvM Death**: If not PvP or Grumbled, the message follows the simpler format:
 
    > **playerName** has died 😄
+   > -# 2x Shark, 1x Cake
 
-3. **Randomized Humor**: Each death message is enhanced with a randomly selected emoji for humor and personalization.
+4. **Randomized Humor**: Each death message is enhanced with a randomly selected emoji for humor and personalization.
 
 ## [tcgHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js)
 

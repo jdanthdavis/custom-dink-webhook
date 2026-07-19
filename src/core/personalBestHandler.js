@@ -1,4 +1,4 @@
-import { grumblerCheck } from './helperFunctions';
+import { customBossNames } from './helperFunctions';
 import { PERSONAL_BEST } from '../constants';
 
 /**
@@ -10,7 +10,7 @@ import { PERSONAL_BEST } from '../constants';
  * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
  */
 function personalBestHandler(msgMap, playerName, extra, URL) {
-  const bossName = grumblerCheck(extra?.boss);
+  const bossName = customBossNames(extra?.boss);
   // Remove the leading PT
   let cleanedTime = extra?.time.replace('PT', '');
 

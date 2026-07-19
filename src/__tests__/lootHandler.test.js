@@ -24,7 +24,7 @@ describe('lootHandler', () => {
     expect(msg).not.toContain('Bones');
   });
 
-  it('applies grumblerCheck to the loot source', () => {
+  it('applies customBossNames to the loot source', () => {
     const msgMap = new Map();
     lootHandler(
       msgMap,

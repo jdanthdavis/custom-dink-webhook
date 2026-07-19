@@ -1,4 +1,4 @@
-import { grumblerCheck, formatAsPercentage } from './helperFunctions';
+import { customBossNames, formatAsPercentage } from './helperFunctions';
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
 
 /**
@@ -15,7 +15,7 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
     duplicate: isDuplicate,
     petName,
   } = extra;
-  const validatedPetName = grumblerCheck(petName);
+  const validatedPetName = customBossNames(petName);
   let milestone =
     validatedPetName === THE_GRUMBLER
       ? initialMilestone.replace('killcount', 'grumbles')

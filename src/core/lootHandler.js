@@ -1,4 +1,4 @@
-import { grumblerCheck, formatValue, formatLists } from './helperFunctions';
+import { customBossNames, formatValue, formatLists } from './helperFunctions';
 import { LOOT } from '../constants';
 
 const LOOT_THRESHOLD = 1_000_000;
@@ -13,7 +13,7 @@ const LOOT_THRESHOLD = 1_000_000;
  * @returns {Map<{ ID: string, URL: string }, string>|undefined} The updated message map with the formatted loot message, or undefined if no item cleared the value threshold.
  */
 function lootHandler(msgMap, items, playerName, source, URL) {
-  const validatedSource = grumblerCheck(source);
+  const validatedSource = customBossNames(source);
 
   /** @type {string[]} */
   const emptyFilteredItems = [];
@@ -25,11 +25,9 @@ function lootHandler(msgMap, items, playerName, source, URL) {
     return acc;
   }, emptyFilteredItems);
 
-  const boldedItems = filteredItems.map((item) => `**${item}**`);
+  const formattedItems = formatLists(filteredItems);
 
-  const msg = `**${playerName}** has received ${formatLists(
-    boldedItems
-  )} from **${validatedSource}!**`;
+  const msg = `**${playerName}** has received **${formattedItems}** from **${validatedSource}!**`;
 
   if (!filteredItems.length) return;
 

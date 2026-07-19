@@ -14,15 +14,15 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
   const secondary_regex =
     /Your (?<type>completed|subdued) (?<key>.+?) count is: [\d,]+\b/i;
 
-  /** @type {Record<string, { displayName: string, type: string }>} */
-  const SPECIAL_CASES = {
-    [Constants.THE_GRUMBLER]: { displayName: Constants.THE_GRUMBLER, type: 'grumble' },
-    [Constants.LUNAR_CHEST]: { displayName: Constants.MOONS_OF_PERIL, type: 'chest' },
+  /** @type {Record<string, string>} */
+  const TYPE_MAP = {
+    [Constants.THE_GRUMBLER]: 'grumble',
+    [Constants.MOONS_OF_PERIL]: 'chest',
   };
 
-  const specialKcMsg = SPECIAL_CASES[bossName];
-  if (specialKcMsg) {
-    return `**${playerName}** has defeated **${specialKcMsg.displayName}** with a ${specialKcMsg.type} count of **${killCount.toLocaleString()}!**`;
+  const specialType = TYPE_MAP[bossName];
+  if (specialType) {
+    return `**${playerName}** has defeated **${bossName}** with a ${specialType} count of **${killCount.toLocaleString()}!**`;
   }
 
   const primaryMatch = gameMessage.match(primary_regex);

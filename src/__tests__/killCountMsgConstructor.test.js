@@ -56,6 +56,16 @@ describe('killCountMsgConstructor', () => {
     expect(msg).toContain('with a completion count of **42!**');
   });
 
+  it('announces a single-kill JAD or Zuk message without a player-name gate', () => {
+    const jadMsg = killCountMsgConstructor('Swap', 'irrelevant', 'TzTok-Jad', 1);
+    expect(jadMsg).toContain('-# @everyone');
+    expect(jadMsg).toContain('**TzTok-Jad**');
+
+    const zukMsg = killCountMsgConstructor('Swap', 'irrelevant', 'TzKal-Zuk', 1);
+    expect(zukMsg).toContain('-# @everyone');
+    expect(zukMsg).toContain('**TzKal-Zuk**');
+  });
+
   it('formats the kill count with thousands separators', () => {
     const msg = killCountMsgConstructor(
       'Swap',

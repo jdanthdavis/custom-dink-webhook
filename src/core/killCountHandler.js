@@ -1,4 +1,4 @@
-import { grumblerCheck, killCountMsgConstructor } from './helperFunctions';
+import { customBossNames, killCountMsgConstructor } from './helperFunctions';
 import { bossMap, specialKills, KILL_COUNT, BRUTUS } from '../constants';
 
 /**
@@ -12,7 +12,7 @@ import { bossMap, specialKills, KILL_COUNT, BRUTUS } from '../constants';
  */
 function killCountHandler(msgMap, playerName, extra, URL) {
   const { boss, count: killCount, gameMessage } = extra || {};
-  const validatedBossName = grumblerCheck(boss);
+  const validatedBossName = customBossNames(boss);
   const bossInterval = bossMap.get(validatedBossName?.toUpperCase()) ?? 0;
 
   // if KC is notable

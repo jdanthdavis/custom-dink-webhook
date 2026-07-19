@@ -1,4 +1,4 @@
-import { grumblerCheck, formatAsPercentage } from './helperFunctions';
+import { customBossNames, formatAsPercentage } from './helperFunctions';
 import { RANK_MAP, COLLECTION } from '../constants';
 
 /**
@@ -26,7 +26,7 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     currentRank,
     justCompletedRank,
   } = extra;
-  const validatedItemName = grumblerCheck(itemName);
+  const validatedItemName = customBossNames(itemName);
   const percentageCompleted = formatAsPercentage(
     completedEntries,
     totalEntries,

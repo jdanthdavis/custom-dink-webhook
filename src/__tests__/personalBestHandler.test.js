@@ -47,7 +47,7 @@ describe('personalBestHandler', () => {
     expect(firstMessage(msgMap)).toContain('personal best of **1:05!**');
   });
 
-  it('applies grumblerCheck to the boss name', () => {
+  it('applies customBossNames to the boss name', () => {
     const msgMap = new Map();
     personalBestHandler(
       msgMap,

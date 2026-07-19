@@ -1,27 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import grumblerCheck from '../core/helperFunctions/grumblerCheck';
+import customBossNames from '../core/helperFunctions/customBossNames';
 
-describe('grumblerCheck', () => {
+describe('customBossNames', () => {
   it('maps Phantom Muspah to The Grumbler', () => {
-    expect(grumblerCheck('Phantom Muspah')).toBe('The Grumbler');
+    expect(customBossNames('Phantom Muspah')).toBe('The Grumbler');
   });
 
   it('maps Muphin to The Grumbler', () => {
-    expect(grumblerCheck('muphin')).toBe('The Grumbler');
+    expect(customBossNames('muphin')).toBe('The Grumbler');
   });
 
   it('maps any Hallowed Sepulchre variant to Grand Hallowed Coffin', () => {
-    expect(grumblerCheck('Hallowed Sepulchre')).toBe('Grand Hallowed Coffin');
-    expect(grumblerCheck('hallowed sepulchre (floor 5)')).toBe(
+    expect(customBossNames('Hallowed Sepulchre')).toBe('Grand Hallowed Coffin');
+    expect(customBossNames('hallowed sepulchre (floor 5)')).toBe(
       'Grand Hallowed Coffin'
     );
   });
 
   it('maps Dusk to Grotesque Guardians', () => {
-    expect(grumblerCheck('dusk')).toBe('Grotesque Guardians');
+    expect(customBossNames('dusk')).toBe('Grotesque Guardians');
   });
 
   it('returns the original name unchanged for anything else', () => {
-    expect(grumblerCheck('Zulrah')).toBe('Zulrah');
+    expect(customBossNames('Zulrah')).toBe('Zulrah');
   });
 });

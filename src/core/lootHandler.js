@@ -25,9 +25,11 @@ function lootHandler(msgMap, items, playerName, source, URL) {
     return acc;
   }, emptyFilteredItems);
 
-  const msg = `**${playerName}** has received **${formatLists(
-    filteredItems
-  )}** from **${validatedSource}!**`;
+  const boldedItems = filteredItems.map((item) => `**${item}**`);
+
+  const msg = `**${playerName}** has received ${formatLists(
+    boldedItems
+  )} from **${validatedSource}!**`;
 
   if (!filteredItems.length) return;
 

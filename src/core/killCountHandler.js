@@ -19,11 +19,7 @@ function killCountHandler(msgMap, playerName, extra, URL) {
   if (
     killCount % bossInterval === 0 ||
     killCount % 100 === 0 ||
-    (killCount === 1 &&
-      validatedBossName === BRUTUS &&
-      playerName?.toUpperCase() === "THEMILDEST1") ||
-    (killCount === 1 &&
-      specialKills.includes(validatedBossName?.toUpperCase()))
+    (killCount === 1 && specialKills.includes(validatedBossName?.toUpperCase()))
   ) {
     msgMap.set(
       { ID: KILL_COUNT, URL },
@@ -31,8 +27,8 @@ function killCountHandler(msgMap, playerName, extra, URL) {
         playerName,
         gameMessage,
         validatedBossName,
-        killCount
-      )
+        killCount,
+      ),
     );
   }
 

@@ -1,4 +1,5 @@
 import * as Constants from '../../constants';
+import { specialKills } from '../../constants';
 
 /**
  * Adds the correct wording for specific kill count messages
@@ -23,6 +24,10 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
   const specialType = TYPE_MAP[bossName];
   if (specialType) {
     return `**${playerName}** has defeated **${bossName}** with a ${specialType} count of **${killCount.toLocaleString()}!**`;
+  }
+
+  if (killCount === 1 && specialKills.includes(bossName.toUpperCase())) {
+    return `-# @everyone\n${Constants.DANSE} **${playerName}** has defeated **${bossName}** with a kill count of **${killCount.toLocaleString()}!**`;
   }
 
   const primaryMatch = gameMessage.match(primary_regex);

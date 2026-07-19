@@ -5,6 +5,8 @@ export const MUPHIN = 'MUPHIN';
 export const GG = 'Grotesque Guardians';
 export const DUSK = 'DUSK';
 export const BRUTUS = 'BRUTUS';
+export const TZKAL_ZUK = 'TZKAL-ZUK';
+export const TZTOK_JAD = 'TZTOK-JAD';
 export const GEMSTONE_CRAB = 'Gemstone Crab';
 export const MOONS_OF_PERIL = 'Moons of Peril';
 export const LUNAR_CHEST = 'Lunar Chest';
@@ -58,9 +60,7 @@ export const specialKills = [
   'SOL HEREDIT',
   'TZKAL-ZUK',
   'TZTOK-JAD',
-  'DOOM OF MOKHAIOTL',
   'DEMONIC BRUTUS',
-  'BRUTUS',
 ];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],

@@ -14,12 +14,19 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
   const secondary_regex =
     /Your (?<type>completed|subdued) (?<key>.+?) count is: [\d,]+\b/i;
 
-  if (bossName === Constants.THE_GRUMBLER) {
-    return `**${playerName}** has defeated **${bossName}** with a grumble count of **${killCount.toLocaleString()}!**`;
+  /** @type {Record<string, { displayName: string, type: string }>} */
+  const SPECIAL_CASES = {
+    [Constants.THE_GRUMBLER]: { displayName: Constants.THE_GRUMBLER, type: 'grumble' },
+    [Constants.LUNAR_CHEST]: { displayName: Constants.MOONS_OF_PERIL, type: 'chest' },
+  };
+
+  const specialKcMsg = SPECIAL_CASES[bossName];
+  if (specialKcMsg) {
+    return `**${playerName}** has defeated **${specialKcMsg.displayName}** with a ${specialKcMsg.type} count of **${killCount.toLocaleString()}!**`;
   }
 
   const primaryMatch = gameMessage.match(primary_regex);
-  const secondaryMatch = gameMessage.match(secondary_regex);
+  const secondaryMatch = primaryMatch ? null : gameMessage.match(secondary_regex);
 
   let fallBackType = 'completion';
 
@@ -29,7 +36,7 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
     fallBackType = secondaryMatch.groups.type;
   }
 
-  return `**${playerName}** has defeated **${bossName}** with a ${fallBackType} count of **${killCount.toLocaleString()}!**`;
+  return `**${playerName}** has defeated **${bossName}** with a ${fallBackType.toLowerCase()} count of **${killCount.toLocaleString()}!**`;
 }
 
 export default killCountMsgConstructor;

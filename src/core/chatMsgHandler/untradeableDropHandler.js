@@ -9,11 +9,13 @@ import { CHAT_MESSAGE_TYPES, CHAT_REGEX, ITEM_BOSS_MAP } from '../../constants';
  * @param {string} URL - The associated URL
  */
 export function untradeableDropHandler(message, playerName, msgMap, URL) {
-  let msg;
   const vestigeMatch = message?.match(CHAT_REGEX.VESTIGE_TEXT);
   const untradeableMatch = message?.match(CHAT_REGEX.UNTRADEABLE_TEXT);
   const tobKitMatch = message?.match(CHAT_REGEX.TOB_KITS);
-  if (!vestigeMatch && !untradeableMatch && !tobKitMatch) return;
+  const maggotEggMatch = message?.match(CHAT_REGEX.MAGGOT_EGG);
+
+  if (!vestigeMatch && !untradeableMatch && !tobKitMatch && !maggotEggMatch)
+    return;
 
   /** @param {string} message */
   const getBossName = (message) => {
@@ -29,27 +31,26 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   };
   const bossName = getBossName(message);
 
-  /** @param {string} playerName @param {string} item @param {boolean} [isVestige] */
-  const buildMessage = (playerName, item, isVestige = false) =>
-    `**${playerName}** has received **x1 ${item}${
-      isVestige ? ' vestige (5M) ' : ' '
-    }**from **${bossName}!**`;
+  /** @param {string} playerName @param {string} [item] @param {'vestige'} [type] */
+  const buildMessage = (playerName, item, type) =>
+    type === 'vestige'
+      ? `**${playerName}** has received **x1 ${item} vestige (5M)** from **${bossName}!**`
+      : `**${playerName}** has received **x1 ${item}** from **${bossName}!**`;
 
-  if (vestigeMatch) {
-    const item = vestigeMatch[1];
-    msg = buildMessage(playerName, item, true);
-    return msgMap.set({ ID: CHAT_MESSAGE_TYPES.VESTIGE_DROP, URL }, msg);
-  }
+  // Order matters: UNTRADEABLE_TEXT is a catch-all that also matches the more
+  // specific patterns above it, so it must be checked last.
+  /** @type {{ match: RegExpMatchArray | null | undefined, id: string, kind?: 'vestige' }[]} */
+  const matchers = [
+    { match: vestigeMatch, id: CHAT_MESSAGE_TYPES.VESTIGE_DROP, kind: 'vestige' },
+    { match: tobKitMatch, id: CHAT_MESSAGE_TYPES.TOB_KIT },
+    { match: maggotEggMatch, id: CHAT_MESSAGE_TYPES.MAGGOT_EGG },
+    { match: untradeableMatch, id: CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP },
+  ];
 
-  if (tobKitMatch) {
-    const item = tobKitMatch[1];
-    msg = buildMessage(playerName, item);
-    return msgMap.set({ ID: CHAT_MESSAGE_TYPES.TOB_KIT, URL }, msg);
-  }
-
-  if (untradeableMatch) {
-    const item = untradeableMatch[1];
-    msg = buildMessage(playerName, item);
-    return msgMap.set({ ID: CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP, URL }, msg);
+  for (const { match, id, kind } of matchers) {
+    if (match) {
+      const msg = buildMessage(playerName, match[1], kind);
+      return msgMap.set({ ID: id, URL }, msg);
+    }
   }
 }

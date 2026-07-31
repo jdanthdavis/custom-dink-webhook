@@ -45,6 +45,22 @@ describe('untradeableDropHandler', () => {
     expect(key.ID).toBe(CHAT_MESSAGE_TYPES.TOB_KIT);
   });
 
+  it('formats a maggot egg drop with its mapped boss', () => {
+    const msgMap = new Map();
+    untradeableDropHandler(
+      'Swap received a drop: Maggot egg',
+      'Swap',
+      msgMap,
+      'url'
+    );
+    const msg = [...msgMap.values()][0];
+    expect(msg).toContain('**Swap** has received **x1 Maggot egg');
+    expect(msg).toContain('from **Maggot King!**');
+
+    const [key] = [...msgMap.keys()];
+    expect(key.ID).toBe(CHAT_MESSAGE_TYPES.MAGGOT_EGG);
+  });
+
   it('does not set a message when nothing matches', () => {
     const msgMap = new Map();
     untradeableDropHandler('unrelated message', 'Swap', msgMap, 'url');

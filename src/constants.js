@@ -116,6 +116,7 @@ export const CHAT_MESSAGE_TYPES = {
   UNTRADEABLE_DROP: 'UNTRADEABLE_DROP',
   PURIFYING_SIGIL: 'PURIFYING_SIGIL',
   FETCH_PETS: 'FETCH_PETS',
+  MAGGOT_EGG: 'MAGGOT_EGG',
 };
 export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',
@@ -126,6 +127,7 @@ export const ITEM_BOSS_MAP = {
   Holy: 'Theatre of Blood: Hard Mode',
   Sanguine: 'Theatre of Blood: Hard Mode',
   Dust: 'Theatre of Blood: Hard Mode',
+  Maggot: 'Maggot King',
 };
 export const UNTRADEABLE_ITEMS = [
   'vestige',
@@ -145,6 +147,7 @@ export const CHAT_REGEX = {
   BIG_FISH: /You catch an enormous (.+)!/,
   TOB_KITS:
     /.+ found something special: (Holy ornament kit|Sanguine ornament kit|Sanguine dust)/,
+  MAGGOT_EGG: /.+ received a drop: (Maggot egg).*/,
 };
 export const bigFishArr = [
   '[PLAYER] just wrangled a [FISH] bigger’n a damn johnboat—y’all better bring the grill and a tall tale ‘cause this one’s a whopper!',

@@ -22,7 +22,7 @@ export const DANSE_PARTY = '<a:danseParty:1281063903933104160>';
 export const FISHH = '<:fishh:1285367875531575306>';
 export const theBoys = [
   'LSX SWAP',
-  'MOOREI',
+  'PIGEON CAM',
   'GOUT HAVER',
   '6OUT',
   'GLASSFACE',

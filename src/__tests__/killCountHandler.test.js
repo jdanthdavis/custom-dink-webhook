@@ -45,6 +45,23 @@ describe('killCountHandler', () => {
     expect(msgMap.size).toBe(1);
   });
 
+  it('notifies on Lunar Chest counts and maps the boss name to Moons of Peril', () => {
+    const msgMap = new Map();
+    killCountHandler(
+      msgMap,
+      'Swap',
+      {
+        boss: 'Lunar Chest',
+        count: 20,
+        gameMessage: 'Your Lunar Chest count is: 20',
+      },
+      'url'
+    );
+    expect(msgMap.size).toBe(1);
+    expect(firstMessage(msgMap)).toContain('20!');
+    expect(firstMessage(msgMap)).toContain('Moons of Peril');
+  });
+
   it('notifies on the first kill of a special boss', () => {
     const msgMap = new Map();
     killCountHandler(

@@ -76,7 +76,7 @@ export const bossMap = new Map([
   ['DOOM OF MOKHAIOTL', 25],
   ['GEMSTONE CRAB', 10],
   ['DEMONIC BRUTUS', 10],
-  ['LUNAR CHEST', 10],
+  ['MOONS OF PERIL', 10],
   ['TEST', 1],
 ]);
 

@@ -48,14 +48,31 @@ export async function petGraph(message, msgMap, URL, MONGO_MIDDLEWARE) {
       return (Number(bData.totalPets) || 0) - (Number(aData.totalPets) || 0);
     });
 
-    const lines = entries.map(([name, data]) => {
-      const totalPets = Number(data.totalPets) || '-';
+    const headers = ['Name', '# of Pets', 'Recent Pet', 'Date Acquired'];
+
+    const rows = entries.map(([name, data]) => {
+      const totalPets = String(Number(data.totalPets) || '-');
       const recentPetName = data.mostRecentPet?.name ?? '-';
       const recentPetDate = data.mostRecentPet?.dateGot ?? '-';
-      return `**${name}** -> Total Pets: **${totalPets}** -> Most Recent: **${recentPetName}** on **${recentPetDate}**`;
+      return [name, totalPets, recentPetName, recentPetDate];
     });
 
-    return lines.join('\n');
+    // Auto-size each column to fit its header and the longest value below it
+    const widths = headers.map((header, col) =>
+      Math.max(header.length, ...rows.map((row) => row[col].length))
+    );
+
+    /** @param {string[]} cells */
+    const padRow = (cells) =>
+      cells.map((cell, col) => cell.padEnd(widths[col])).join('  ').trimEnd();
+
+    const headerLine = padRow(headers);
+    const separatorLine = widths.map((w) => '-'.repeat(w)).join('  ').trimEnd();
+    const rowLines = rows.map((row) => padRow(row));
+
+    const table = [headerLine, separatorLine, ...rowLines].join('\n');
+
+    return `**Pet Board**\n\`\`\`\n${table}\n\`\`\``;
   }
 
   if (singlePlayerName) {

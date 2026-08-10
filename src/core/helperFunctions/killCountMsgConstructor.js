@@ -27,7 +27,7 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
   }
 
   if (killCount === 1 && specialKills.includes(bossName.toUpperCase())) {
-    return `-# @everyone\n${Constants.DANSE} **${playerName}** has defeated **${bossName}** with a kill count of **${killCount.toLocaleString()}!**`;
+    return `-# @everyone\n${Constants.DANSE} **${playerName}** has defeated **${bossName}** with a kill count of **${killCount.toLocaleString()}!** ${Constants.DANSE}`;
   }
 
   const primaryMatch = gameMessage.match(primary_regex);

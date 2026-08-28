@@ -12,12 +12,17 @@ import { COMBAT_ACHIEVEMENT } from '../constants';
 function combatTaskHandler(msgMap, playerName, extra, URL) {
   const {
     tier,
-    task,
+    task: rawTask,
     tierProgress,
     tierTotalPoints,
     justCompletedTier,
     currentTier,
   } = extra;
+
+  // Temporary safety net: strip a stray "@ach_comp@" prefix some tasks are
+  // currently arriving with (e.g. "@ach_comp@Fight Caves Veteran"). Remove
+  // once the upstream data is fixed.
+  const task = rawTask?.replace('@ach_comp@', '') ?? rawTask;
 
   /** @param {string} [tier] */
   const formatTierText = (tier) => {

@@ -42,12 +42,13 @@ function extractOpenedPacks(content) {
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
  * @param {string} content - The raw content string containing card collection progress
- * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean } }} extra - Additional information about the card pull
+ * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean, inspectUrl?: string } }} extra - Additional information about the card pull
  * @param {string} URL - The associated URL
  * @returns {Map<{ ID: string, URL: string }, string>|undefined} The updated message map, or undefined if the pull doesn't qualify for a notification
  */
 function tcgHandler(msgMap, playerName, content, extra, URL) {
-  const { cardName, rarityTier, newForCollection, foil } = extra.metadata;
+  const { cardName, rarityTier, newForCollection, foil, inspectUrl } =
+    extra.metadata;
   const acceptedRarity = ["Mythic", "Godly", "Legendary"];
 
   if (!newForCollection) return;
@@ -57,9 +58,10 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   if (!foil && !isAcceptedNonFoil) return;
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
+  const cardLabel = inspectUrl ? `[${cardName}](<${inspectUrl}>)` : cardName;
   const msg = foil
-    ? `**${playerName}** has pulled a **${rarityTier} ${cardName}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
-    : `**${playerName}** has pulled a **${rarityTier} ${cardName}** on pack **${openedPacks} | ${cardProgress}**`;
+    ? `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
+    : `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** on pack **${openedPacks} | ${cardProgress}**`;
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);
 

@@ -14,21 +14,28 @@ export default {
       return new Response();
     }
 
-    let form;
     let payload;
+    let file = null;
     try {
-      form = await request.clone().formData();
-      const payloadJson = form.get('payload_json');
-      if (typeof payloadJson !== 'string') {
-        throw new Error('Missing or invalid payload_json field');
+      const contentType = request.headers.get('Content-Type') || '';
+      if (contentType.includes('multipart/form-data')) {
+        // Dink only sends multipart/form-data when it's attaching a screenshot.
+        const form = await request.clone().formData();
+        const payloadJson = form.get('payload_json');
+        if (typeof payloadJson !== 'string') {
+          throw new Error('Missing or invalid payload_json field');
+        }
+        payload = JSON.parse(payloadJson);
+        file = form.get('file');
+      } else {
+        // No screenshot means Dink sends the payload as a plain JSON body instead.
+        payload = await request.clone().json();
       }
-      payload = JSON.parse(payloadJson);
     } catch (error) {
       console.log('Failed to parse request payload - ', error);
       return new Response();
     }
 
-    const file = form.get('file');
     const extra = payload.extra;
     const payloadType = payload.type;
     const playerName = payload.playerName ? payload.playerName : payload.source;

@@ -106,6 +106,51 @@ describe('worker.fetch', () => {
     expect(fetchMock.mock.calls[0][0]).toBe('https://discord.example/webhook');
   });
 
+  it('parses a plain JSON body when no screenshot is attached', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const request = new Request('https://worker.example/webhook', {
+      method: 'POST',
+      headers: {
+        'User-Agent': 'RuneLite/1.10.0 Dink/1.8.0',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'DEATH',
+        playerName: 'LSX SWAP',
+        extra: {
+          isPvp: false,
+          keptItems: [],
+          lostItems: [],
+          location: { regionId: 1 },
+        },
+      }),
+    });
+
+    await worker.fetch(request, { DEATH_URL: 'https://discord.example/webhook' });
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][0]).toBe('https://discord.example/webhook');
+  });
+
+  it('does not throw on a malformed plain JSON body', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const request = new Request('https://worker.example/webhook', {
+      method: 'POST',
+      headers: {
+        'User-Agent': 'RuneLite/1.10.0 Dink/1.8.0',
+        'Content-Type': 'application/json',
+      },
+      body: 'not valid json',
+    });
+
+    await expect(worker.fetch(request, {})).resolves.toBeInstanceOf(Response);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it('does not post to Discord for a non-allowlisted player', async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);

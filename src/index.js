@@ -53,7 +53,8 @@ export default {
         console.log(url, msg);
         let formData = new FormData();
         let response;
-        formData.append('payload_json', JSON.stringify({ content: msg }));
+        const body = typeof msg === 'string' ? { content: msg } : { embeds: [msg] };
+        formData.append('payload_json', JSON.stringify(body));
         if (file !== null && !extra?.message?.startsWith('!Fetchpets')) {
           // since the screenshots would be taken so close to each other we are fine with sending the first one twice
           formData.append('file', file);

@@ -37,7 +37,7 @@ import * as Constants from './constants';
  *                          For more details, see the link provided in the description.
  * @param {string} playerName - The name of the player.
  * @param {*} env - The URLs used for each payload type.
- * @returns {Promise<Map<{ ID: string, URL: string }, string>>} - The updated message map containing the formatted message.
+ * @returns {Promise<Map<{ ID: string, URL: string }, string|object>>} - The updated message map containing the formatted message (a plain string for every handler except EXTERNAL_PLUGIN, which returns a Discord embed object).
  */
 async function createFormData(extra, content, payloadType, playerName, env) {
   const {

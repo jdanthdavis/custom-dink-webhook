@@ -80,7 +80,7 @@ describe('tcgHandler', () => {
     expect(embed.description).toContain('pack **1,048 | 3,458/6,376 (54.2%)**');
   });
 
-  it('sets url, color, image, and footer from the payload metadata', () => {
+  it('sets url, color, thumbnail, and footer from the payload metadata', () => {
     const msgMap = new Map();
     tcgHandler(
       msgMap,
@@ -101,12 +101,12 @@ describe('tcgHandler', () => {
     );
     const embed = firstEmbed(msgMap);
     expect(embed.url).toBe('https://osrs-tcg.net/inspect/92b15d70-7090-4a2c-b60d-15bc2f58b485');
-    expect(embed.image).toEqual({ url: 'https://osrs-tcg.net/images/items/detail/Rune_pouch_detail.webp' });
+    expect(embed.thumbnail).toEqual({ url: 'https://osrs-tcg.net/images/items/detail/Rune_pouch_detail.webp' });
     expect(embed.footer).toEqual({ text: 'OSRS TCG' });
     expect(embed.color).toBe(0xf1c40f);
   });
 
-  it('omits url, image, and footer when their source data is absent', () => {
+  it('omits url, thumbnail, and footer when their source data is absent', () => {
     const msgMap = new Map();
     tcgHandler(
       msgMap,
@@ -117,7 +117,7 @@ describe('tcgHandler', () => {
     );
     const embed = firstEmbed(msgMap);
     expect(embed.url).toBeUndefined();
-    expect(embed.image).toBeUndefined();
+    expect(embed.thumbnail).toBeUndefined();
     expect(embed.footer).toBeUndefined();
   });
 });

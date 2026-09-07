@@ -52,9 +52,9 @@ function extractOpenedPacks(content) {
 /**
  * Creates a TCG pull notification embed when a qualifying card is found. This
  * is the only handler that sends an embed instead of plain message content -
- * the embed's own `url` field makes the title clickable without dropping a
- * raw link into the message text, which is what causes Discord to unfurl a
- * second, redundant embed.
+ * the card name is linked to `inspectUrl` via a markdown link inside the
+ * embed description, which (unlike a link in plain message content) doesn't
+ * trigger Discord's auto-unfurl into a second, redundant embed.
  * @param {Map<{ ID: string, URL: string }, string|object>} msgMap - The message map to update
  * @param {string} playerName - The player's name
  * @param {string} content - The raw content string containing card collection progress
@@ -82,12 +82,11 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
   const foilSuffix = foil ? " :sparkles: *foil* :sparkles:" : "";
+  const cardLabel = inspectUrl ? `[${cardName}](${inspectUrl})` : cardName;
   const embed = {
-    title: cardName,
-    url: inspectUrl,
     color: RARITY_COLORS[rarityTier] ?? DEFAULT_RARITY_COLOR,
     thumbnail: imageUrl ? { url: imageUrl } : undefined,
-    description: `**${playerName}** has pulled a **${rarityTier}** card${foilSuffix}\non pack **${openedPacks} | ${cardProgress}**`,
+    description: `**${playerName}** has pulled a **${rarityTier} ${cardLabel}**${foilSuffix}\non pack **${openedPacks} | ${cardProgress}**`,
     footer: sourcePlugin ? { text: sourcePlugin } : undefined,
   };
 

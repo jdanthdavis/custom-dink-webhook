@@ -1,10 +1,14 @@
 import { EXTERNAL_PLUGIN } from "../constants";
 
-/** Embed colors keyed by rarity tier, with a fallback for anything else (e.g. a foil pull of an unlisted rarity). */
+/** Embed colors keyed by rarity tier, with a fallback for anything else (e.g. a new tier not yet listed here). */
 const RARITY_COLORS = {
-  Legendary: 0xf1c40f,
-  Godly: 0x9b59b6,
-  Mythic: 0xe74c3c,
+  Godly: 0xf1c40f,
+  Mythic: 0x9b59b6,
+  Legendary: 0xe74c3c,
+  Epic: 0x9b59b6,
+  Rare: 0x3498db,
+  Uncommon: 0x2ecc71,
+  Common: 0xffffff,
 };
 const DEFAULT_RARITY_COLOR = 0x5865f2;
 

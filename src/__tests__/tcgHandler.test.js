@@ -103,7 +103,7 @@ describe('tcgHandler', () => {
     expect(embed.url).toBe('https://osrs-tcg.net/inspect/92b15d70-7090-4a2c-b60d-15bc2f58b485');
     expect(embed.thumbnail).toEqual({ url: 'https://osrs-tcg.net/images/items/detail/Rune_pouch_detail.webp' });
     expect(embed.footer).toEqual({ text: 'OSRS TCG' });
-    expect(embed.color).toBe(0xf1c40f);
+    expect(embed.color).toBe(0xe74c3c);
   });
 
   it('omits url, thumbnail, and footer when their source data is absent', () => {

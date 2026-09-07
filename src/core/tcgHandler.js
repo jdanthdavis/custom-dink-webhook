@@ -1,5 +1,13 @@
 import { EXTERNAL_PLUGIN } from "../constants";
 
+/** Embed colors keyed by rarity tier, with a fallback for anything else (e.g. a foil pull of an unlisted rarity). */
+const RARITY_COLORS = {
+  Legendary: 0xf1c40f,
+  Godly: 0x9b59b6,
+  Mythic: 0xe74c3c,
+};
+const DEFAULT_RARITY_COLOR = 0x5865f2;
+
 /**
  * Extracts the total number of cards the game has from the content string and
  * pairs it with the "Total cards" count.
@@ -38,17 +46,28 @@ function extractOpenedPacks(content) {
 }
 
 /**
- * Creates a TCG pull notification message when a qualifying card is found.
- * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
+ * Creates a TCG pull notification embed when a qualifying card is found. This
+ * is the only handler that sends an embed instead of plain message content -
+ * the embed's own `url` field makes the title clickable without dropping a
+ * raw link into the message text, which is what causes Discord to unfurl a
+ * second, redundant embed.
+ * @param {Map<{ ID: string, URL: string }, string|object>} msgMap - The message map to update
  * @param {string} playerName - The player's name
  * @param {string} content - The raw content string containing card collection progress
- * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean, inspectUrl?: string } }} extra - Additional information about the card pull
+ * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean, inspectUrl?: string, imageUrl?: string, sourcePlugin?: string } }} extra - Additional information about the card pull
  * @param {string} URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>|undefined} The updated message map, or undefined if the pull doesn't qualify for a notification
+ * @returns {Map<{ ID: string, URL: string }, string|object>|undefined} The updated message map, or undefined if the pull doesn't qualify for a notification
  */
 function tcgHandler(msgMap, playerName, content, extra, URL) {
-  const { cardName, rarityTier, newForCollection, foil, inspectUrl } =
-    extra.metadata;
+  const {
+    cardName,
+    rarityTier,
+    newForCollection,
+    foil,
+    inspectUrl,
+    imageUrl,
+    sourcePlugin,
+  } = extra.metadata;
   const acceptedRarity = ["Mythic", "Godly", "Legendary"];
 
   if (!newForCollection) return;
@@ -58,12 +77,17 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   if (!foil && !isAcceptedNonFoil) return;
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
-  const cardLabel = inspectUrl ? `[${cardName}](<${inspectUrl}>)` : cardName;
-  const msg = foil
-    ? `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
-    : `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** on pack **${openedPacks} | ${cardProgress}**`;
+  const foilSuffix = foil ? " :sparkles: *foil* :sparkles:" : "";
+  const embed = {
+    title: cardName,
+    url: inspectUrl,
+    color: RARITY_COLORS[rarityTier] ?? DEFAULT_RARITY_COLOR,
+    thumbnail: imageUrl ? { url: imageUrl } : undefined,
+    description: `**${playerName}** has pulled a **${rarityTier}** card${foilSuffix}\non pack **${openedPacks} | ${cardProgress}**`,
+    footer: sourcePlugin ? { text: sourcePlugin } : undefined,
+  };
 
-  msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);
+  msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, embed);
 
   return msgMap;
 }

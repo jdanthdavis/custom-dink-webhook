@@ -82,7 +82,7 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
     title: cardName,
     url: inspectUrl,
     color: RARITY_COLORS[rarityTier] ?? DEFAULT_RARITY_COLOR,
-    thumbnail: imageUrl ? { url: imageUrl } : undefined,
+    image: imageUrl ? { url: imageUrl } : undefined,
     description: `**${playerName}** has pulled a **${rarityTier}** card${foilSuffix}\non pack **${openedPacks} | ${cardProgress}**`,
     footer: sourcePlugin ? { text: sourcePlugin } : undefined,
   };

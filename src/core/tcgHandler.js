@@ -12,29 +12,6 @@ const RARITY_COLORS = {
 };
 const DEFAULT_RARITY_COLOR = 0x5865f2;
 
-const PROGRESS_BAR_LENGTH = 10;
-const PROGRESS_BAR_FILLED = "▓";
-const PROGRESS_BAR_EMPTY = "░";
-
-/**
- * Renders a text progress bar for a 0-100 percentage.
- * @param {number} percentage - A value between 0 and 100
- * @returns {string} A bar like "▓▓▓░░░░░░░"
- */
-function buildProgressBar(percentage) {
-  const filled = Math.max(
-    0,
-    Math.min(
-      PROGRESS_BAR_LENGTH,
-      Math.round((percentage / 100) * PROGRESS_BAR_LENGTH),
-    ),
-  );
-  return (
-    PROGRESS_BAR_FILLED.repeat(filled) +
-    PROGRESS_BAR_EMPTY.repeat(PROGRESS_BAR_LENGTH - filled)
-  );
-}
-
 /**
  * Extracts the "Opened packs" count from the raw content string.
  * @param {string} content - The raw content from the TCG message
@@ -101,21 +78,14 @@ function extractCollectionScoreStats(content) {
 }
 
 /**
- * Detects a one-off milestone worth calling out for this specific pull.
- * Only checks conditions derivable from this single payload (no persisted
- * prior state), so it's limited to round-number moments rather than "just
- * crossed 50%" style detection.
- * @param {{ uniqueStats: { owned: number }|null, foilStats: { owned: number }|null, foil: boolean }} args
- * @returns {string|null}
+ * Formats a stat's owned/total counts and percentage as "owned/total (X.X%)",
+ * always to one decimal place rather than whatever precision the source
+ * content happened to use.
+ * @param {{ owned: number, total: number, percentage: number }} stats
+ * @returns {string}
  */
-function detectMilestone({ uniqueStats, foilStats, foil }) {
-  if (foil && foilStats?.owned === 1) {
-    return "First foil card ever pulled!";
-  }
-  if (uniqueStats?.owned && uniqueStats.owned % 100 === 0) {
-    return `${uniqueStats.owned.toLocaleString("en-US")}th unique card collected!`;
-  }
-  return null;
+function formatRatioStat(stats) {
+  return `${stats.owned.toLocaleString("en-US")}/${stats.total.toLocaleString("en-US")} (${stats.percentage.toFixed(1)}%)`;
 }
 
 /**
@@ -127,20 +97,13 @@ function detectMilestone({ uniqueStats, foilStats, foil }) {
  * @param {Map<{ ID: string, URL: string }, string|object>} msgMap - The message map to update
  * @param {string} playerName - The player's name
  * @param {string} content - The raw content string containing card collection progress
- * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean, inspectUrl?: string, imageUrl?: string, sourcePlugin?: string } }} extra - Additional information about the card pull
+ * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean, inspectUrl?: string, imageUrl?: string } }} extra - Additional information about the card pull
  * @param {string} URL - The associated URL
  * @returns {Map<{ ID: string, URL: string }, string|object>|undefined} The updated message map, or undefined if the pull doesn't qualify for a notification
  */
 function tcgHandler(msgMap, playerName, content, extra, URL) {
-  const {
-    cardName,
-    rarityTier,
-    newForCollection,
-    foil,
-    inspectUrl,
-    imageUrl,
-    sourcePlugin,
-  } = extra.metadata;
+  const { cardName, rarityTier, newForCollection, foil, inspectUrl, imageUrl } =
+    extra.metadata;
   const acceptedRarity = ["Mythic", "Godly", "Legendary"];
 
   if (!newForCollection) return;
@@ -153,61 +116,36 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   const uniqueStats = extractUniqueCardStats(content);
   const foilStats = extractFoilCardStats(content);
   const scoreStats = extractCollectionScoreStats(content);
-  const milestone = detectMilestone({ uniqueStats, foilStats, foil });
 
   const foilSuffix = foil ? " :sparkles: *foil* :sparkles:" : "";
   const cardLabel = inspectUrl ? `[${cardName}](${inspectUrl})` : cardName;
 
-  const fields = [
-    {
-      name: "🎴 This Pull",
-      value: `**${rarityTier}**${foil ? " ✨ Foil" : ""}`,
-      inline: true,
-    },
-    {
-      name: "📦 Opened Packs",
-      value: openedPacks ?? "—",
-      inline: true,
-    },
-  ];
+  const statLines = [`Packs opened: **${openedPacks ?? "—"}**`];
 
   if (uniqueStats) {
-    fields.push({
-      name: "🃏 Unique Cards",
-      value: `${buildProgressBar(uniqueStats.percentage)} ${uniqueStats.owned.toLocaleString("en-US")}/${uniqueStats.total.toLocaleString("en-US")} (${uniqueStats.percentage}%)`,
-      inline: true,
-    });
+    statLines.push(`Unique cards: **${formatRatioStat(uniqueStats)}**`);
   }
 
   // Foil progress is only relevant to show off on a foil pull.
   if (foil && foilStats) {
-    fields.push({
-      name: "✨ Unique Foils",
-      value: `${foilStats.owned.toLocaleString("en-US")}/${foilStats.total.toLocaleString("en-US")} (${foilStats.percentage}%)`,
-      inline: true,
-    });
+    statLines.push(`Unique foils: **${formatRatioStat(foilStats)}**`);
   }
 
   // Collection score is reserved for the rarest pulls so it doesn't clutter every notification.
   if ((foil || rarityTier === "Mythic") && scoreStats) {
-    fields.push({
-      name: "💰 Collection Score",
-      value: `${scoreStats.score.toLocaleString("en-US")} (${scoreStats.percentage}%)`,
-      inline: true,
-    });
-  }
-
-  if (milestone) {
-    fields.push({ name: "🎉 Milestone", value: milestone, inline: false });
+    statLines.push(
+      `Collection score: **${scoreStats.score.toLocaleString("en-US")} (${scoreStats.percentage.toFixed(1)}%)**`,
+    );
   }
 
   const embed = {
     color: RARITY_COLORS[rarityTier] ?? DEFAULT_RARITY_COLOR,
     thumbnail: imageUrl ? { url: imageUrl } : undefined,
-    description: `**${playerName}** has pulled a **${rarityTier} ${cardLabel}**${foilSuffix}`,
-    fields,
-    footer: sourcePlugin ? { text: sourcePlugin } : undefined,
-    timestamp: new Date().toISOString(),
+    description: [
+      `${playerName} has pulled a ${rarityTier} ${cardLabel}${foilSuffix}`,
+      "",
+      ...statLines,
+    ].join("\n"),
   };
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, embed);

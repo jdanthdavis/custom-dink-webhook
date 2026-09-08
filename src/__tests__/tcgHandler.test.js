@@ -50,7 +50,7 @@ describe('tcgHandler', () => {
     expect(msg).not.toContain('foil');
     // no "Collection score" or "Unique foil cards" in `content`, so those fall back to "—"
     expect(msg).toContain(
-      '-# Collection score: — | Unique cards: 320/500 (64.0%) | Unique Foils: —'
+      '-# Collection score: — | Unique cards: 320/500 | Unique Foils: —'
     );
   });
 
@@ -84,7 +84,7 @@ describe('tcgHandler', () => {
     // (3,458, includes duplicates) against the "Unique cards" universe - not the 3,455
     // distinct-owned figure - matching the same value already shown on the pack line above.
     expect(msg).toContain(
-      '-# Collection score: 181,289,545 (54.2%) | Unique cards: 3,458/6,376 (54.2%) | Unique Foils: 54/6,376 (0.8%)'
+      '-# Collection score: 181,289,545 | Unique cards: 3,458/6,376 | Unique Foils: 54/6,376'
     );
   });
 
@@ -105,7 +105,7 @@ describe('tcgHandler', () => {
       '**themildest1** has pulled a **Legendary Dragon pickaxe** on pack **1 | 5/5,173 (0.1%)**'
     );
     expect(lines[1]).toBe(
-      '-# Collection score: 153,800 (0.10%) | Unique cards: 5/5,173 (0.1%) | Unique Foils: 1/5,173 (0.02%)'
+      '-# Collection score: 153,800 | Unique cards: 5/5,173 | Unique Foils: 1/5,173'
     );
   });
 });

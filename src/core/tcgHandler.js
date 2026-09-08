@@ -69,6 +69,17 @@ function extractCollectionScore(content) {
 }
 
 /**
+ * Strips a trailing " (X%)" suffix from a formatted stat string, e.g.
+ * "215/5,173 (4.2%)" -> "215/5,173". Leaves a string without that suffix
+ * (like the "—" fallback) unchanged, and passes through null/undefined as-is.
+ * @param {string|null|undefined} stat
+ * @returns {string|null|undefined}
+ */
+function stripPercentage(stat) {
+  return stat?.replace(/ \([\d.]+%\)$/, "") ?? stat;
+}
+
+/**
  * Creates a TCG pull notification message when a qualifying card is found.
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
@@ -95,7 +106,7 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   const pullLine = foil
     ? `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
     : `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** on pack **${openedPacks} | ${cardProgress}**`;
-  const statsLine = `-# Collection score: ${collectionScore} | Unique cards: ${cardProgress} | Unique Foils: ${foilProgress}`;
+  const statsLine = `-# Collection score: ${stripPercentage(collectionScore)} | Unique cards: ${stripPercentage(cardProgress)} | Unique Foils: ${stripPercentage(foilProgress)}`;
   const msg = `${pullLine}\n${statsLine}`;
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);

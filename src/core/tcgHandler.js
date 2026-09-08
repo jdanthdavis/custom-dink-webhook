@@ -104,8 +104,8 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   const foilProgress = extractFoilCardProgress(content) ?? "—";
   const cardLabel = inspectUrl ? `[${cardName}](<${inspectUrl}>)` : cardName;
   const pullLine = foil
-    ? `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
-    : `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** on pack **${openedPacks} | ${cardProgress}**`;
+    ? `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks}!**`
+    : `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** on pack **${openedPacks}!**`;
   const statsLine = `-# Collection score: ${stripPercentage(collectionScore)} | Unique cards: ${stripPercentage(cardProgress)} | Unique Foils: ${stripPercentage(foilProgress)}`;
   const msg = `${pullLine}\n${statsLine}`;
 

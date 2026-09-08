@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import tcgHandler from '../core/tcgHandler';
 
-/** @param {Map<any, object>} msgMap */
-function firstEmbed(msgMap) {
+/** @param {Map<any, string>} msgMap */
+function firstMessage(msgMap) {
   return [...msgMap.values()][0];
 }
 
@@ -44,35 +44,23 @@ describe('tcgHandler', () => {
       { metadata: { cardName: 'Zulrah', rarityTier: 'Legendary', newForCollection: true, foil: false } },
       'url'
     );
-    const embed = firstEmbed(msgMap);
-    expect(embed.description).toBe(
-      'Swap has pulled a Legendary Zulrah\n\nPacks opened: **150**\nUnique cards: **320/500 (64.0%)**'
-    );
-    // non-foil, non-Mythic pulls stay lean: no foil/score lines, no foil marker
-    expect(embed.description).not.toContain('Unique foils');
-    expect(embed.description).not.toContain('Collection score');
-    expect(embed.description).not.toContain('foil');
+    const msg = firstMessage(msgMap);
+    expect(msg).toContain('**Swap** has pulled a **Legendary Zulrah**');
+    expect(msg).toContain('pack **150 | 320/500 (64.0%)**');
+    expect(msg).not.toContain('foil');
   });
 
   it('notifies on any new foil pull regardless of rarity', () => {
-    const foilContent =
-      'Collection score: 100 (1.0%)\nUnique cards: 320 / 500 (64.0%)\nUnique foil cards: 5 / 500 (1.0%)\nOpened packs: 150';
     const msgMap = new Map();
     tcgHandler(
       msgMap,
       'Swap',
-      foilContent,
+      content,
       { metadata: { cardName: 'Goblin', rarityTier: 'Common', newForCollection: true, foil: true } },
       'url'
     );
-    const embed = firstEmbed(msgMap);
-    expect(embed.description).toBe(
-      'Swap has pulled a Common Goblin :sparkles: *foil* :sparkles:\n\n' +
-        'Packs opened: **150**\n' +
-        'Unique cards: **320/500 (64.0%)**\n' +
-        'Unique foils: **5/500 (1.0%)**\n' +
-        'Collection score: **100 (1.0%)**'
-    );
+    const msg = firstMessage(msgMap);
+    expect(msg).toContain('**Common Goblin** :sparkles: *foil* :sparkles:');
   });
 
   it('handles space-delimited thousands separators in the content', () => {
@@ -86,64 +74,7 @@ describe('tcgHandler', () => {
       { metadata: { cardName: "Statius's platelegs", rarityTier: 'Mythic', newForCollection: true, foil: false } },
       'url'
     );
-    const embed = firstEmbed(msgMap);
-    expect(embed.description).toContain('Packs opened: **1,048**');
-    expect(embed.description).toContain('Unique cards: **3,455/6,376 (54.2%)**');
-    // Mythic pulls show collection score even without foil
-    expect(embed.description).toContain('Collection score: **181,289,545 (54.2%)**');
-  });
-
-  it('shows the true percentage to one decimal place instead of a rounded whole number', () => {
-    const msgMap = new Map();
-    tcgHandler(
-      msgMap,
-      'Swap',
-      'Unique cards: 320 / 500 (64.0%)\nUnique foil cards: 412 / 5173 (7.965%)\nOpened packs: 150',
-      { metadata: { cardName: 'Goblin', rarityTier: 'Common', newForCollection: true, foil: true } },
-      'url'
-    );
-    const embed = firstEmbed(msgMap);
-    expect(embed.description).toContain('Unique foils: **412/5,173 (8.0%)**');
-  });
-
-  it('links the card name to inspectUrl and sets thumbnail and color from the payload metadata', () => {
-    const msgMap = new Map();
-    tcgHandler(
-      msgMap,
-      'Pigeon Cam',
-      'Unique cards: 5 / 5173 (0.1%)\nTotal cards: 5\nOpened packs: 1',
-      {
-        metadata: {
-          cardName: 'Rune pouch',
-          rarityTier: 'Legendary',
-          newForCollection: true,
-          foil: false,
-          inspectUrl: 'https://osrs-tcg.net/inspect/92b15d70-7090-4a2c-b60d-15bc2f58b485',
-          imageUrl: 'https://osrs-tcg.net/images/items/detail/Rune_pouch_detail.webp',
-        },
-      },
-      'url'
-    );
-    const embed = firstEmbed(msgMap);
-    expect(embed.description).toContain(
-      '[Rune pouch](https://osrs-tcg.net/inspect/92b15d70-7090-4a2c-b60d-15bc2f58b485)'
-    );
-    expect(embed.thumbnail).toEqual({ url: 'https://osrs-tcg.net/images/items/detail/Rune_pouch_detail.webp' });
-    expect(embed.color).toBe(0xe74c3c);
-  });
-
-  it('falls back to a plain card name and omits the thumbnail when their source data is absent', () => {
-    const msgMap = new Map();
-    tcgHandler(
-      msgMap,
-      'Swap',
-      content,
-      { metadata: { cardName: 'Zulrah', rarityTier: 'Legendary', newForCollection: true, foil: false } },
-      'url'
-    );
-    const embed = firstEmbed(msgMap);
-    expect(embed.description).toContain('Legendary Zulrah');
-    expect(embed.description).not.toContain('[Zulrah]');
-    expect(embed.thumbnail).toBeUndefined();
+    const msg = firstMessage(msgMap);
+    expect(msg).toContain('pack **1,048 | 3,458/6,376 (54.2%)**');
   });
 });

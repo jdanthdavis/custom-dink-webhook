@@ -1,5 +1,9 @@
 import { EXTERNAL_PLUGIN } from "../constants";
 
+const ACCEPTED_RARITIES = ["Mythic", "Godly", "Legendary"];
+const FOIL_MILESTONE_INTERVAL = 50;
+const CARD_MILESTONE_INTERVAL = 250;
+
 /**
  * Extracts the total number of cards the game has from the content string and
  * pairs it with the "Total cards" count.
@@ -102,6 +106,58 @@ function stripPercentage(stat) {
 }
 
 /**
+ * Checks whether an owned count lands exactly on a milestone interval, e.g.
+ * isMilestone(100, 50) -> true.
+ * @param {number|null} count - The owned count, or null if unknown
+ * @param {number} interval - The milestone interval (e.g. every 50)
+ * @returns {boolean}
+ */
+function isMilestone(count, interval) {
+  return count !== null && count % interval === 0;
+}
+
+/**
+ * Builds the pull-line message for a qualifying card pull. Uses a distinct
+ * milestone message when the foil or unique-card owned count lands exactly
+ * on its interval (FOIL_MILESTONE_INTERVAL / CARD_MILESTONE_INTERVAL),
+ * otherwise falls back to the standard pull message.
+ * @param {object} params
+ * @param {string} params.playerName - The player's name
+ * @param {string} params.rarityTier - The card's rarity tier
+ * @param {string} params.cardLabel - The card name, optionally linked
+ * @param {string|null} params.openedPacks - The formatted opened-packs count
+ * @param {boolean} params.foil - Whether the pulled card is a foil
+ * @param {number|null} params.foilOwnedCount - Raw unique-foil-cards-owned count
+ * @param {number|null} params.uniqueCardOwnedCount - Raw unique-cards-owned count
+ * @returns {string} The formatted pull-line message
+ */
+function buildPullLine({
+  playerName,
+  rarityTier,
+  cardLabel,
+  openedPacks,
+  foil,
+  foilOwnedCount,
+  uniqueCardOwnedCount,
+}) {
+  const cardDescriptor = `a **${rarityTier} ${cardLabel}**`;
+  const foilTag = " :sparkles: *foil* :sparkles:";
+  const packSuffix = `on pack **${openedPacks}!**`;
+
+  if (foil && isMilestone(foilOwnedCount, FOIL_MILESTONE_INTERVAL)) {
+    return `**${playerName}** has pulled their **${foilOwnedCount}th** foil by pulling ${cardDescriptor}${foilTag} ${packSuffix}`;
+  }
+
+  if (!foil && isMilestone(uniqueCardOwnedCount, CARD_MILESTONE_INTERVAL)) {
+    return `**${playerName}** has pulled their **${uniqueCardOwnedCount}th** card by pulling ${cardDescriptor} ${packSuffix}`;
+  }
+
+  return foil
+    ? `**${playerName}** has pulled ${cardDescriptor}${foilTag} ${packSuffix}`
+    : `**${playerName}** has pulled ${cardDescriptor} ${packSuffix}`;
+}
+
+/**
  * Creates a TCG pull notification message when a qualifying card is found.
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
@@ -113,31 +169,27 @@ function stripPercentage(stat) {
 function tcgHandler(msgMap, playerName, content, extra, URL) {
   const { cardName, rarityTier, newForCollection, foil, inspectUrl } =
     extra.metadata;
-  const acceptedRarity = ["Mythic", "Godly", "Legendary"];
 
   if (!newForCollection) return;
+  if (!foil && !ACCEPTED_RARITIES.includes(rarityTier)) return;
 
-  const isAcceptedNonFoil = !foil && acceptedRarity.includes(rarityTier);
-
-  if (!foil && !isAcceptedNonFoil) return;
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
   const collectionScore = extractCollectionScore(content) ?? "—";
   const foilProgress = extractFoilCardProgress(content) ?? "—";
   const foilOwnedCount = extractFoilOwnedCount(content);
-  const isFoilMilestone =
-    foil && foilOwnedCount !== null && foilOwnedCount % 50 === 0;
   const uniqueCardOwnedCount = extractUniqueCardOwnedCount(content);
-  const isCardMilestone =
-    !foil && uniqueCardOwnedCount !== null && uniqueCardOwnedCount % 250 === 0;
   const cardLabel = inspectUrl ? `[${cardName}](<${inspectUrl}>)` : cardName;
-  const pullLine = isFoilMilestone
-    ? `**${playerName}** has pulled their **${foilOwnedCount}th** foil by pulling a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks}!**`
-    : isCardMilestone
-      ? `**${playerName}** has pulled their **${uniqueCardOwnedCount}th** card by pulling a **${rarityTier} ${cardLabel}** on pack **${openedPacks}!**`
-      : foil
-        ? `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks}!**`
-        : `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** on pack **${openedPacks}!**`;
+
+  const pullLine = buildPullLine({
+    playerName,
+    rarityTier,
+    cardLabel,
+    openedPacks,
+    foil,
+    foilOwnedCount,
+    uniqueCardOwnedCount,
+  });
   const statsLine = `-# Collection score: ${stripPercentage(collectionScore)} | Unique cards: ${stripPercentage(cardProgress)} | Unique Foils: ${stripPercentage(foilProgress)}`;
   const msg = `${pullLine}\n${statsLine}`;
 

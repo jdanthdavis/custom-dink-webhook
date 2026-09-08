@@ -46,7 +46,7 @@ describe('tcgHandler', () => {
     );
     const msg = firstMessage(msgMap);
     expect(msg).toContain('**Swap** has pulled a **Legendary Zulrah**');
-    expect(msg).toContain('pack **150 | 320/500 (64.0%)**');
+    expect(msg).toContain('pack **150!**');
     expect(msg).not.toContain('foil');
     // no "Collection score" or "Unique foil cards" in `content`, so those fall back to "—"
     expect(msg).toContain(
@@ -79,10 +79,10 @@ describe('tcgHandler', () => {
       'url'
     );
     const msg = firstMessage(msgMap);
-    expect(msg).toContain('pack **1,048 | 3,458/6,376 (54.2%)**');
+    expect(msg).toContain('pack **1,048!**');
     // "Unique cards" here intentionally reuses cardProgress, which pairs "Total cards"
     // (3,458, includes duplicates) against the "Unique cards" universe - not the 3,455
-    // distinct-owned figure - matching the same value already shown on the pack line above.
+    // distinct-owned figure.
     expect(msg).toContain(
       '-# Collection score: 181,289,545 | Unique cards: 3,458/6,376 | Unique Foils: 54/6,376'
     );
@@ -102,7 +102,7 @@ describe('tcgHandler', () => {
     const msg = firstMessage(msgMap);
     const lines = msg.split('\n');
     expect(lines[0]).toBe(
-      '**themildest1** has pulled a **Legendary Dragon pickaxe** on pack **1 | 5/5,173 (0.1%)**'
+      '**themildest1** has pulled a **Legendary Dragon pickaxe** on pack **1!**'
     );
     expect(lines[1]).toBe(
       '-# Collection score: 153,800 | Unique cards: 5/5,173 | Unique Foils: 1/5,173'

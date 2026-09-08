@@ -38,6 +38,48 @@ function extractOpenedPacks(content) {
 }
 
 /**
+ * Extracts the unique-foil-card progress (owned/total and percentage) from
+ * the raw content string.
+ * @param {string} content - The raw content from the TCG message
+ * @returns {string|null} A formatted string in the format "owned/total (percentage%)", or null if data is missing
+ */
+function extractFoilCardProgress(content) {
+  const match = content?.match(
+    /Unique foil cards: ([\d ]+) \/ ([\d ]+) \(([\d.]+)%\)/,
+  );
+  if (!match) return null;
+
+  const owned = Number(match[1].replace(/ /g, "")).toLocaleString("en-US");
+  const total = Number(match[2].replace(/ /g, "")).toLocaleString("en-US");
+
+  return `${owned}/${total} (${match[3]}%)`;
+}
+
+/**
+ * Extracts the collection score and its percentage from the raw content string.
+ * @param {string} content - The raw content from the TCG message
+ * @returns {string|null} A formatted string in the format "score (percentage%)", or null if not found
+ */
+function extractCollectionScore(content) {
+  const match = content?.match(/Collection score: ([\d ]+) \(([\d.]+)%\)/);
+  if (!match) return null;
+
+  const score = Number(match[1].replace(/ /g, "")).toLocaleString("en-US");
+  return `${score} (${match[2]}%)`;
+}
+
+/**
+ * Strips a trailing " (X%)" suffix from a formatted stat string, e.g.
+ * "215/5,173 (4.2%)" -> "215/5,173". Leaves a string without that suffix
+ * (like the "—" fallback) unchanged, and passes through null/undefined as-is.
+ * @param {string|null|undefined} stat
+ * @returns {string|null|undefined}
+ */
+function stripPercentage(stat) {
+  return stat?.replace(/ \([\d.]+%\)$/, "") ?? stat;
+}
+
+/**
  * Creates a TCG pull notification message when a qualifying card is found.
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
@@ -58,10 +100,14 @@ function tcgHandler(msgMap, playerName, content, extra, URL) {
   if (!foil && !isAcceptedNonFoil) return;
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
+  const collectionScore = extractCollectionScore(content) ?? "—";
+  const foilProgress = extractFoilCardProgress(content) ?? "—";
   const cardLabel = inspectUrl ? `[${cardName}](<${inspectUrl}>)` : cardName;
-  const msg = foil
+  const pullLine = foil
     ? `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** :sparkles: *foil* :sparkles: on pack **${openedPacks} | ${cardProgress}**`
     : `**${playerName}** has pulled a **${rarityTier} ${cardLabel}** on pack **${openedPacks} | ${cardProgress}**`;
+  const statsLine = `-# Collection score: ${stripPercentage(collectionScore)} | Unique cards: ${stripPercentage(cardProgress)} | Unique Foils: ${stripPercentage(foilProgress)}`;
+  const msg = `${pullLine}\n${statsLine}`;
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);
 

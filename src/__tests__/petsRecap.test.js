@@ -67,8 +67,18 @@ describe('buildPetsWeeklyChangeSection', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'Idle', total_pets: 10, most_recent_pet_name: 'X', total_pets_baseline: 10 },
-              { playername: 'Active', total_pets: 12, most_recent_pet_name: 'Y', total_pets_baseline: 10 },
+              {
+                playername: 'Idle',
+                total_pets: 10,
+                most_recent_pet_name: 'X',
+                total_pets_baseline: 10,
+              },
+              {
+                playername: 'Active',
+                total_pets: 12,
+                most_recent_pet_name: 'Y',
+                total_pets_baseline: 10,
+              },
             ],
           },
         })
@@ -87,8 +97,18 @@ describe('buildPetsWeeklyChangeSection', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'SmallGain', total_pets: 11, most_recent_pet_name: 'A', total_pets_baseline: 10 },
-              { playername: 'BigGain', total_pets: 15, most_recent_pet_name: 'B', total_pets_baseline: 5 },
+              {
+                playername: 'SmallGain',
+                total_pets: 11,
+                most_recent_pet_name: 'A',
+                total_pets_baseline: 10,
+              },
+              {
+                playername: 'BigGain',
+                total_pets: 15,
+                most_recent_pet_name: 'B',
+                total_pets_baseline: 5,
+              },
             ],
           },
         })
@@ -106,7 +126,12 @@ describe('buildPetsWeeklyChangeSection', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'Swap', total_pets: 33, most_recent_pet_name: 'Herbi', total_pets_baseline: 31 },
+              {
+                playername: 'Swap',
+                total_pets: 33,
+                most_recent_pet_name: 'Herbi',
+                total_pets_baseline: 31,
+              },
             ],
           },
         })
@@ -115,7 +140,9 @@ describe('buildPetsWeeklyChangeSection', () => {
 
     await buildPetsWeeklyChangeSection(PETS_DB);
 
-    const updateCall = PETS_DB.prepare.mock.calls.find(([sql]) => sql.includes('UPDATE pets'));
+    const updateCall = PETS_DB.prepare.mock.calls.find(([sql]) =>
+      sql.includes('UPDATE pets')
+    );
     expect(updateCall).toBeDefined();
     expect(updateCall[0]).toContain('total_pets_baseline = total_pets');
   });
@@ -126,7 +153,12 @@ describe('buildPetsWeeklyChangeSection', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'Idle', total_pets: 10, most_recent_pet_name: 'X', total_pets_baseline: 10 },
+              {
+                playername: 'Idle',
+                total_pets: 10,
+                most_recent_pet_name: 'X',
+                total_pets_baseline: 10,
+              },
             ],
           },
         })
@@ -136,7 +168,9 @@ describe('buildPetsWeeklyChangeSection', () => {
     const result = await buildPetsWeeklyChangeSection(PETS_DB);
 
     expect(result).toBeNull();
-    const updateCall = PETS_DB.prepare.mock.calls.find(([sql]) => sql.includes('UPDATE pets'));
+    const updateCall = PETS_DB.prepare.mock.calls.find(([sql]) =>
+      sql.includes('UPDATE pets')
+    );
     expect(updateCall).toBeDefined();
   });
 

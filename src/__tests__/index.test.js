@@ -100,7 +100,9 @@ describe('worker.fetch', () => {
       }),
     });
 
-    await worker.fetch(request, { DEATH_URL: 'https://discord.example/webhook' });
+    await worker.fetch(request, {
+      DEATH_URL: 'https://discord.example/webhook',
+    });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0][0]).toBe('https://discord.example/webhook');
@@ -128,7 +130,9 @@ describe('worker.fetch', () => {
       }),
     });
 
-    await worker.fetch(request, { DEATH_URL: 'https://discord.example/webhook' });
+    await worker.fetch(request, {
+      DEATH_URL: 'https://discord.example/webhook',
+    });
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0][0]).toBe('https://discord.example/webhook');
@@ -169,7 +173,9 @@ describe('worker.fetch', () => {
       }),
     });
 
-    await worker.fetch(request, { DEATH_URL: 'https://discord.example/webhook' });
+    await worker.fetch(request, {
+      DEATH_URL: 'https://discord.example/webhook',
+    });
 
     expect(fetchMock).not.toHaveBeenCalled();
   });

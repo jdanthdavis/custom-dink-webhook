@@ -1,4 +1,9 @@
-import { customBossNames, formatAsPercentage, formatDate, getSingleColumn } from './helperFunctions';
+import {
+  customBossNames,
+  formatAsPercentage,
+  formatDate,
+  getSingleColumn,
+} from './helperFunctions';
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
 
 /**
@@ -23,7 +28,13 @@ async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
 
   /** @param {string} playername */
   async function getTotalPets(playername) {
-    return getSingleColumn(PETS_DB, 'pets', 'total_pets', playername, 'getTotalPets');
+    return getSingleColumn(
+      PETS_DB,
+      'pets',
+      'total_pets',
+      playername,
+      'getTotalPets'
+    );
   }
 
   /** @param {string} playername @param {string} petName */

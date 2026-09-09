@@ -15,7 +15,9 @@ describe('collectionLogHandler', () => {
       { itemName: 'Twisted bow', totalEntries: 0, completedEntries: 0 },
       'url'
     );
-    expect(firstMessage(msgMap)).toContain('Unable to fetch total and completed entries');
+    expect(firstMessage(msgMap)).toContain(
+      'Unable to fetch total and completed entries'
+    );
   });
 
   it('announces a rank completion', () => {
@@ -49,7 +51,9 @@ describe('collectionLogHandler', () => {
       },
       'url'
     );
-    expect(firstMessage(msgMap)).toContain('has reached the highest possible rank of **Gilded**');
+    expect(firstMessage(msgMap)).toContain(
+      'has reached the highest possible rank of **Gilded**'
+    );
   });
 
   it('announces achieving the current rank when justCompletedRank is "NONE"', () => {
@@ -103,7 +107,9 @@ describe('collectionLogHandler', () => {
       'url'
     );
     const msg = firstMessage(msgMap);
-    expect(msg).toContain('has added a new item to their collection log: **Twisted bow**');
+    expect(msg).toContain(
+      'has added a new item to their collection log: **Twisted bow**'
+    );
     expect(msg).not.toContain('has completed the');
   });
 

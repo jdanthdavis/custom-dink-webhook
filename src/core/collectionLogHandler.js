@@ -29,7 +29,7 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
   const validatedItemName = customBossNames(itemName);
   const percentageCompleted = formatAsPercentage(
     completedEntries,
-    totalEntries,
+    totalEntries
   );
   /** @param {string} rank */
   const formatedRanks = (rank) =>
@@ -42,7 +42,7 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     // If the user hasn't cycled their collection log we will use this fallback to prevent errors
     msgMap.set(
       { ID: COLLECTION, URL },
-      `**${playerName}** has added a new item to their collection log: **${validatedItemName}**\n-# Unable to fetch total and completed entries. Open your collection log tab to fix this.`,
+      `**${playerName}** has added a new item to their collection log: **${validatedItemName}**\n-# Unable to fetch total and completed entries. Open your collection log tab to fix this.`
     );
     return msgMap;
   }
@@ -60,12 +60,12 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
   } else if (justCompletedRank === 'NONE') {
     msgMap.set(
       { ID: COLLECTION, URL },
-      `**${playerName}** has achieved the **${formattedCurrentRank}** rank, by adding **${validatedItemName}** to their collection log | **${logPercentage}** ${rankIcon}`,
+      `**${playerName}** has achieved the **${formattedCurrentRank}** rank, by adding **${validatedItemName}** to their collection log | **${logPercentage}** ${rankIcon}`
     );
   } else {
     msgMap.set(
       { ID: COLLECTION, URL },
-      `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${logPercentage}** ${rankIcon}`,
+      `**${playerName}** has added a new item to their collection log: **${validatedItemName}** | **${logPercentage}** ${rankIcon}`
     );
   }
 

@@ -12,7 +12,9 @@ function makeStatement(resolves = {}) {
 const singleMetricOptions = {
   table: 'pets',
   extraColumns: ['most_recent_pet_name'],
-  metrics: [{ current: 'total_pets', baseline: 'total_pets_baseline', key: 'pets' }],
+  metrics: [
+    { current: 'total_pets', baseline: 'total_pets_baseline', key: 'pets' },
+  ],
 };
 
 describe('computeAndResetDeltas', () => {
@@ -22,7 +24,12 @@ describe('computeAndResetDeltas', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'Swap', total_pets: 33, total_pets_baseline: 31, most_recent_pet_name: 'Herbi' },
+              {
+                playername: 'Swap',
+                total_pets: 33,
+                total_pets_baseline: 31,
+                most_recent_pet_name: 'Herbi',
+              },
             ],
           },
         })
@@ -42,7 +49,12 @@ describe('computeAndResetDeltas', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'New', total_pets: 1, total_pets_baseline: null, most_recent_pet_name: 'Beef' },
+              {
+                playername: 'New',
+                total_pets: 1,
+                total_pets_baseline: null,
+                most_recent_pet_name: 'Beef',
+              },
             ],
           },
         })
@@ -60,7 +72,12 @@ describe('computeAndResetDeltas', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'Idle', total_pets: 10, total_pets_baseline: 10, most_recent_pet_name: 'X' },
+              {
+                playername: 'Idle',
+                total_pets: 10,
+                total_pets_baseline: 10,
+                most_recent_pet_name: 'X',
+              },
             ],
           },
         })
@@ -94,34 +111,59 @@ describe('computeAndResetDeltas', () => {
     const changes = await computeAndResetDeltas(DB, {
       table: 'tcg_progress',
       metrics: [
-        { current: 'collection_score', baseline: 'collection_score_baseline', key: 'score' },
-        { current: 'unique_cards_owned', baseline: 'unique_cards_owned_baseline', key: 'cards' },
+        {
+          current: 'collection_score',
+          baseline: 'collection_score_baseline',
+          key: 'score',
+        },
+        {
+          current: 'unique_cards_owned',
+          baseline: 'unique_cards_owned_baseline',
+          key: 'cards',
+        },
       ],
     });
 
     // Nonzero on `score` keeps the row even though `cards` didn't change.
-    expect(changes).toEqual([{ playername: 'Swap', scoreDelta: 100, cardsDelta: 0 }]);
+    expect(changes).toEqual([
+      { playername: 'Swap', scoreDelta: 100, cardsDelta: 0 },
+    ]);
   });
 
   it('resets baselines with a WHERE clause that skips unchanged rows', async () => {
     const DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
-          all: { results: [{ playername: 'Swap', total_pets: 33, total_pets_baseline: 31, most_recent_pet_name: 'Herbi' }] },
+          all: {
+            results: [
+              {
+                playername: 'Swap',
+                total_pets: 33,
+                total_pets_baseline: 31,
+                most_recent_pet_name: 'Herbi',
+              },
+            ],
+          },
         })
       ),
     };
 
     await computeAndResetDeltas(DB, singleMetricOptions);
 
-    const updateCall = DB.prepare.mock.calls.find(([sql]) => sql.startsWith('UPDATE'));
+    const updateCall = DB.prepare.mock.calls.find(([sql]) =>
+      sql.startsWith('UPDATE')
+    );
     expect(updateCall).toBeDefined();
     expect(updateCall[0]).toContain('total_pets_baseline = total_pets');
-    expect(updateCall[0]).toContain('WHERE total_pets_baseline IS NOT total_pets');
+    expect(updateCall[0]).toContain(
+      'WHERE total_pets_baseline IS NOT total_pets'
+    );
   });
 
   it('returns null and skips the reset when the table is empty', async () => {
-    const DB = { prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })) };
+    const DB = {
+      prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
+    };
 
     const changes = await computeAndResetDeltas(DB, singleMetricOptions);
 
@@ -143,7 +185,14 @@ describe('computeAndResetDeltas', () => {
     const DB = {
       prepare: vi.fn().mockReturnValue({
         all: vi.fn().mockResolvedValue({
-          results: [{ playername: 'Swap', total_pets: 33, total_pets_baseline: 31, most_recent_pet_name: 'Herbi' }],
+          results: [
+            {
+              playername: 'Swap',
+              total_pets: 33,
+              total_pets_baseline: 31,
+              most_recent_pet_name: 'Herbi',
+            },
+          ],
         }),
         run: vi.fn().mockRejectedValue(new Error('D1 error')),
       }),

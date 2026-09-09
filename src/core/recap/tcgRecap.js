@@ -18,9 +18,21 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
   const changes = await computeAndResetDeltas(WEEKLY_RECAP_DB, {
     table: 'tcg_progress',
     metrics: [
-      { current: 'collection_score', baseline: 'collection_score_baseline', key: 'score' },
-      { current: 'unique_cards_owned', baseline: 'unique_cards_owned_baseline', key: 'cards' },
-      { current: 'foil_cards_owned', baseline: 'foil_cards_owned_baseline', key: 'foils' },
+      {
+        current: 'collection_score',
+        baseline: 'collection_score_baseline',
+        key: 'score',
+      },
+      {
+        current: 'unique_cards_owned',
+        baseline: 'unique_cards_owned_baseline',
+        key: 'cards',
+      },
+      {
+        current: 'foil_cards_owned',
+        baseline: 'foil_cards_owned_baseline',
+        key: 'foils',
+      },
     ],
   });
   if (!changes || changes.length === 0) return null;

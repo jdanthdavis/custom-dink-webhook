@@ -41,7 +41,11 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   // specific patterns above it, so it must be checked last.
   /** @type {{ match: RegExpMatchArray | null | undefined, id: string, kind?: 'vestige' }[]} */
   const matchers = [
-    { match: vestigeMatch, id: CHAT_MESSAGE_TYPES.VESTIGE_DROP, kind: 'vestige' },
+    {
+      match: vestigeMatch,
+      id: CHAT_MESSAGE_TYPES.VESTIGE_DROP,
+      kind: 'vestige',
+    },
     { match: tobKitMatch, id: CHAT_MESSAGE_TYPES.TOB_KIT },
     { match: maggotEggMatch, id: CHAT_MESSAGE_TYPES.MAGGOT_EGG },
     { match: untradeableMatch, id: CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP },

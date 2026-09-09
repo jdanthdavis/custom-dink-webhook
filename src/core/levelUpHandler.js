@@ -132,7 +132,10 @@ function levelUpHandler(msgMap, playerName, extra, URL) {
   const multiLvlStr = multiLevelMsgConstructor();
 
   if (skillLevel === 99 && isFirstNinetyNine(allSkills)) {
-    msgMap.set({ ID: LEVEL, URL }, `-# @everyone\n${DANSE} **${playerName}** has achieved their first **99** in **${skillName}!** ${DANSE}`);
+    msgMap.set(
+      { ID: LEVEL, URL },
+      `-# @everyone\n${DANSE} **${playerName}** has achieved their first **99** in **${skillName}!** ${DANSE}`
+    );
     return msgMap;
   }
 

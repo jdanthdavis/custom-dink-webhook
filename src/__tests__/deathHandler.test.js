@@ -51,7 +51,10 @@ describe('deathHandler', () => {
       {
         isPvp: false,
         keptItems: [{ name: 'Shark', quantity: 2 }],
-        lostItems: [{ name: 'Shark', quantity: 3 }, { name: 'Manta ray', quantity: 1 }],
+        lostItems: [
+          { name: 'Shark', quantity: 3 },
+          { name: 'Manta ray', quantity: 1 },
+        ],
         location: { regionId: 1234 },
       },
       'url'

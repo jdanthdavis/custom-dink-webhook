@@ -1,7 +1,7 @@
-import { EXTERNAL_PLUGIN } from "../constants";
-import { formatDate } from "./helperFunctions";
+import { EXTERNAL_PLUGIN } from '../constants';
+import { formatDate } from './helperFunctions';
 
-const ACCEPTED_RARITIES = ["Mythic", "Godly", "Legendary"];
+const ACCEPTED_RARITIES = ['Mythic', 'Godly', 'Legendary'];
 const FOIL_MILESTONE_INTERVAL = 50;
 const CARD_MILESTONE_INTERVAL = 250;
 
@@ -13,18 +13,18 @@ const CARD_MILESTONE_INTERVAL = 250;
  */
 function extractCardProgress(content) {
   const gameTotalMatch = content?.match(
-    /Unique cards: [\d ]+ \/ ([\d ]+) \([\d.]+%\)/,
+    /Unique cards: [\d ]+ \/ ([\d ]+) \([\d.]+%\)/
   );
   if (!gameTotalMatch) return null;
 
   const totalCardsMatch = content?.match(/Total cards: ([\d ]+)/);
   if (!totalCardsMatch) return null;
 
-  const gameTotal = Number(gameTotalMatch[1].replace(/ /g, ""));
-  const totalCards = Number(totalCardsMatch[1].replace(/ /g, ""));
+  const gameTotal = Number(gameTotalMatch[1].replace(/ /g, ''));
+  const totalCards = Number(totalCardsMatch[1].replace(/ /g, ''));
 
-  const formattedOwned = totalCards.toLocaleString("en-US");
-  const formattedTotal = gameTotal.toLocaleString("en-US");
+  const formattedOwned = totalCards.toLocaleString('en-US');
+  const formattedTotal = gameTotal.toLocaleString('en-US');
   const percentage = ((totalCards / gameTotal) * 100).toFixed(1);
 
   return `${formattedOwned}/${formattedTotal} (${percentage}%)`;
@@ -38,7 +38,7 @@ function extractCardProgress(content) {
 function extractOpenedPacks(content) {
   const match = content?.match(/Opened packs: ([\d ]+)/);
   return match
-    ? Number(match[1].replace(/ /g, "")).toLocaleString("en-US")
+    ? Number(match[1].replace(/ /g, '')).toLocaleString('en-US')
     : null;
 }
 
@@ -50,12 +50,12 @@ function extractOpenedPacks(content) {
  */
 function extractFoilCardProgress(content) {
   const match = content?.match(
-    /Unique foil cards: ([\d ]+) \/ ([\d ]+) \(([\d.]+)%\)/,
+    /Unique foil cards: ([\d ]+) \/ ([\d ]+) \(([\d.]+)%\)/
   );
   if (!match) return null;
 
-  const owned = Number(match[1].replace(/ /g, "")).toLocaleString("en-US");
-  const total = Number(match[2].replace(/ /g, "")).toLocaleString("en-US");
+  const owned = Number(match[1].replace(/ /g, '')).toLocaleString('en-US');
+  const total = Number(match[2].replace(/ /g, '')).toLocaleString('en-US');
 
   return `${owned}/${total} (${match[3]}%)`;
 }
@@ -68,7 +68,7 @@ function extractFoilCardProgress(content) {
  */
 function extractFoilOwnedCount(content) {
   const match = content?.match(/Unique foil cards: ([\d ]+) \/ [\d ]+ \(/);
-  return match ? Number(match[1].replace(/ /g, "")) : null;
+  return match ? Number(match[1].replace(/ /g, '')) : null;
 }
 
 /**
@@ -84,7 +84,7 @@ function extractFoilOwnedCount(content) {
  */
 function extractUniqueCardOwnedCount(content) {
   const match = content?.match(/Total cards: ([\d ]+)/);
-  return match ? Number(match[1].replace(/ /g, "")) : null;
+  return match ? Number(match[1].replace(/ /g, '')) : null;
 }
 
 /**
@@ -96,7 +96,7 @@ function extractCollectionScore(content) {
   const match = content?.match(/Collection score: ([\d ]+) \(([\d.]+)%\)/);
   if (!match) return null;
 
-  const score = Number(match[1].replace(/ /g, "")).toLocaleString("en-US");
+  const score = Number(match[1].replace(/ /g, '')).toLocaleString('en-US');
   return `${score} (${match[2]}%)`;
 }
 
@@ -108,7 +108,7 @@ function extractCollectionScore(content) {
  */
 function extractCollectionScoreValue(content) {
   const match = content?.match(/Collection score: ([\d ]+) \(/);
-  return match ? Number(match[1].replace(/ /g, "")) : null;
+  return match ? Number(match[1].replace(/ /g, '')) : null;
 }
 
 /**
@@ -122,7 +122,7 @@ function extractCollectionScoreValue(content) {
  */
 function extractTotalFoilCards(content) {
   const match = content?.match(/Total foil cards: ([\d ]+)/);
-  return match ? Number(match[1].replace(/ /g, "")) : null;
+  return match ? Number(match[1].replace(/ /g, '')) : null;
 }
 
 /**
@@ -133,7 +133,7 @@ function extractTotalFoilCards(content) {
  */
 function extractUniqueCardsTotal(content) {
   const match = content?.match(/Unique cards: [\d ]+ \/ ([\d ]+) \(/);
-  return match ? Number(match[1].replace(/ /g, "")) : null;
+  return match ? Number(match[1].replace(/ /g, '')) : null;
 }
 
 /**
@@ -144,7 +144,7 @@ function extractUniqueCardsTotal(content) {
  */
 function extractFoilCardsTotal(content) {
   const match = content?.match(/Unique foil cards: [\d ]+ \/ ([\d ]+) \(/);
-  return match ? Number(match[1].replace(/ /g, "")) : null;
+  return match ? Number(match[1].replace(/ /g, '')) : null;
 }
 
 /**
@@ -155,7 +155,7 @@ function extractFoilCardsTotal(content) {
  */
 function extractOpenedPacksValue(content) {
   const match = content?.match(/Opened packs: ([\d ]+)/);
-  return match ? Number(match[1].replace(/ /g, "")) : null;
+  return match ? Number(match[1].replace(/ /g, '')) : null;
 }
 
 /**
@@ -166,7 +166,7 @@ function extractOpenedPacksValue(content) {
  * @returns {string|null|undefined}
  */
 function stripPercentage(stat) {
-  return stat?.replace(/ \([\d.]+%\)$/, "") ?? stat;
+  return stat?.replace(/ \([\d.]+%\)$/, '') ?? stat;
 }
 
 /**
@@ -205,7 +205,7 @@ function buildPullLine({
   uniqueCardOwnedCount,
 }) {
   const cardDescriptor = `a **${rarityTier} ${cardLabel}**`;
-  const foilTag = " :sparkles: *foil* :sparkles:";
+  const foilTag = ' :sparkles: *foil* :sparkles:';
   const packSuffix = `on pack **${openedPacks}!**`;
 
   if (foil && isMilestone(foilOwnedCount, FOIL_MILESTONE_INTERVAL)) {
@@ -232,7 +232,12 @@ function buildPullLine({
  * @param {string} content - The raw content from the TCG message
  * @param {string} cardName
  */
-async function recordTcgProgress(WEEKLY_RECAP_DB, playername, content, cardName) {
+async function recordTcgProgress(
+  WEEKLY_RECAP_DB,
+  playername,
+  content,
+  cardName
+) {
   try {
     await WEEKLY_RECAP_DB.prepare(
       `INSERT INTO tcg_progress (playername, collection_score, unique_cards_owned, unique_cards_total, foil_cards_owned, foil_cards_total, opened_packs, last_card_name, last_updated)
@@ -278,7 +283,14 @@ async function recordTcgProgress(WEEKLY_RECAP_DB, playername, content, cardName)
  * @param {string} URL - The associated URL
  * @returns {Promise<Map<{ ID: string, URL: string }, string>|undefined>} The updated message map, or undefined if the pull doesn't qualify for a notification
  */
-async function tcgHandler(msgMap, playerName, content, extra, WEEKLY_RECAP_DB, URL) {
+async function tcgHandler(
+  msgMap,
+  playerName,
+  content,
+  extra,
+  WEEKLY_RECAP_DB,
+  URL
+) {
   const { cardName, rarityTier, newForCollection, foil, inspectUrl } =
     extra.metadata;
 
@@ -287,8 +299,8 @@ async function tcgHandler(msgMap, playerName, content, extra, WEEKLY_RECAP_DB, U
 
   const cardProgress = extractCardProgress(content);
   const openedPacks = extractOpenedPacks(content);
-  const collectionScore = extractCollectionScore(content) ?? "—";
-  const foilProgress = extractFoilCardProgress(content) ?? "—";
+  const collectionScore = extractCollectionScore(content) ?? '—';
+  const foilProgress = extractFoilCardProgress(content) ?? '—';
   const foilOwnedCount = extractFoilOwnedCount(content);
   const uniqueCardOwnedCount = extractUniqueCardOwnedCount(content);
   const cardLabel = inspectUrl ? `[${cardName}](<${inspectUrl}>)` : cardName;

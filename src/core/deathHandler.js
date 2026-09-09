@@ -35,7 +35,7 @@ const FOOD_ARR = [
   'Honey locust',
   'Silk dressing',
   'Cooked bream',
-  'Cooked moss lizard'
+  'Cooked moss lizard',
 ];
 
 const INVALID_FOOD_ARR = ['Shark lure'];

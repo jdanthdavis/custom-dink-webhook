@@ -155,7 +155,9 @@ describe('lootHandler', () => {
     );
 
     expect(LOOT_DB.prepare).toHaveBeenCalledTimes(1);
-    expect(LOOT_DB.prepare.mock.calls[0][0]).toContain('INSERT INTO loot_totals');
+    expect(LOOT_DB.prepare.mock.calls[0][0]).toContain(
+      'INSERT INTO loot_totals'
+    );
     const statement = LOOT_DB.prepare.mock.results[0].value;
     expect(statement.bind).toHaveBeenCalledWith(
       'Swap',

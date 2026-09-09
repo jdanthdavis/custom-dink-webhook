@@ -64,4 +64,51 @@ describe('buildWeeklyRecap', () => {
 
     expect(recap).toBeNull();
   });
+
+  it('includes the TCG section alongside pets and loot', async () => {
+    const PETS_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: { results: [{ playername: 'Swap', total_pets: 5 }] },
+        })
+      ),
+    };
+    const LOOT_DB = {
+      prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
+    };
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              { playername: 'Swap', collection_score: 100, unique_cards_owned: 10, unique_cards_total: 500 },
+            ],
+          },
+        })
+      ),
+    };
+
+    const recap = await buildWeeklyRecap({ PETS_DB, LOOT_DB, WEEKLY_RECAP_DB });
+
+    expect(recap).toContain('Pet Board');
+    expect(recap).not.toContain('Loot Board');
+    expect(recap).toContain('TCG Board');
+  });
+
+  it('degrades gracefully when a section binding is missing entirely', async () => {
+    const PETS_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: { results: [{ playername: 'Swap', total_pets: 5 }] },
+        })
+      ),
+    };
+
+    // No LOOT_DB/WEEKLY_RECAP_DB in env at all
+    const recap = await buildWeeklyRecap({ PETS_DB });
+
+    expect(recap).toContain('Pet Board');
+    expect(recap).not.toContain('Loot Board');
+    expect(recap).not.toContain('TCG Board');
+  });
 });

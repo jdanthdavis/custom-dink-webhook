@@ -1,17 +1,22 @@
 import { getPetsLeaderboard } from './core/chatMsgHandler/petGraph';
 import { getLootLeaderboard } from './core/chatMsgHandler/lootGraph';
+import { getTcgLeaderboard } from './core/tcgHandler';
 
-// Each entry builds one section of the recap from its own D1 binding, reusing
-// the exact leaderboard text `!Fetchpets`/`!Fetchloot` already produce, so the
-// recap always agrees with those commands. A section returning null (empty
-// table, or its binding isn't wired up yet) is simply omitted.
+// Each entry builds one section of the recap. Pets/loot reuse the exact
+// leaderboard text `!Fetchpets`/`!Fetchloot` already produce, so the recap
+// always agrees with those commands. TCG (and the domains after it) are
+// recap-only by design — no chat command, tracked in the shared
+// WEEKLY_RECAP_DB database rather than a dedicated one, to stay under the
+// account's D1 database cap. A section returning null (empty table, or its
+// binding isn't wired up yet) is simply omitted.
 //
 // Adding a new domain (clues, collection log, combat tasks, deaths, personal
-// bests, TCG) once it has its own tracking table is just one more entry here
-// — no other changes needed.
+// bests) once it has its own tracking table is just one more entry here — no
+// other changes needed.
 const RECAP_SECTIONS = [
   (env) => getPetsLeaderboard(env.PETS_DB),
   (env) => getLootLeaderboard(env.LOOT_DB),
+  (env) => getTcgLeaderboard(env.WEEKLY_RECAP_DB),
 ];
 
 /**

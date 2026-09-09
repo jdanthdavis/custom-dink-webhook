@@ -273,8 +273,13 @@ async function recordTcgProgress(
 }
 
 /**
- * Creates a TCG pull notification message when a qualifying card is found,
- * and records the player's updated progress for the weekly recap.
+ * Records the player's updated TCG progress for the weekly recap on every
+ * pull, then creates a Discord pull notification only when the card
+ * qualifies (new to the collection, and either a foil or an accepted
+ * rarity). The D1 write is intentionally unconditional - a dupe or a common
+ * non-foil still changes `content`'s stats (packs opened, at minimum), and
+ * the weekly recap should reflect that even though it never triggers a
+ * notification. The notification-qualification logic itself is unchanged.
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
  * @param {string} content - The raw content string containing card collection progress
@@ -293,6 +298,8 @@ async function tcgHandler(
 ) {
   const { cardName, rarityTier, newForCollection, foil, inspectUrl } =
     extra.metadata;
+
+  await recordTcgProgress(WEEKLY_RECAP_DB, playerName, content, cardName);
 
   if (!newForCollection) return;
   if (!foil && !ACCEPTED_RARITIES.includes(rarityTier)) return;
@@ -318,8 +325,6 @@ async function tcgHandler(
   const msg = `${pullLine}\n${statsLine}`;
 
   msgMap.set({ ID: EXTERNAL_PLUGIN, URL }, msg);
-
-  await recordTcgProgress(WEEKLY_RECAP_DB, playerName, content, cardName);
 
   return msgMap;
 }

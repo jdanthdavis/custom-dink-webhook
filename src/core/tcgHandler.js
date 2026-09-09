@@ -328,9 +328,9 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
   const headers = ['Name', 'Score Gained', 'Cards Gained', 'Foils Gained'];
   const tableRows = sorted.map((row) => [
     row.playername,
-    String(row.scoreDelta),
-    String(row.cardsDelta),
-    String(row.foilsDelta),
+    row.scoreDelta.toLocaleString('en-US'),
+    row.cardsDelta.toLocaleString('en-US'),
+    row.foilsDelta.toLocaleString('en-US'),
   ]);
 
   return formatLeaderboardTable('TCG Board (This Week)', headers, tableRows);

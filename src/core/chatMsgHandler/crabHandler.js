@@ -7,22 +7,19 @@ import { GEMSTONE_CRAB } from '../../constants';
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
  * @param {string} URL - The associated URL
- * @param {string} MONGO_MIDDLEWARE - The pet-tracking middleware base URL
+ * @param {*} CRAB_DB - D1 database binding for Gemstone Crab kill count tracking
  * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map
  */
-export async function crabHandler(msgMap, playerName, URL, MONGO_MIDDLEWARE) {
+export async function crabHandler(msgMap, playerName, URL, CRAB_DB) {
   /** @param {string} playername */
   async function getTotalCrabKc(playername) {
-    const url = `${MONGO_MIDDLEWARE}/get-crab?playername=${encodeURIComponent(
-      playername
-    )}`;
     try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`/get-crab response status: ${res.status}`);
-      }
-      const json = await res.json();
-      return json.player?.count != null ? Number(json.player.count) : null;
+      const row = await CRAB_DB.prepare(
+        'SELECT count FROM crab_kc WHERE playername = ?'
+      )
+        .bind(playername)
+        .first();
+      return row?.count != null ? Number(row.count) : null;
     } catch (error) {
       console.log(
         'getTotalCrabKc ',
@@ -34,21 +31,15 @@ export async function crabHandler(msgMap, playerName, URL, MONGO_MIDDLEWARE) {
 
   /** @param {string} playername */
   async function incrementCrabKc(playername) {
-    const url = `${MONGO_MIDDLEWARE}/increment-crab`;
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          playername,
-        }),
-      });
-
-      if (!res.ok)
-        throw new Error(`Failed to increment crab count: ${res.status}`);
-      const json = await res.json();
+      await CRAB_DB.prepare(
+        `INSERT INTO crab_kc (playername, count) VALUES (?, 1)
+         ON CONFLICT(playername) DO UPDATE SET count = count + 1`
+      )
+        .bind(playername)
+        .run();
       console.log(
-        `Crab count and recent pet successfully updated for ${json.playername}`
+        `Crab count and recent pet successfully updated for ${playername}`
       );
     } catch (error) {
       console.log(

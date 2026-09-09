@@ -8,3 +8,15 @@ enabled = true
 binding = "CA_PROGRESS"
 id = "cc17ea160ebc4aa390969602aad00259"
 preview_id = "508dbfa39b384308b07e3644d57ccad5"
+
+[[d1_databases]]
+binding = "PETS_DB"
+database_name = "dink_pets"
+database_id = "63602ced-0117-4f2b-a525-53d035bc10e2"
+migrations_dir = "migrations/pets"
+
+[[d1_databases]]
+binding = "CRAB_DB"
+database_name = "dink_crab_kc"
+database_id = "ae46ffbe-fdd8-45dc-a712-efa039c25c0c"
+migrations_dir = "migrations/crab_kc"

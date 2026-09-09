@@ -36,7 +36,7 @@ import * as Constants from './constants';
  * @param {*} payloadType - The type of payload (e.g., Pet, Collection, Level, etc.).
  *                          For more details, see the link provided in the description.
  * @param {string} playerName - The name of the player.
- * @param {*} env - The URLs used for each payload type.
+ * @param {*} env - The URLs and binding used for each payload type.
  * @returns {Promise<Map<{ ID: string, URL: string }, string>>} - The updated message map containing the formatted message.
  */
 async function createFormData(extra, content, payloadType, playerName, env) {
@@ -51,7 +51,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     LOOT_URL,
     DEATH_URL,
     EXTERNAL_URL,
-    MONGO_MIDDLEWARE,
+    PETS_DB,
+    CRAB_DB,
     CA_PROGRESS,
   } = env;
 
@@ -59,7 +60,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
 
   switch (payloadType) {
     case Constants.PET:
-      await petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, PET_URL);
+      await petHandler(msgMap, playerName, extra, PETS_DB, PET_URL);
       break;
     case Constants.COLLECTION:
       collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
@@ -95,7 +96,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         LOOT_URL,
         PET_URL,
         KC_URL,
-        MONGO_MIDDLEWARE
+        PETS_DB,
+        CRAB_DB
       );
       break;
     default:

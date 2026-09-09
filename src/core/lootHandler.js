@@ -1,4 +1,9 @@
-import { customBossNames, formatValue, formatLists, formatDate } from './helperFunctions';
+import {
+  customBossNames,
+  formatValue,
+  formatLists,
+  formatDate,
+} from './helperFunctions';
 import { LOOT } from '../constants';
 
 const LOOT_THRESHOLD = 1_000_000;
@@ -66,7 +71,8 @@ async function lootHandler(msgMap, items, playerName, source, LOOT_DB, URL) {
   if (!qualifyingItems.length) return;
 
   const boldedItems = qualifyingItems.map(
-    (item) => `**${item.quantity}x ${item.name} ${formatValue(item.totalValue)}**`
+    (item) =>
+      `**${item.quantity}x ${item.name} ${formatValue(item.totalValue)}**`
   );
 
   const msg = `**${playerName}** has received ${formatLists(

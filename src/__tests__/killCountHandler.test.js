@@ -12,7 +12,11 @@ describe('killCountHandler', () => {
     killCountHandler(
       msgMap,
       'Swap',
-      { boss: 'Zulrah', count: 200, gameMessage: 'Your Zulrah kill count is: 200' },
+      {
+        boss: 'Zulrah',
+        count: 200,
+        gameMessage: 'Your Zulrah kill count is: 200',
+      },
       'url'
     );
     expect(msgMap.size).toBe(1);
@@ -24,7 +28,11 @@ describe('killCountHandler', () => {
     killCountHandler(
       msgMap,
       'Swap',
-      { boss: 'Zulrah', count: 47, gameMessage: 'Your Zulrah kill count is: 47' },
+      {
+        boss: 'Zulrah',
+        count: 47,
+        gameMessage: 'Your Zulrah kill count is: 47',
+      },
       'url'
     );
     expect(msgMap.size).toBe(0);

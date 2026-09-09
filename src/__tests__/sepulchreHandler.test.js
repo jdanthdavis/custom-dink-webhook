@@ -11,7 +11,9 @@ describe('sepulchreHandler', () => {
       'url'
     );
     const msg = [...msgMap.values()][0];
-    expect(msg).toContain('**Hallowed Sepulchre (Overall)** personal best of **5:30.20!**');
+    expect(msg).toContain(
+      '**Hallowed Sepulchre (Overall)** personal best of **5:30.20!**'
+    );
   });
 
   it('formats a floor personal best', () => {
@@ -23,7 +25,9 @@ describe('sepulchreHandler', () => {
       'url'
     );
     const msg = [...msgMap.values()][0];
-    expect(msg).toContain('**Hallowed Sepulchre (Floor 3)** personal best of **1:10.50!**');
+    expect(msg).toContain(
+      '**Hallowed Sepulchre (Floor 3)** personal best of **1:10.50!**'
+    );
   });
 
   it('does not set a message when the text does not match', () => {

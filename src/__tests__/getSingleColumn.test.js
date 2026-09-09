@@ -13,7 +13,9 @@ describe('getSingleColumn', () => {
     const result = await getSingleColumn(DB, 'pets', 'total_pets', 'Swap');
 
     expect(result).toBe(5);
-    expect(DB.prepare).toHaveBeenCalledWith('SELECT total_pets FROM pets WHERE playername = ?');
+    expect(DB.prepare).toHaveBeenCalledWith(
+      'SELECT total_pets FROM pets WHERE playername = ?'
+    );
   });
 
   it('returns null when the row does not exist', async () => {
@@ -24,7 +26,9 @@ describe('getSingleColumn', () => {
       }),
     };
 
-    expect(await getSingleColumn(DB, 'pets', 'total_pets', 'Nobody')).toBeNull();
+    expect(
+      await getSingleColumn(DB, 'pets', 'total_pets', 'Nobody')
+    ).toBeNull();
   });
 
   it('returns null and logs when the query fails', async () => {
@@ -35,6 +39,8 @@ describe('getSingleColumn', () => {
       }),
     };
 
-    expect(await getSingleColumn(DB, 'crab_kc', 'count', 'Swap', 'getTotalCrabKc')).toBeNull();
+    expect(
+      await getSingleColumn(DB, 'crab_kc', 'count', 'Swap', 'getTotalCrabKc')
+    ).toBeNull();
   });
 });

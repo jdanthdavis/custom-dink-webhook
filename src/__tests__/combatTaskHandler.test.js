@@ -83,7 +83,12 @@ describe('combatTaskHandler', () => {
     await combatTaskHandler(
       m1,
       'Frosty Dad',
-      { ...base, tier: 'MEDIUM', task: 'Demonbane Weaponry', tierProgress: 113 },
+      {
+        ...base,
+        tier: 'MEDIUM',
+        task: 'Demonbane Weaponry',
+        tierProgress: 113,
+      },
       kv,
       'url'
     );
@@ -112,7 +117,10 @@ describe('combatTaskHandler', () => {
 
   it('resets tracked progress when currentTier changes', async () => {
     const kv = createFakeKV();
-    await kv.put('Swap', JSON.stringify({ currentTier: 'BRONZE', progress: 50 }));
+    await kv.put(
+      'Swap',
+      JSON.stringify({ currentTier: 'BRONZE', progress: 50 })
+    );
 
     const msgMap = new Map();
     await combatTaskHandler(

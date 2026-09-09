@@ -57,11 +57,21 @@ describe('killCountMsgConstructor', () => {
   });
 
   it('announces a single-kill JAD or Zuk message without a player-name gate', () => {
-    const jadMsg = killCountMsgConstructor('Swap', 'irrelevant', 'TzTok-Jad', 1);
+    const jadMsg = killCountMsgConstructor(
+      'Swap',
+      'irrelevant',
+      'TzTok-Jad',
+      1
+    );
     expect(jadMsg).toContain('-# @everyone');
     expect(jadMsg).toContain('**TzTok-Jad**');
 
-    const zukMsg = killCountMsgConstructor('Swap', 'irrelevant', 'TzKal-Zuk', 1);
+    const zukMsg = killCountMsgConstructor(
+      'Swap',
+      'irrelevant',
+      'TzKal-Zuk',
+      1
+    );
     expect(zukMsg).toContain('-# @everyone');
     expect(zukMsg).toContain('**TzKal-Zuk**');
   });

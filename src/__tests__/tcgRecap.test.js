@@ -196,7 +196,9 @@ describe('buildTcgWeeklyChangeSection', () => {
       sql.includes('UPDATE tcg_progress')
     );
     expect(updateCall).toBeDefined();
-    expect(updateCall[0]).toContain('collection_score_baseline = collection_score');
+    expect(updateCall[0]).toContain(
+      'collection_score_baseline = collection_score'
+    );
   });
 
   it('resets baselines even when nothing is reported (all zero-change)', async () => {

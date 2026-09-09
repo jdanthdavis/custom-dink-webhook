@@ -10,21 +10,21 @@ Checks if a player's kill count for a boss is a notable milestone (every 100 kil
 
 For select bosses, the milestone check uses a custom `killCount` interval instead of the default every-100-kills check. Boss names are matched case-insensitively against `bossMap` in [constants.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/constants.js).
 
-| Boss | Interval |
-|---|---|
-| TzKal-Zuk | 5 |
-| Sol Heredit | 5 |
-| Skotizo | 5 |
-| Theatre of Blood: Hard Mode | 10 |
-| Chambers of Xeric: Challenge Mode | 10 |
-| Gemstone Crab | 10 |
-| Demonic Brutus | 10 |
-| Phosani's Nightmare | 25 |
-| The Nightmare | 25 |
-| Yama | 25 |
-| Doom of Mokhaiotl | 25 |
-| Corporeal Beast | 50 |
-| Herbiboar | 150 |
+| Boss                              | Interval |
+| --------------------------------- | -------- |
+| TzKal-Zuk                         | 5        |
+| Sol Heredit                       | 5        |
+| Skotizo                           | 5        |
+| Theatre of Blood: Hard Mode       | 10       |
+| Chambers of Xeric: Challenge Mode | 10       |
+| Gemstone Crab                     | 10       |
+| Demonic Brutus                    | 10       |
+| Phosani's Nightmare               | 25       |
+| The Nightmare                     | 25       |
+| Yama                              | 25       |
+| Doom of Mokhaiotl                 | 25       |
+| Corporeal Beast                   | 50       |
+| Herbiboar                         | 150      |
 
 ### First-Kill Notifications
 
@@ -240,7 +240,7 @@ Handles notifications for the Trading Card Game (TCG) pack-opening feature. When
 
 3. **Foil Card** (any rarity):
 
-   > **playerName** has pulled a **Rare cardName** :sparkles: *foil* :sparkles: on pack **150 | 320/500 (64.0%)**
+   > **playerName** has pulled a **Rare cardName** :sparkles: _foil_ :sparkles: on pack **150 | 320/500 (64.0%)**
 
 ### Storage
 
@@ -293,6 +293,7 @@ a new database per domain, to stay well under the cap.
 ### Local testing
 
 `wrangler dev --test-scheduled` exposes a `/__scheduled` endpoint to fire the cron handler on demand, without waiting for the real schedule:
+
 ```bash
 curl "http://localhost:8787/__scheduled"
 ```
@@ -300,4 +301,3 @@ curl "http://localhost:8787/__scheduled"
 ## Credits
 
 This handler wouldn't have been possible without the help from the team at [DinkPlugin](https://github.com/pajlads/DinkPlugin).
-

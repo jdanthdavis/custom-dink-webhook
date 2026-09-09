@@ -81,13 +81,27 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
       break;
     case Constants.LOOT:
-      await lootHandler(msgMap, extra.items, playerName, extra.source, LOOT_DB, LOOT_URL);
+      await lootHandler(
+        msgMap,
+        extra.items,
+        playerName,
+        extra.source,
+        LOOT_DB,
+        LOOT_URL
+      );
       break;
     case Constants.DEATH:
       deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.EXTERNAL_PLUGIN:
-      await tcgHandler(msgMap, playerName, content, extra, WEEKLY_RECAP_DB, EXTERNAL_URL);
+      await tcgHandler(
+        msgMap,
+        playerName,
+        content,
+        extra,
+        WEEKLY_RECAP_DB,
+        EXTERNAL_URL
+      );
       break;
     case Constants.CHAT:
       await chatHandler(

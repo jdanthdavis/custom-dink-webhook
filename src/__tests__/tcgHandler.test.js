@@ -30,7 +30,14 @@ describe('tcgHandler', () => {
       msgMap,
       'Swap',
       content,
-      { metadata: { cardName: 'Zulrah', rarityTier: 'Legendary', newForCollection: false, foil: false } },
+      {
+        metadata: {
+          cardName: 'Zulrah',
+          rarityTier: 'Legendary',
+          newForCollection: false,
+          foil: false,
+        },
+      },
       makeTrackingDb(),
       'url'
     );
@@ -44,7 +51,14 @@ describe('tcgHandler', () => {
       msgMap,
       'Swap',
       content,
-      { metadata: { cardName: 'Goblin', rarityTier: 'Common', newForCollection: true, foil: false } },
+      {
+        metadata: {
+          cardName: 'Goblin',
+          rarityTier: 'Common',
+          newForCollection: true,
+          foil: false,
+        },
+      },
       makeTrackingDb(),
       'url'
     );
@@ -57,7 +71,14 @@ describe('tcgHandler', () => {
       msgMap,
       'Swap',
       content,
-      { metadata: { cardName: 'Zulrah', rarityTier: 'Legendary', newForCollection: true, foil: false } },
+      {
+        metadata: {
+          cardName: 'Zulrah',
+          rarityTier: 'Legendary',
+          newForCollection: true,
+          foil: false,
+        },
+      },
       makeTrackingDb(),
       'url'
     );
@@ -77,7 +98,14 @@ describe('tcgHandler', () => {
       msgMap,
       'Swap',
       content,
-      { metadata: { cardName: 'Goblin', rarityTier: 'Common', newForCollection: true, foil: true } },
+      {
+        metadata: {
+          cardName: 'Goblin',
+          rarityTier: 'Common',
+          newForCollection: true,
+          foil: true,
+        },
+      },
       makeTrackingDb(),
       'url'
     );
@@ -93,7 +121,14 @@ describe('tcgHandler', () => {
       msgMap,
       '6out',
       spacedContent,
-      { metadata: { cardName: "Statius's platelegs", rarityTier: 'Mythic', newForCollection: true, foil: false } },
+      {
+        metadata: {
+          cardName: "Statius's platelegs",
+          rarityTier: 'Mythic',
+          newForCollection: true,
+          foil: false,
+        },
+      },
       makeTrackingDb(),
       'url'
     );
@@ -115,7 +150,14 @@ describe('tcgHandler', () => {
       msgMap,
       'themildest1',
       fullContent,
-      { metadata: { cardName: 'Dragon pickaxe', rarityTier: 'Legendary', newForCollection: true, foil: false } },
+      {
+        metadata: {
+          cardName: 'Dragon pickaxe',
+          rarityTier: 'Legendary',
+          newForCollection: true,
+          foil: false,
+        },
+      },
       makeTrackingDb(),
       'url'
     );
@@ -138,13 +180,22 @@ describe('tcgHandler', () => {
       msgMap,
       'Pigeon Cam',
       fullContent,
-      { metadata: { cardName: 'Bronze chainbody', rarityTier: 'Common', newForCollection: true, foil: true } },
+      {
+        metadata: {
+          cardName: 'Bronze chainbody',
+          rarityTier: 'Common',
+          newForCollection: true,
+          foil: true,
+        },
+      },
       WEEKLY_RECAP_DB,
       'url'
     );
 
     expect(WEEKLY_RECAP_DB.prepare).toHaveBeenCalledTimes(1);
-    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain('INSERT INTO tcg_progress');
+    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain(
+      'INSERT INTO tcg_progress'
+    );
     const statement = WEEKLY_RECAP_DB.prepare.mock.results[0].value;
     expect(statement.bind).toHaveBeenCalledWith(
       'Pigeon Cam',
@@ -171,10 +222,19 @@ describe('tcgHandler', () => {
       msgMap,
       'Swap',
       content,
-      { metadata: { cardName: 'Zulrah', rarityTier: 'Legendary', newForCollection: true, foil: false } },
+      {
+        metadata: {
+          cardName: 'Zulrah',
+          rarityTier: 'Legendary',
+          newForCollection: true,
+          foil: false,
+        },
+      },
       WEEKLY_RECAP_DB,
       'url'
     );
-    expect(firstMessage(msgMap)).toContain('**Swap** has pulled a **Legendary Zulrah**');
+    expect(firstMessage(msgMap)).toContain(
+      '**Swap** has pulled a **Legendary Zulrah**'
+    );
   });
 });

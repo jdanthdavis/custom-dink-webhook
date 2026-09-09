@@ -18,11 +18,17 @@ async function sendDiscordMessage(url, content, file = null) {
     response = await fetch(url, { method: 'post', body: formData });
 
     if (response.status === 429) {
-      const retryBody = await response.clone().json().catch(() => null);
+      const retryBody = await response
+        .clone()
+        .json()
+        .catch(() => null);
       const retryAfterSeconds =
-        Number(retryBody?.retry_after ?? response.headers.get('Retry-After')) || 1;
+        Number(retryBody?.retry_after ?? response.headers.get('Retry-After')) ||
+        1;
       console.log(`Rate limited, retrying after ${retryAfterSeconds}s`);
-      await new Promise((resolve) => setTimeout(resolve, retryAfterSeconds * 1000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, retryAfterSeconds * 1000)
+      );
       response = await fetch(url, { method: 'post', body: formData });
     }
   } catch (error) {

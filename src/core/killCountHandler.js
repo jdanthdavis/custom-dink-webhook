@@ -27,8 +27,8 @@ function killCountHandler(msgMap, playerName, extra, URL) {
         playerName,
         gameMessage,
         validatedBossName,
-        killCount,
-      ),
+        killCount
+      )
     );
   }
 

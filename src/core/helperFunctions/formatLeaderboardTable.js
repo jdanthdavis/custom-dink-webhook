@@ -14,10 +14,16 @@ function formatLeaderboardTable(title, headers, rows) {
 
   /** @param {string[]} cells */
   const padRow = (cells) =>
-    cells.map((cell, col) => cell.padEnd(widths[col])).join('  ').trimEnd();
+    cells
+      .map((cell, col) => cell.padEnd(widths[col]))
+      .join('  ')
+      .trimEnd();
 
   const headerLine = padRow(headers);
-  const separatorLine = widths.map((w) => '-'.repeat(w)).join('  ').trimEnd();
+  const separatorLine = widths
+    .map((w) => '-'.repeat(w))
+    .join('  ')
+    .trimEnd();
   const rowLines = rows.map((row) => padRow(row));
 
   const table = [headerLine, separatorLine, ...rowLines].join('\n');

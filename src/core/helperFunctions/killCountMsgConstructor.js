@@ -31,7 +31,9 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
   }
 
   const primaryMatch = gameMessage.match(primary_regex);
-  const secondaryMatch = primaryMatch ? null : gameMessage.match(secondary_regex);
+  const secondaryMatch = primaryMatch
+    ? null
+    : gameMessage.match(secondary_regex);
 
   let fallBackType = 'completion';
 

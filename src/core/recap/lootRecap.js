@@ -14,7 +14,10 @@ export async function getAllLoot(LOOT_DB) {
       (a, b) => (Number(b.total_value) || 0) - (Number(a.total_value) || 0)
     );
   } catch (error) {
-    console.log('getAllLoot error:', error instanceof Error ? error.message : error);
+    console.log(
+      'getAllLoot error:',
+      error instanceof Error ? error.message : error
+    );
     return null;
   }
 }

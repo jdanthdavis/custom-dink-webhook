@@ -32,7 +32,10 @@ describe('sendDiscordMessage', () => {
       .mockResolvedValueOnce({ ok: true, status: 200 });
     vi.stubGlobal('fetch', fetchMock);
 
-    const promise = sendDiscordMessage('https://discord.example/webhook', 'hello');
+    const promise = sendDiscordMessage(
+      'https://discord.example/webhook',
+      'hello'
+    );
     await vi.runAllTimersAsync();
     await promise;
 
@@ -41,7 +44,10 @@ describe('sendDiscordMessage', () => {
   });
 
   it('does not throw when fetch itself rejects', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network down')));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockRejectedValue(new Error('network down'))
+    );
 
     await expect(
       sendDiscordMessage('https://discord.example/webhook', 'hello')
@@ -52,7 +58,11 @@ describe('sendDiscordMessage', () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
     vi.stubGlobal('fetch', fetchMock);
 
-    await sendDiscordMessage('https://discord.example/webhook', 'hello', 'fake-file');
+    await sendDiscordMessage(
+      'https://discord.example/webhook',
+      'hello',
+      'fake-file'
+    );
 
     const body = fetchMock.mock.calls[0][1].body;
     expect(body.get('file')).toBe('fake-file');

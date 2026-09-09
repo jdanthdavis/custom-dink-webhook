@@ -27,7 +27,10 @@
  * @param {string[]} [options.extraColumns] - Additional non-metric columns to carry through as-is (e.g. a display name).
  * @returns {Promise<Array<{ playername: string, [field: string]: any }>|null>} Rows with a nonzero delta on at least one metric, or null if the table's empty or the query fails.
  */
-export async function computeAndResetDeltas(DB, { table, metrics, extraColumns = [] }) {
+export async function computeAndResetDeltas(
+  DB,
+  { table, metrics, extraColumns = [] }
+) {
   const columns = [
     'playername',
     ...extraColumns,

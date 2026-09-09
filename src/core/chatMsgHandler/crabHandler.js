@@ -14,7 +14,13 @@ import { getSingleColumn } from '../helperFunctions';
 export async function crabHandler(msgMap, playerName, URL, CRAB_DB) {
   /** @param {string} playername */
   async function getTotalCrabKc(playername) {
-    return getSingleColumn(CRAB_DB, 'crab_kc', 'count', playername, 'getTotalCrabKc');
+    return getSingleColumn(
+      CRAB_DB,
+      'crab_kc',
+      'count',
+      playername,
+      'getTotalCrabKc'
+    );
   }
 
   /** @param {string} playername */

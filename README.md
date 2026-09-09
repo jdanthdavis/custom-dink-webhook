@@ -245,6 +245,24 @@ Handles notifications for the Trading Card Game (TCG) pack-opening feature. When
 
    > **playerName** has pulled a **Rare cardName** :sparkles: *foil* :sparkles: on pack **150 | 320/500 (64.0%)**
 
+## [Weekly Recap](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/recapHandler.js)
+
+Posts a combined standings recap to a dedicated Discord channel on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, currently Monday 16:00 UTC) — no external scheduler involved. `src/index.js` exports a `scheduled()` handler alongside `fetch()`; on each trigger it builds the recap and posts it to the `RECAP_URL` webhook (set via `wrangler secret put RECAP_URL`).
+
+The recap reports **current standings**, not week-over-week activity — the same leaderboard data `!Fetchpets`/`!Fetchloot` already show, just posted automatically. Each domain contributes one section, built from a shared `getXLeaderboard(DB)` function that both the chat command and the recap call, so they can never disagree:
+
+- [getPetsLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js)
+- [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js)
+
+A section that returns nothing (empty table) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, deaths, personal bests, TCG) is a two-step follow-up once that domain has its own D1 tracking table: write its `getXLeaderboard` function, then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
+
+### Local testing
+
+`wrangler dev --test-scheduled` exposes a `/__scheduled` endpoint to fire the cron handler on demand, without waiting for the real schedule:
+```bash
+curl "http://localhost:8787/__scheduled"
+```
+
 ## Credits
 
 This handler wouldn't have been possible without the help from the team at [DinkPlugin](https://github.com/pajlads/DinkPlugin).

@@ -1,4 +1,46 @@
 import { CHAT_MESSAGE_TYPES } from '../../constants';
+import { formatLeaderboardTable } from '../helperFunctions';
+
+/**
+ * Fetches every tracked player's pet stats, sorted by total pets descending.
+ * Reused by both the `!Fetchpets` leaderboard and the weekly recap.
+ * @param {*} PETS_DB - D1 database binding for pet tracking
+ * @returns {Promise<Array<{ playername: string, total_pets?: number, most_recent_pet_name?: string, most_recent_pet_date?: string }>|null>}
+ */
+export async function getAllPets(PETS_DB) {
+  try {
+    const { results } = await PETS_DB.prepare(
+      'SELECT playername, total_pets, most_recent_pet_name, most_recent_pet_date FROM pets'
+    ).all();
+    return results?.sort(
+      (a, b) => (Number(b.total_pets) || 0) - (Number(a.total_pets) || 0)
+    );
+  } catch (error) {
+    console.log('getAllPets error:', error instanceof Error ? error.message : error);
+    return null;
+  }
+}
+
+/**
+ * Fetches and formats the full pet leaderboard as a titled table, or null if
+ * no player has any tracked pets. Reused by both `!Fetchpets` and the weekly
+ * recap, so both surfaces always agree.
+ * @param {*} PETS_DB - D1 database binding for pet tracking
+ * @returns {Promise<string|null>}
+ */
+export async function getPetsLeaderboard(PETS_DB) {
+  const rows = await getAllPets(PETS_DB);
+  if (!rows || rows.length === 0) return null;
+
+  const headers = ['Name', '# of Pets', 'Recent Pet', 'Date Acquired'];
+  const tableRows = rows.map((row) => [
+    row.playername,
+    String(Number(row.total_pets) || '-'),
+    row.most_recent_pet_name ?? '-',
+    row.most_recent_pet_date ?? '-',
+  ]);
+  return formatLeaderboardTable('Pet Board', headers, tableRows);
+}
 
 /**
  * Handles the "!Fetchpets" chat command, reporting either a single player's
@@ -36,52 +78,6 @@ export async function petGraph(message, msgMap, URL, PETS_DB) {
     }
   }
 
-  async function getAllPets() {
-    try {
-      const { results } = await PETS_DB.prepare(
-        'SELECT playername, total_pets, most_recent_pet_name, most_recent_pet_date FROM pets'
-      ).all();
-      return results;
-    } catch (error) {
-      console.log('getAllPets error:', error instanceof Error ? error.message : error);
-      return null;
-    }
-  }
-
-  /** @param {Array<{ playername: string, total_pets?: number, most_recent_pet_name?: string, most_recent_pet_date?: string }>} rows */
-  function formatPlayersList(rows) {
-    // Sort by total_pets descending
-    const sorted = [...rows].sort(
-      (a, b) => (Number(b.total_pets) || 0) - (Number(a.total_pets) || 0)
-    );
-
-    const headers = ['Name', '# of Pets', 'Recent Pet', 'Date Acquired'];
-
-    const tableRows = sorted.map((row) => [
-      row.playername,
-      String(Number(row.total_pets) || '-'),
-      row.most_recent_pet_name ?? '-',
-      row.most_recent_pet_date ?? '-',
-    ]);
-
-    // Auto-size each column to fit its header and the longest value below it
-    const widths = headers.map((header, col) =>
-      Math.max(header.length, ...tableRows.map((row) => row[col].length))
-    );
-
-    /** @param {string[]} cells */
-    const padRow = (cells) =>
-      cells.map((cell, col) => cell.padEnd(widths[col])).join('  ').trimEnd();
-
-    const headerLine = padRow(headers);
-    const separatorLine = widths.map((w) => '-'.repeat(w)).join('  ').trimEnd();
-    const rowLines = tableRows.map((row) => padRow(row));
-
-    const table = [headerLine, separatorLine, ...rowLines].join('\n');
-
-    return `**Pet Board**\n\`\`\`\n${table}\n\`\`\``;
-  }
-
   if (singlePlayerName) {
     const row = await getPlayerPets(singlePlayerName);
     if (!row) {
@@ -96,13 +92,12 @@ export async function petGraph(message, msgMap, URL, PETS_DB) {
     const formatted = `**${row.playername}** -> Total Pets: **${totalPets}** -> Most Recent: **${recentPetName}** on **${recentPetDate}**`;
     return msgMap.set({ ID: CHAT_MESSAGE_TYPES.FETCH_PETS, URL }, formatted);
   } else {
-    const rows = await getAllPets();
-    if (!rows || rows.length === 0) {
+    const formatted = await getPetsLeaderboard(PETS_DB);
+    if (!formatted) {
       console.log('No players data found.');
       return;
     }
 
-    const formatted = formatPlayersList(rows);
     return msgMap.set({ ID: CHAT_MESSAGE_TYPES.FETCH_PETS, URL }, formatted);
   }
 }

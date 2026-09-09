@@ -1,5 +1,12 @@
 import createFormData from './createFormData.js';
 import { acceptedPayloads, theBoys } from './constants.js';
+import sendDiscordMessage from './sendDiscordMessage.js';
+import buildWeeklyRecap from './recapHandler.js';
+
+// Chat commands that reply with a leaderboard table rather than reacting to
+// the triggering event — a screenshot attached to the original request (if
+// any) shouldn't be tacked onto these replies.
+const LEADERBOARD_COMMANDS = ['!Fetchpets', '!Fetchloot'];
 
 export default {
   /**
@@ -56,52 +63,38 @@ export default {
         env
       );
 
+      const isLeaderboardReply = LEADERBOARD_COMMANDS.some((command) =>
+        extra?.message?.startsWith(command)
+      );
+
       for (const [url, msg] of msgMap.entries()) {
         console.log(url, msg);
-        let formData = new FormData();
-        let response;
-        formData.append('payload_json', JSON.stringify({ content: msg }));
-        if (file !== null && !extra?.message?.startsWith('!Fetchpets')) {
-          // since the screenshots would be taken so close to each other we are fine with sending the first one twice
-          formData.append('file', file);
-        }
-
-        try {
-          response = await fetch(url.URL, {
-            method: 'post',
-            body: formData,
-          });
-
-          if (response.status === 429) {
-            const retryBody = await response
-              .clone()
-              .json()
-              .catch(() => null);
-            const retryAfterSeconds =
-              Number(
-                retryBody?.retry_after ?? response.headers.get('Retry-After')
-              ) || 1;
-            console.log(
-              `Rate limited, retrying after ${retryAfterSeconds}s`
-            );
-            await new Promise((resolve) =>
-              setTimeout(resolve, retryAfterSeconds * 1000)
-            );
-            response = await fetch(url.URL, {
-              method: 'post',
-              body: formData,
-            });
-          }
-        } catch (error) {
-          console.log('There was an error - ', error);
-        }
-
-        if (!response?.ok) {
-          console.log(`Response Code: ${response?.status}`);
-        }
+        // since the screenshots would be taken so close to each other we are fine with sending the first one twice
+        await sendDiscordMessage(
+          url.URL,
+          msg,
+          file !== null && !isLeaderboardReply ? file : null
+        );
       }
     }
     return new Response();
+  },
+
+  /**
+   * Posts the weekly recap on the configured Cron Trigger schedule.
+   * @param {*} event - The scheduled event
+   * @param {*} env - The Worker's environment bindings (URLs/secrets)
+   * @param {*} ctx - The execution context
+   */
+  async scheduled(event, env, ctx) {
+    ctx.waitUntil(
+      (async () => {
+        const recap = await buildWeeklyRecap(env);
+        if (recap) {
+          await sendDiscordMessage(env.RECAP_URL, recap);
+        }
+      })()
+    );
   },
 };
 

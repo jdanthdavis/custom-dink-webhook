@@ -4,6 +4,9 @@ compatibility_date = "2024-11-22"
 [observability.logs]
 enabled = true
 
+[triggers]
+crons = ["0 16 * * 1"] # Monday 16:00 UTC
+
 [[kv_namespaces]]
 binding = "CA_PROGRESS"
 id = "cc17ea160ebc4aa390969602aad00259"

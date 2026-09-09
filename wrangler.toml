@@ -20,3 +20,9 @@ binding = "CRAB_DB"
 database_name = "dink_crab_kc"
 database_id = "ae46ffbe-fdd8-45dc-a712-efa039c25c0c"
 migrations_dir = "migrations/crab_kc"
+
+[[d1_databases]]
+binding = "LOOT_DB"
+database_name = "dink_loot"
+database_id = "1308d5b3-3507-4901-b128-8c58ed747756"
+migrations_dir = "migrations/loot"

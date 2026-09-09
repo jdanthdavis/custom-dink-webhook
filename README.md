@@ -109,6 +109,26 @@ Handles generic loot-drop notifications. Items are filtered down to only those w
 
 > **playerName** has received **2x Twisted bow (1.2B) and 1x Elysian sigil (300M)** from **Vorkath!**
 
+### Storage
+
+Qualifying drops (the same ones announced above) are also upserted into a Cloudflare D1
+database bound directly to this Worker (`LOOT_DB` -> `dink_loot`):
+
+```sql
+CREATE TABLE loot_totals (
+  playername TEXT PRIMARY KEY COLLATE NOCASE,
+  total_value INTEGER NOT NULL DEFAULT 0,
+  last_item_name TEXT,
+  last_item_value INTEGER,
+  last_source TEXT,
+  last_drop_date TEXT
+);
+```
+
+`total_value` accumulates across every qualifying drop; `last_item_*` records the
+highest-value item from the most recent qualifying event. Surfaced via the `!Fetchloot`
+chat command (see [chatHandler](#chathandler) below).
+
 ## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
 Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type:
@@ -116,9 +136,10 @@ Handles different types of chat messages by delegating the processing to the app
 - [bigFishHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/bigFishHandler.js) — "You catch an enormous X!" catches.
 - [sepulchreHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/sepulchreHandler.js) — Hallowed Sepulchre personal bests (overall and per-floor).
 - [untradeableDropHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/untradeableDropHandler.js) — untradeable item drops (vestiges, Theatre of Blood ornament kits/dust, and other untradeables), mapped to their source boss.
-- [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) — increments and reports a player's Gemstone Crab kill count via the pet-tracking middleware, then formats the milestone through [killCountHandler](#killcounthandler).
+- [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) — increments and reports a player's Gemstone Crab kill count via D1 (`CRAB_DB` -> `dink_crab_kc`), then formats the milestone through [killCountHandler](#killcounthandler).
 - [delveHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/delveHandler.js) — reports a player's Doom of Mokhaiotl (Deep Delves) kill count through [killCountHandler](#killcounthandler).
 - [petGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) — responds to the `!Fetchpets` chat command with either a single player's pet stats or a full leaderboard of all tracked players.
+- [lootGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js) — responds to the `!Fetchloot` chat command with either a single player's lifetime loot value or a full leaderboard, backed by the `loot_totals` table described under [lootHandler](#loothandler).
 
 ### Untradeable Drop Example
 
@@ -127,6 +148,10 @@ Handles different types of chat messages by delegating the processing to the app
 ### `!Fetchpets` Example
 
 > **playerName** -> Total Pets: **12** -> Most Recent: **Baby mole** on **07/19/2026**
+
+### `!Fetchloot` Example
+
+> **playerName** -> Total Loot Value: **245.3M** -> Most Recent: **Draconic visage** (**4.20M**) from **Vorkath** on **09/09/2026**
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 

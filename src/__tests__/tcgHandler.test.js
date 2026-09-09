@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import tcgHandler, { getTcgLeaderboard } from '../core/tcgHandler';
+import tcgHandler, { buildTcgWeeklyChangeSection } from '../core/tcgHandler';
 
 /** @param {Map<any, string>} msgMap */
 function firstMessage(msgMap) {
@@ -179,8 +179,8 @@ describe('tcgHandler', () => {
   });
 });
 
-describe('getTcgLeaderboard', () => {
-  it('formats a sorted leaderboard with ratios', async () => {
+describe('buildTcgWeeklyChangeSection', () => {
+  it("shows a player's full total as their change when they have no prior baseline", async () => {
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
@@ -188,19 +188,12 @@ describe('getTcgLeaderboard', () => {
             results: [
               {
                 playername: 'Swap',
-                collection_score: 100,
-                unique_cards_owned: 10,
-                unique_cards_total: 500,
-                foil_cards_owned: 1,
-                foil_cards_total: 500,
-              },
-              {
-                playername: 'Gout',
-                collection_score: 500,
-                unique_cards_owned: 50,
-                unique_cards_total: 500,
-                foil_cards_owned: 5,
-                foil_cards_total: 500,
+                collection_score: 45,
+                unique_cards_owned: 12,
+                foil_cards_owned: 2,
+                collection_score_baseline: null,
+                unique_cards_owned_baseline: null,
+                foil_cards_owned_baseline: null,
               },
             ],
           },
@@ -208,21 +201,181 @@ describe('getTcgLeaderboard', () => {
       ),
     };
 
-    const result = await getTcgLeaderboard(WEEKLY_RECAP_DB);
+    const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    expect(result).toContain('TCG Board');
-    const goutIndex = result.indexOf('Gout');
-    const swapIndex = result.indexOf('Swap');
-    expect(goutIndex).toBeGreaterThanOrEqual(0);
-    expect(goutIndex).toBeLessThan(swapIndex);
-    expect(result).toContain('10/500');
+    expect(result).toContain('TCG Board (This Week)');
+    expect(result).toContain('45');
+    expect(result).toContain('12');
+    expect(result).toContain('2');
+  });
+
+  it('shows only the change when a baseline exists (100 foils -> 150 shows 50)', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Swap',
+                collection_score: 1000,
+                unique_cards_owned: 200,
+                foil_cards_owned: 150,
+                collection_score_baseline: 900,
+                unique_cards_owned_baseline: 200,
+                foil_cards_owned_baseline: 100,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    const lines = result.split('\n');
+    const swapLine = lines.find((l) => l.includes('Swap'));
+    expect(swapLine).toContain('100'); // score gained: 1000 - 900
+    expect(swapLine).toContain('50'); // foils gained: 150 - 100
+    // cards gained: 200 - 200 = 0
+    expect(swapLine.trim().split(/\s{2,}/)).toEqual(['Swap', '100', '0', '50']);
+  });
+
+  it('omits a player with no change since the last recap', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Idle',
+                collection_score: 500,
+                unique_cards_owned: 50,
+                foil_cards_owned: 5,
+                collection_score_baseline: 500,
+                unique_cards_owned_baseline: 50,
+                foil_cards_owned_baseline: 5,
+              },
+              {
+                playername: 'Active',
+                collection_score: 600,
+                unique_cards_owned: 50,
+                foil_cards_owned: 5,
+                collection_score_baseline: 500,
+                unique_cards_owned_baseline: 50,
+                foil_cards_owned_baseline: 5,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    expect(result).toContain('Active');
+    expect(result).not.toContain('Idle');
+  });
+
+  it('sorts by score gained descending', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'SmallGain',
+                collection_score: 110,
+                unique_cards_owned: 1,
+                foil_cards_owned: 0,
+                collection_score_baseline: 100,
+                unique_cards_owned_baseline: 0,
+                foil_cards_owned_baseline: 0,
+              },
+              {
+                playername: 'BigGain',
+                collection_score: 1000,
+                unique_cards_owned: 1,
+                foil_cards_owned: 0,
+                collection_score_baseline: 0,
+                unique_cards_owned_baseline: 0,
+                foil_cards_owned_baseline: 0,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    expect(result.indexOf('BigGain')).toBeLessThan(result.indexOf('SmallGain'));
+  });
+
+  it('resets baselines to current values after building the section', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Swap',
+                collection_score: 150,
+                unique_cards_owned: 10,
+                foil_cards_owned: 1,
+                collection_score_baseline: 100,
+                unique_cards_owned_baseline: 10,
+                foil_cards_owned_baseline: 0,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    const updateCall = WEEKLY_RECAP_DB.prepare.mock.calls.find(([sql]) =>
+      sql.includes('UPDATE tcg_progress')
+    );
+    expect(updateCall).toBeDefined();
+    expect(updateCall[0]).toContain('collection_score_baseline = collection_score');
+  });
+
+  it('resets baselines even when nothing is reported (all zero-change)', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Idle',
+                collection_score: 500,
+                unique_cards_owned: 50,
+                foil_cards_owned: 5,
+                collection_score_baseline: 500,
+                unique_cards_owned_baseline: 50,
+                foil_cards_owned_baseline: 5,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    expect(result).toBeNull();
+    const updateCall = WEEKLY_RECAP_DB.prepare.mock.calls.find(([sql]) =>
+      sql.includes('UPDATE tcg_progress')
+    );
+    expect(updateCall).toBeDefined();
   });
 
   it('returns null when the table is empty', async () => {
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
     };
-    expect(await getTcgLeaderboard(WEEKLY_RECAP_DB)).toBeNull();
+    expect(await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB)).toBeNull();
   });
 
   it('returns null when the query fails', async () => {
@@ -231,6 +384,6 @@ describe('getTcgLeaderboard', () => {
         all: vi.fn().mockRejectedValue(new Error('D1 error')),
       }),
     };
-    expect(await getTcgLeaderboard(WEEKLY_RECAP_DB)).toBeNull();
+    expect(await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB)).toBeNull();
   });
 });

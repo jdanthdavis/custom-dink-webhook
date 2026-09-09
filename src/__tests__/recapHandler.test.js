@@ -7,6 +7,7 @@ function makeStatement(resolves = {}) {
     bind: vi.fn().mockReturnThis(),
     first: vi.fn().mockResolvedValue(resolves.first),
     all: vi.fn().mockResolvedValue(resolves.all),
+    run: vi.fn().mockResolvedValue({ success: true }),
   };
 }
 
@@ -81,7 +82,15 @@ describe('buildWeeklyRecap', () => {
         makeStatement({
           all: {
             results: [
-              { playername: 'Swap', collection_score: 100, unique_cards_owned: 10, unique_cards_total: 500 },
+              {
+                playername: 'Swap',
+                collection_score: 100,
+                unique_cards_owned: 10,
+                foil_cards_owned: 1,
+                collection_score_baseline: null,
+                unique_cards_owned_baseline: null,
+                foil_cards_owned_baseline: null,
+              },
             ],
           },
         })

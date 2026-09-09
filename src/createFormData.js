@@ -52,6 +52,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     DEATH_URL,
     EXTERNAL_URL,
     MONGO_MIDDLEWARE,
+    CA_PROGRESS,
   } = env;
 
   let msgMap = new Map();
@@ -68,7 +69,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       levelUpHandler(msgMap, playerName, extra, LEVEL_URL);
       break;
     case Constants.COMBAT_ACHIEVEMENT:
-      combatTaskHandler(msgMap, playerName, extra, CA_URL);
+      await combatTaskHandler(msgMap, playerName, extra, CA_PROGRESS, CA_URL);
       break;
     case Constants.KILL_COUNT:
       killCountHandler(msgMap, playerName, extra, KC_URL);

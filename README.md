@@ -94,7 +94,7 @@ Handles collection log item notifications by validating the item name and calcul
 
 ## [combatTaskHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/combatTaskHandler.js)
 
-Tracks combat achievement progress by formatting completion percentages and structuring notifications for newly completed combat tasks. If a player completes an entire tier, a specialized message highlights their achievement, while regular task completions update their progress within the current tier.
+Tracks combat achievement progress by formatting completion percentages and structuring notifications for newly completed combat tasks. If a player completes an entire tier, a specialized message highlights their achievement, while regular task completions update their progress within the current tier. Progress is reconciled per player via the `CA_PROGRESS` KV namespace, since Dink reports the same `tierProgress` for multiple combat tasks that complete in the same game tick.
 
 ## [personalBestHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/personalBestHandler.js)
 

@@ -3,3 +3,8 @@ main = "src/index.js"
 compatibility_date = "2024-11-22"
 [observability.logs]
 enabled = true
+
+[[kv_namespaces]]
+binding = "CA_PROGRESS"
+id = "cc17ea160ebc4aa390969602aad00259"
+preview_id = "508dbfa39b384308b07e3644d57ccad5"

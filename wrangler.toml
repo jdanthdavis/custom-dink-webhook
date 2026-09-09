@@ -5,7 +5,10 @@ compatibility_date = "2024-11-22"
 enabled = true
 
 [triggers]
-crons = ["0 16 * * 1"] # Monday 16:00 UTC
+# Cron Triggers run in UTC only, no DST awareness — 14:00 UTC is a fixed 9am EST
+# (UTC-5) year-round. During EDT (UTC-4, roughly Mar-Nov) this lands at 10am
+# Eastern local time instead of 9am.
+crons = ["0 14 * * 1"] # Monday 9am EST / 14:00 UTC
 
 [[kv_namespaces]]
 binding = "CA_PROGRESS"

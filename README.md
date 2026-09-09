@@ -44,18 +44,24 @@ Processes pet-related notifications, particularly for incrementing and retrievin
 ### Storage
 
 Pet and Gemstone Crab counts are tracked in two Cloudflare D1 (SQLite) databases bound
-directly to this Worker — no external service involved. `petHandler.js` and
-[petGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js)
-(the `!Fetchpets` command) use the `PETS_DB` binding:
+directly to this Worker — no external service involved. `petHandler.js` uses the
+`PETS_DB` binding:
 
 ```sql
 CREATE TABLE pets (
   playername TEXT PRIMARY KEY COLLATE NOCASE,
   total_pets INTEGER NOT NULL DEFAULT 0,
   most_recent_pet_name TEXT,
-  most_recent_pet_date TEXT
+  most_recent_pet_date TEXT,
+  total_pets_baseline INTEGER
 );
 ```
+
+`total_pets_baseline` backs the pets section of the [Weekly Recap](#weekly-recap) — it
+tracks each player's total as of the last recap run, so the recap can report pets gained
+since then rather than a lifetime total. There's no chat command for pets anymore
+(`!Fetchpets` was removed as redundant once the recap covered the same ground); the recap
+is the only place this data surfaces.
 
 [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js)
 uses the separate `CRAB_DB` binding:
@@ -126,32 +132,23 @@ CREATE TABLE loot_totals (
 ```
 
 `total_value` accumulates across every qualifying drop; `last_item_*` records the
-highest-value item from the most recent qualifying event. Surfaced via the `!Fetchloot`
-chat command (see [chatHandler](#chathandler) below).
+highest-value item from the most recent qualifying event. Surfaced only via the
+[Weekly Recap](#weekly-recap) — there's no chat command; see
+[getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js).
 
 ## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
-Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type:
+Handles different types of chat messages by delegating the processing to the appropriate handler based on the message type. Every domain that used to have a `!Fetch...`-style on-demand chat command (pets, loot) has had it removed — the [Weekly Recap](#weekly-recap) is the only place that data surfaces now, by design, so players can't manually trigger a fetch:
 
 - [bigFishHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/bigFishHandler.js) — "You catch an enormous X!" catches.
 - [sepulchreHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/sepulchreHandler.js) — Hallowed Sepulchre personal bests (overall and per-floor).
 - [untradeableDropHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/untradeableDropHandler.js) — untradeable item drops (vestiges, Theatre of Blood ornament kits/dust, and other untradeables), mapped to their source boss.
 - [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) — increments and reports a player's Gemstone Crab kill count via D1 (`CRAB_DB` -> `dink_crab_kc`), then formats the milestone through [killCountHandler](#killcounthandler).
 - [delveHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/delveHandler.js) — reports a player's Doom of Mokhaiotl (Deep Delves) kill count through [killCountHandler](#killcounthandler).
-- [petGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) — responds to the `!Fetchpets` chat command with either a single player's pet stats or a full leaderboard of all tracked players.
-- [lootGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js) — responds to the `!Fetchloot` chat command with either a single player's lifetime loot value or a full leaderboard, backed by the `loot_totals` table described under [lootHandler](#loothandler).
 
 ### Untradeable Drop Example
 
 > **playerName** has received **x1 Ultor vestige (5M)** from **Vardorvis!**
-
-### `!Fetchpets` Example
-
-> **playerName** -> Total Pets: **12** -> Most Recent: **Baby mole** on **07/19/2026**
-
-### `!Fetchloot` Example
-
-> **playerName** -> Total Loot Value: **245.3M** -> Most Recent: **Draconic visage** (**4.20M**) from **Vorkath** on **09/09/2026**
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 
@@ -273,15 +270,16 @@ surfaces in the [Weekly Recap](#weekly-recap).
 
 ## [Weekly Recap](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/recapHandler.js)
 
-Posts a combined standings recap to a dedicated Discord channel on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, currently Monday 16:00 UTC) — no external scheduler involved. `src/index.js` exports a `scheduled()` handler alongside `fetch()`; on each trigger it builds the recap and posts it to the `RECAP_URL` webhook (set via `wrangler secret put RECAP_URL`).
+Posts a combined recap to a dedicated Discord channel on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, currently Monday 9am EST / 14:00 UTC — Cron Triggers run in UTC only with no DST awareness, so this drifts to 10am Eastern during EDT) — no external scheduler involved. `src/index.js` exports a `scheduled()` handler alongside `fetch()`; on each trigger it builds the recap and posts it to the `RECAP_URL` webhook (set via `wrangler secret put RECAP_URL`).
 
-The recap reports **current standings**, not week-over-week activity — the same leaderboard data `!Fetchpets`/`!Fetchloot` already show, just posted automatically (TCG is the exception — see below). Each domain contributes one section via a `getXLeaderboard(DB)` function:
+None of the tracked domains have a `!Fetch...`-style chat command — this recap is the only
+place any of this data surfaces, by design, so players can't manually trigger a fetch.
+Each domain contributes one section:
 
-- [getPetsLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) — also backs `!Fetchpets`, so the two can never disagree.
-- [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js) — also backs `!Fetchloot`.
-- [getTcgLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js) — recap-only, no chat command by design (see [tcgHandler](#tcghandler)).
+- [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js) — **current standings**: a lifetime leaderboard, not a delta.
+- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) and [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js) — **week-over-week change**, not a running total: each resets a `*_baseline` column to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress` baseline columns described above).
 
-A section that returns nothing (empty table) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, deaths, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: write its `getXLeaderboard` function, then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
+A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, deaths, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: write its section-builder function, then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
 
 ### D1 database budget
 

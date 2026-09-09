@@ -3,11 +3,6 @@ import { acceptedPayloads, theBoys } from './constants.js';
 import sendDiscordMessage from './sendDiscordMessage.js';
 import buildWeeklyRecap from './recapHandler.js';
 
-// Chat commands that reply with a leaderboard table rather than reacting to
-// the triggering event — a screenshot attached to the original request (if
-// any) shouldn't be tacked onto these replies.
-const LEADERBOARD_COMMANDS = ['!Fetchpets', '!Fetchloot'];
-
 export default {
   /**
    * Handles an incoming Dink webhook request and relays formatted
@@ -63,18 +58,10 @@ export default {
         env
       );
 
-      const isLeaderboardReply = LEADERBOARD_COMMANDS.some((command) =>
-        extra?.message?.startsWith(command)
-      );
-
       for (const [url, msg] of msgMap.entries()) {
         console.log(url, msg);
         // since the screenshots would be taken so close to each other we are fine with sending the first one twice
-        await sendDiscordMessage(
-          url.URL,
-          msg,
-          file !== null && !isLeaderboardReply ? file : null
-        );
+        await sendDiscordMessage(url.URL, msg, file);
       }
     }
     return new Response();

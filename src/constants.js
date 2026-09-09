@@ -119,6 +119,7 @@ export const CHAT_MESSAGE_TYPES = {
   PURIFYING_SIGIL: 'PURIFYING_SIGIL',
   FETCH_PETS: 'FETCH_PETS',
   MAGGOT_EGG: 'MAGGOT_EGG',
+  FETCH_LOOT: 'FETCH_LOOT',
 };
 export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',

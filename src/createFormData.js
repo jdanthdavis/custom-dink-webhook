@@ -53,6 +53,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     EXTERNAL_URL,
     PETS_DB,
     CRAB_DB,
+    LOOT_DB,
     CA_PROGRESS,
   } = env;
 
@@ -79,7 +80,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       clueScrollHandler(msgMap, playerName, extra, CLUE_URL);
       break;
     case Constants.LOOT:
-      lootHandler(msgMap, extra.items, playerName, extra.source, LOOT_URL);
+      await lootHandler(msgMap, extra.items, playerName, extra.source, LOOT_DB, LOOT_URL);
       break;
     case Constants.DEATH:
       deathHandler(msgMap, playerName, extra, DEATH_URL);
@@ -97,7 +98,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         PET_URL,
         KC_URL,
         PETS_DB,
-        CRAB_DB
+        CRAB_DB,
+        LOOT_DB
       );
       break;
     default:

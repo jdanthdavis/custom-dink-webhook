@@ -1,4 +1,4 @@
-import { customBossNames, formatAsPercentage } from './helperFunctions';
+import { customBossNames, formatAsPercentage, formatDate } from './helperFunctions';
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
 
 /**
@@ -38,11 +38,7 @@ async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
 
   /** @param {string} playername @param {string} petName */
   async function incrementPetCount(playername, petName) {
-    const today = new Date();
-    const formattedDate = `${String(today.getMonth() + 1).padStart(
-      2,
-      '0'
-    )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
+    const formattedDate = formatDate();
 
     try {
       await PETS_DB.prepare(

@@ -2,6 +2,7 @@ import { bigFishHandler } from './bigFishHandler';
 import { sepulchreHandler } from './sepulchreHandler';
 import { untradeableDropHandler } from './untradeableDropHandler';
 import { petGraph } from './petGraph';
+import { lootGraph } from './lootGraph';
 import {
   CHAT_MESSAGE_TYPES,
   DELVE_KC,
@@ -22,6 +23,7 @@ import { crabHandler } from './crabHandler';
  * @param {string} KC_URL - The kill-count notification URL
  * @param {*} PETS_DB - D1 database binding for pet tracking
  * @param {*} CRAB_DB - D1 database binding for Gemstone Crab kill count tracking
+ * @param {*} LOOT_DB - D1 database binding for loot value tracking
  */
 async function chatHandler(
   msgMap,
@@ -32,7 +34,8 @@ async function chatHandler(
   PET_URL,
   KC_URL,
   PETS_DB,
-  CRAB_DB
+  CRAB_DB,
+  LOOT_DB
 ) {
   const messageChecks = [
     {
@@ -59,6 +62,10 @@ async function chatHandler(
       check: () => message.includes('!Fetchpets'),
       type: CHAT_MESSAGE_TYPES.FETCH_PETS,
     },
+    {
+      check: () => message.includes('!Fetchloot'),
+      type: CHAT_MESSAGE_TYPES.FETCH_LOOT,
+    },
   ];
 
   const typeOfChat = messageChecks.find((entry) => entry.check())?.type;
@@ -75,6 +82,9 @@ async function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
       await petGraph(message, msgMap, PET_URL, PETS_DB);
+      break;
+    case CHAT_MESSAGE_TYPES.FETCH_LOOT:
+      await lootGraph(message, msgMap, LOOT_URL, LOOT_DB);
       break;
     case GEMSTONE_CRAB:
       await crabHandler(msgMap, playerName, KC_URL, CRAB_DB);

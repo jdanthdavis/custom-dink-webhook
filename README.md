@@ -273,7 +273,7 @@ surfaces in the [Weekly Recap](#weekly-recap).
 
 ## [Weekly Recap](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/recapHandler.js)
 
-Posts a combined standings recap to a dedicated Discord channel on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, currently Monday 16:00 UTC) — no external scheduler involved. `src/index.js` exports a `scheduled()` handler alongside `fetch()`; on each trigger it builds the recap and posts it to the `RECAP_URL` webhook (set via `wrangler secret put RECAP_URL`).
+Posts a combined recap to a dedicated Discord channel on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, currently Monday 9am EST / 14:00 UTC — Cron Triggers run in UTC only with no DST awareness, so this drifts to 10am Eastern during EDT) — no external scheduler involved. `src/index.js` exports a `scheduled()` handler alongside `fetch()`; on each trigger it builds the recap and posts it to the `RECAP_URL` webhook (set via `wrangler secret put RECAP_URL`).
 
 The recap reports **current standings**, not week-over-week activity — the same leaderboard data `!Fetchpets`/`!Fetchloot` already show, just posted automatically (TCG is the exception — see below). Each domain contributes one section via a `getXLeaderboard(DB)` function:
 

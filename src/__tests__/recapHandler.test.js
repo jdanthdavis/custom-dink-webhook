@@ -16,7 +16,7 @@ describe('buildWeeklyRecap', () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
-          all: { results: [{ playername: 'Swap', total_pets: 5 }] },
+          all: { results: [{ playername: 'Swap', total_pets: 5, total_pets_baseline: 0 }] },
         })
       ),
     };
@@ -39,7 +39,7 @@ describe('buildWeeklyRecap', () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
-          all: { results: [{ playername: 'Swap', total_pets: 5 }] },
+          all: { results: [{ playername: 'Swap', total_pets: 5, total_pets_baseline: 0 }] },
         })
       ),
     };
@@ -70,7 +70,7 @@ describe('buildWeeklyRecap', () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
-          all: { results: [{ playername: 'Swap', total_pets: 5 }] },
+          all: { results: [{ playername: 'Swap', total_pets: 5, total_pets_baseline: 0 }] },
         })
       ),
     };
@@ -108,7 +108,7 @@ describe('buildWeeklyRecap', () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
-          all: { results: [{ playername: 'Swap', total_pets: 5 }] },
+          all: { results: [{ playername: 'Swap', total_pets: 5, total_pets_baseline: 0 }] },
         })
       ),
     };

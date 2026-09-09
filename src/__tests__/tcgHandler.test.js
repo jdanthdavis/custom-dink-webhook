@@ -209,6 +209,33 @@ describe('buildTcgWeeklyChangeSection', () => {
     expect(result).toContain('2');
   });
 
+  it('formats large deltas with thousands separators', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Pigeon Cam',
+                collection_score: 3_948_949,
+                unique_cards_owned: 135,
+                foil_cards_owned: 1,
+                collection_score_baseline: null,
+                unique_cards_owned_baseline: null,
+                foil_cards_owned_baseline: null,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    expect(result).toContain('3,948,949');
+    expect(result).not.toContain('3948949');
+  });
+
   it('shows only the change when a baseline exists (100 foils -> 150 shows 50)', async () => {
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(

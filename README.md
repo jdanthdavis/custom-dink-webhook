@@ -245,6 +245,60 @@ Handles notifications for the Trading Card Game (TCG) pack-opening feature. When
 
    > **playerName** has pulled a **Rare cardName** :sparkles: *foil* :sparkles: on pack **150 | 320/500 (64.0%)**
 
+### Storage
+
+Every qualifying pull also upserts a progress snapshot into the shared `dink_weekly_recap`
+D1 database (`WEEKLY_RECAP_DB` binding), table `tcg_progress`:
+
+```sql
+CREATE TABLE tcg_progress (
+  playername TEXT PRIMARY KEY COLLATE NOCASE,
+  collection_score INTEGER,
+  unique_cards_owned INTEGER,
+  unique_cards_total INTEGER,
+  foil_cards_owned INTEGER,
+  foil_cards_total INTEGER,
+  opened_packs INTEGER,
+  last_card_name TEXT,
+  last_updated TEXT
+);
+```
+
+Dupes count: `unique_cards_owned`/`foil_cards_owned` track every pull (the payload's `Total
+cards`/`Total foil cards` fields), not just genuinely new cards — pulling a card or foil
+you already own still moves these numbers. A stat missing from a given pull's `content`
+(e.g. no `Collection score` line) leaves the stored value untouched rather than clearing
+it. **Recap-only** — unlike pets/loot, there's no `!Fetchtcg` chat command; this data only
+surfaces in the [Weekly Recap](#weekly-recap).
+
+## [Weekly Recap](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/recapHandler.js)
+
+Posts a combined standings recap to a dedicated Discord channel on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, currently Monday 16:00 UTC) — no external scheduler involved. `src/index.js` exports a `scheduled()` handler alongside `fetch()`; on each trigger it builds the recap and posts it to the `RECAP_URL` webhook (set via `wrangler secret put RECAP_URL`).
+
+The recap reports **current standings**, not week-over-week activity — the same leaderboard data `!Fetchpets`/`!Fetchloot` already show, just posted automatically (TCG is the exception — see below). Each domain contributes one section via a `getXLeaderboard(DB)` function:
+
+- [getPetsLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) — also backs `!Fetchpets`, so the two can never disagree.
+- [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js) — also backs `!Fetchloot`.
+- [getTcgLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js) — recap-only, no chat command by design (see [tcgHandler](#tcghandler)).
+
+A section that returns nothing (empty table) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, deaths, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: write its `getXLeaderboard` function, then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
+
+### D1 database budget
+
+The Cloudflare account this Worker runs on caps out at 10 D1 databases. `pets`/`crab_kc`/
+`loot_totals` each have their own dedicated database (`dink_pets`, `dink_crab_kc`,
+`dink_loot`) from when they were built. Every domain added since (starting with TCG)
+instead gets its own **table** inside one shared `dink_weekly_recap` database
+(`WEEKLY_RECAP_DB` binding) — keep doing this for future domains rather than provisioning
+a new database per domain, to stay well under the cap.
+
+### Local testing
+
+`wrangler dev --test-scheduled` exposes a `/__scheduled` endpoint to fire the cron handler on demand, without waiting for the real schedule:
+```bash
+curl "http://localhost:8787/__scheduled"
+```
+
 ## Credits
 
 This handler wouldn't have been possible without the help from the team at [DinkPlugin](https://github.com/pajlads/DinkPlugin).

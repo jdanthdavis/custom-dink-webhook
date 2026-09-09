@@ -2,5 +2,6 @@ node_modules
 assets
 test
 .env
+.dev.vars
 .claude
 .wrangler

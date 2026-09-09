@@ -54,6 +54,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     PETS_DB,
     CRAB_DB,
     LOOT_DB,
+    WEEKLY_RECAP_DB,
     CA_PROGRESS,
   } = env;
 
@@ -86,7 +87,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       deathHandler(msgMap, playerName, extra, DEATH_URL);
       break;
     case Constants.EXTERNAL_PLUGIN:
-      tcgHandler(msgMap, playerName, content, extra, EXTERNAL_URL);
+      await tcgHandler(msgMap, playerName, content, extra, WEEKLY_RECAP_DB, EXTERNAL_URL);
       break;
     case Constants.CHAT:
       await chatHandler(

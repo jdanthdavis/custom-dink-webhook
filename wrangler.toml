@@ -4,6 +4,9 @@ compatibility_date = "2024-11-22"
 [observability.logs]
 enabled = true
 
+[triggers]
+crons = ["0 16 * * 1"] # Monday 16:00 UTC
+
 [[kv_namespaces]]
 binding = "CA_PROGRESS"
 id = "cc17ea160ebc4aa390969602aad00259"
@@ -26,3 +29,9 @@ binding = "LOOT_DB"
 database_name = "dink_loot"
 database_id = "1308d5b3-3507-4901-b128-8c58ed747756"
 migrations_dir = "migrations/loot"
+
+[[d1_databases]]
+binding = "WEEKLY_RECAP_DB"
+database_name = "dink_weekly_recap"
+database_id = "c938df6a-ff7a-4954-9ed9-4cfb0782bcb2"
+migrations_dir = "migrations/weekly_recap"

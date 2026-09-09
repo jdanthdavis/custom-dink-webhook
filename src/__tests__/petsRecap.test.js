@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { buildPetsWeeklyChangeSection } from '../core/chatMsgHandler/petGraph';
+import { buildPetsWeeklyChangeSection } from '../core/recap/petsRecap';
 
 /** @param {{ first?: any, all?: any }} [resolves] */
 function makeStatement(resolves = {}) {

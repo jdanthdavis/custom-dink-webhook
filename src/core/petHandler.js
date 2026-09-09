@@ -1,4 +1,4 @@
-import { customBossNames, formatAsPercentage, formatDate } from './helperFunctions';
+import { customBossNames, formatAsPercentage, formatDate, getSingleColumn } from './helperFunctions';
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
 
 /**
@@ -23,17 +23,7 @@ async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
 
   /** @param {string} playername */
   async function getTotalPets(playername) {
-    try {
-      const row = await PETS_DB.prepare(
-        'SELECT total_pets FROM pets WHERE playername = ?'
-      )
-        .bind(playername)
-        .first();
-      return row?.total_pets != null ? Number(row.total_pets) : null;
-    } catch (error) {
-      console.log('getTotalPets ', error instanceof Error ? error.message : error);
-      return null;
-    }
+    return getSingleColumn(PETS_DB, 'pets', 'total_pets', playername, 'getTotalPets');
   }
 
   /** @param {string} playername @param {string} petName */

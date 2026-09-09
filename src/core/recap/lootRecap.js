@@ -22,7 +22,8 @@ export async function getAllLoot(LOOT_DB) {
 /**
  * Fetches and formats the full loot leaderboard as a titled table, or null if
  * no player has any tracked loot. Recap-only by design - there's no chat
- * command exposing this on demand.
+ * command exposing this on demand. Unlike pets/TCG, this reports current
+ * standings (a lifetime total), not a change since the last recap.
  * @param {*} LOOT_DB - D1 database binding for loot value tracking
  * @returns {Promise<string|null>}
  */

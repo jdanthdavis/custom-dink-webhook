@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getLootLeaderboard } from '../core/chatMsgHandler/lootGraph';
+import { getLootLeaderboard } from '../core/recap/lootRecap';
 
 /** @param {{ all?: any }} [resolves] */
 function makeStatement(resolves = {}) {

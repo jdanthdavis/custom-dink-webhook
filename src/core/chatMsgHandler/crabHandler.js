@@ -1,5 +1,6 @@
 import killCountHandler from '../killCountHandler';
 import { GEMSTONE_CRAB } from '../../constants';
+import { getSingleColumn } from '../helperFunctions';
 
 /**
  * Increments and reports the Gemstone Crab kill count for a player, then
@@ -13,20 +14,7 @@ import { GEMSTONE_CRAB } from '../../constants';
 export async function crabHandler(msgMap, playerName, URL, CRAB_DB) {
   /** @param {string} playername */
   async function getTotalCrabKc(playername) {
-    try {
-      const row = await CRAB_DB.prepare(
-        'SELECT count FROM crab_kc WHERE playername = ?'
-      )
-        .bind(playername)
-        .first();
-      return row?.count != null ? Number(row.count) : null;
-    } catch (error) {
-      console.log(
-        'getTotalCrabKc ',
-        error instanceof Error ? error.message : error
-      );
-      return null;
-    }
+    return getSingleColumn(CRAB_DB, 'crab_kc', 'count', playername, 'getTotalCrabKc');
   }
 
   /** @param {string} playername */

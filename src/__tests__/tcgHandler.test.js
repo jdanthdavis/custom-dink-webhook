@@ -24,8 +24,9 @@ const content =
   'Unique cards: 320 / 500 (64.0%)\nTotal cards: 320\nOpened packs: 150';
 
 describe('tcgHandler', () => {
-  it('ignores duplicate pulls', async () => {
+  it('does not notify on a duplicate pull, but still records D1 progress', async () => {
     const msgMap = new Map();
+    const WEEKLY_RECAP_DB = makeTrackingDb();
     const result = await tcgHandler(
       msgMap,
       'Swap',
@@ -38,15 +39,22 @@ describe('tcgHandler', () => {
           foil: false,
         },
       },
-      makeTrackingDb(),
+      WEEKLY_RECAP_DB,
       'url'
     );
     expect(result).toBeUndefined();
     expect(msgMap.size).toBe(0);
+    // A dupe still moves opened_packs/collection_score in `content` - the
+    // weekly recap should reflect that even though nothing gets posted.
+    expect(WEEKLY_RECAP_DB.prepare).toHaveBeenCalledTimes(1);
+    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain(
+      'INSERT INTO tcg_progress'
+    );
   });
 
-  it('ignores a new non-foil pull outside the accepted rarities', async () => {
+  it('does not notify on a non-foil pull outside the accepted rarities, but still records D1 progress', async () => {
     const msgMap = new Map();
+    const WEEKLY_RECAP_DB = makeTrackingDb();
     await tcgHandler(
       msgMap,
       'Swap',
@@ -59,10 +67,14 @@ describe('tcgHandler', () => {
           foil: false,
         },
       },
-      makeTrackingDb(),
+      WEEKLY_RECAP_DB,
       'url'
     );
     expect(msgMap.size).toBe(0);
+    expect(WEEKLY_RECAP_DB.prepare).toHaveBeenCalledTimes(1);
+    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain(
+      'INSERT INTO tcg_progress'
+    );
   });
 
   it('notifies on a new non-foil pull within an accepted rarity', async () => {

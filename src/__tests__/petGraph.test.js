@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { petGraph } from '../core/chatMsgHandler/petGraph';
 
 /** @param {Map<any, string>} msgMap */
@@ -6,28 +6,32 @@ function firstMessage(msgMap) {
   return [...msgMap.values()][0];
 }
 
-describe('petGraph', () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
+/** @param {{ first?: any, all?: any }} [resolves] */
+function makeStatement(resolves = {}) {
+  return {
+    bind: vi.fn().mockReturnThis(),
+    first: vi.fn().mockResolvedValue(resolves.first),
+    all: vi.fn().mockResolvedValue(resolves.all),
+  };
+}
 
-  it('reports a single player\'s pets when a name is given', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({
-          properName: 'Swap',
-          player: {
-            totalPets: 5,
-            mostRecentPet: { name: 'Baby mole', dateGot: '01/01/2026' },
+describe('petGraph', () => {
+  it("reports a single player's pets when a name is given", async () => {
+    const PETS_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          first: {
+            playername: 'Swap',
+            total_pets: 5,
+            most_recent_pet_name: 'Baby mole',
+            most_recent_pet_date: '01/01/2026',
           },
-        }),
-      })
-    );
+        })
+      ),
+    };
 
     const msgMap = new Map();
-    await petGraph('!Fetchpets Swap', msgMap, 'url', 'https://mongo.example');
+    await petGraph('!Fetchpets Swap', msgMap, 'url', PETS_DB);
 
     const msg = firstMessage(msgMap);
     expect(msg).toContain('**Swap** -> Total Pets: **5**');
@@ -35,21 +39,31 @@ describe('petGraph', () => {
   });
 
   it('reports a leaderboard sorted by total pets when no name is given', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => ({
-          players: {
-            Swap: { totalPets: 2, mostRecentPet: { name: 'Rocky', dateGot: '01/01/2026' } },
-            Gout: { totalPets: 8, mostRecentPet: { name: 'Nid', dateGot: '01/02/2026' } },
+    const PETS_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Swap',
+                total_pets: 2,
+                most_recent_pet_name: 'Rocky',
+                most_recent_pet_date: '01/01/2026',
+              },
+              {
+                playername: 'Gout',
+                total_pets: 8,
+                most_recent_pet_name: 'Nid',
+                most_recent_pet_date: '01/02/2026',
+              },
+            ],
           },
-        }),
-      })
-    );
+        })
+      ),
+    };
 
     const msgMap = new Map();
-    await petGraph('!Fetchpets', msgMap, 'url', 'https://mongo.example');
+    await petGraph('!Fetchpets', msgMap, 'url', PETS_DB);
 
     const msg = firstMessage(msgMap);
     const goutIndex = msg.indexOf('Gout');

@@ -32,7 +32,7 @@ A first kill of any of the following "special" bosses always triggers a notifica
 
 ## [petHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/petHandler.js)
 
-Processes pet-related notifications, particularly for incrementing and retrieving a player's pet count in a MongoDB database. The handler supports both first-time pet drops and duplicate pet drops, adjusting the format and message accordingly. It ensures that the pet name is validated, and provides a system for tracking the pet count. The handler also includes a route for directly updating pet counts, so players can modify their progress in real-time. 
+Processes pet-related notifications, particularly for incrementing and retrieving a player's pet count. The handler supports both first-time pet drops and duplicate pet drops, adjusting the format and message accordingly. It ensures that the pet name is validated, and provides a system for tracking the pet count.
 
 ### Pet Count Update Logic
 
@@ -41,38 +41,35 @@ Processes pet-related notifications, particularly for incrementing and retrievin
 - **The Grumbler Special Case**: For this specific pet, the word "killcount" in the milestone text is swapped for "grumbles" (e.g. "at 500 grumbles!" instead of "at 500 killcount!").
 - **Missing Data Fallback**: If the pet name or milestone text can't be resolved, a fallback message is sent instead ("has a funny feeling like they're being followed!") noting that the pet name or milestone is missing.
 
-### Routes
+### Storage
 
-> **Note:** the routes below are served by the external pet-tracking middleware (`MONGO_MIDDLEWARE`) that `petHandler.js` calls out to, not by this Worker directly. This Worker's own `src/index.js` has no routing of its own — every request is treated as a Dink webhook. The same middleware also backs `/increment-crab` and `/get-crab` (used by [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) for Gemstone Crab tracking) and `/get-pets` (also used by [petGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) for the `!Fetchpets` leaderboard).
+Pet and Gemstone Crab counts are tracked in two Cloudflare D1 (SQLite) databases bound
+directly to this Worker — no external service involved. `petHandler.js` and
+[petGraph](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js)
+(the `!Fetchpets` command) use the `PETS_DB` binding:
 
-#### **POST `/increment-pets`**
-
-This endpoint allows the pet count for a given player to be incremented by 1. The player’s name is sent as part of the request body. It ensures that the pet count is updated in the database, and returns a success message if the operation is successful.
-
-- **Parameters**:
-  - `playername` (JSON body): The player whose pet count is to be incremented.
-
-- **Response**:
-  - `200 OK`: If the pet count was successfully incremented.
-  - `400 Bad Request`: If no `playername` is provided.
-  - `404 Not Found`: If the player is not found in the database.
-  - `500 Internal Server Error`: If there is an error while updating the database.
-
-#### Example Request
-
-```bash
-curl -X POST "http://localhost:3000/increment-pets" \
--H "Content-Type: application/json" \
--d '{"playername": "player1", "petName": "Baby mole", "dateGot": "07/19/2026"}'
+```sql
+CREATE TABLE pets (
+  playername TEXT PRIMARY KEY COLLATE NOCASE,
+  total_pets INTEGER NOT NULL DEFAULT 0,
+  most_recent_pet_name TEXT,
+  most_recent_pet_date TEXT
+);
 ```
-#### Example response
-```json
-{
-  "success": true,
-  "playername": "player1"
-}
+
+[crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js)
+uses the separate `CRAB_DB` binding:
+
+```sql
+CREATE TABLE crab_kc (
+  playername TEXT PRIMARY KEY COLLATE NOCASE,
+  count INTEGER NOT NULL DEFAULT 0
+);
 ```
-> Note: the request body above reflects what `petHandler.js` actually sends (`playername`, `petName`, `dateGot`). The response shape is defined by the external middleware, which lives outside this repo.
+
+Both are upserted (`INSERT ... ON CONFLICT DO UPDATE`) on each increment, so a player's
+first pet/crab kill creates their row automatically. Migrations live in `migrations/pets`
+and `migrations/crab_kc`; apply with `wrangler d1 migrations apply <db-name>`.
 
 ## [collectionLogHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/collectionLogHandler.js)
 

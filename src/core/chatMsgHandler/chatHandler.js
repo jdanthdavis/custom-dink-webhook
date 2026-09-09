@@ -20,7 +20,8 @@ import { crabHandler } from './crabHandler';
  * @param {string} LOOT_URL - The loot notification URL
  * @param {string} PET_URL - The pet notification URL
  * @param {string} KC_URL - The kill-count notification URL
- * @param {string} MONGO_MIDDLEWARE - The pet-tracking middleware base URL
+ * @param {*} PETS_DB - D1 database binding for pet tracking
+ * @param {*} CRAB_DB - D1 database binding for Gemstone Crab kill count tracking
  */
 async function chatHandler(
   msgMap,
@@ -30,7 +31,8 @@ async function chatHandler(
   LOOT_URL,
   PET_URL,
   KC_URL,
-  MONGO_MIDDLEWARE
+  PETS_DB,
+  CRAB_DB
 ) {
   const messageChecks = [
     {
@@ -72,10 +74,10 @@ async function chatHandler(
       sepulchreHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.FETCH_PETS:
-      await petGraph(message, msgMap, PET_URL, MONGO_MIDDLEWARE);
+      await petGraph(message, msgMap, PET_URL, PETS_DB);
       break;
     case GEMSTONE_CRAB:
-      await crabHandler(msgMap, playerName, KC_URL, MONGO_MIDDLEWARE);
+      await crabHandler(msgMap, playerName, KC_URL, CRAB_DB);
       break;
     case DELVE_KC:
       delveHandler(message, playerName, msgMap, KC_URL);

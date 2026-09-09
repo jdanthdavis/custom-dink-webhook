@@ -6,10 +6,10 @@ import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
  * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
  * @param {*} playerName - The player's name
  * @param {*} extra - Additional information. See {@link https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#pets} for all the information.
- * @param {string} MONGO_MIDDLEWARE - The pet-tracking middleware base URL
+ * @param {*} PETS_DB - D1 database binding for pet tracking
  * @param {*} URL - The associated URL
  */
-async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
+async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
   const {
     milestone: initialMilestone,
     duplicate: isDuplicate,
@@ -23,18 +23,13 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
 
   /** @param {string} playername */
   async function getTotalPets(playername) {
-    const url = `${MONGO_MIDDLEWARE}/get-pets?playername=${encodeURIComponent(
-      playername
-    )}`;
     try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`/get-pets response status: ${res.status}`);
-      }
-      const json = await res.json();
-      return json.player?.totalPets != null
-        ? Number(json.player.totalPets)
-        : null;
+      const row = await PETS_DB.prepare(
+        'SELECT total_pets FROM pets WHERE playername = ?'
+      )
+        .bind(playername)
+        .first();
+      return row?.total_pets != null ? Number(row.total_pets) : null;
     } catch (error) {
       console.log('getTotalPets ', error instanceof Error ? error.message : error);
       return null;
@@ -43,7 +38,6 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
 
   /** @param {string} playername @param {string} petName */
   async function incrementPetCount(playername, petName) {
-    const url = `${MONGO_MIDDLEWARE}/increment-pets`;
     const today = new Date();
     const formattedDate = `${String(today.getMonth() + 1).padStart(
       2,
@@ -51,21 +45,18 @@ async function petHandler(msgMap, playerName, extra, MONGO_MIDDLEWARE, URL) {
     )}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
 
     try {
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          playername,
-          petName,
-          dateGot: formattedDate,
-        }),
-      });
-
-      if (!res.ok)
-        throw new Error(`Failed to increment pet count: ${res.status}`);
-      const json = await res.json();
+      await PETS_DB.prepare(
+        `INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date)
+         VALUES (?1, 1, ?2, ?3)
+         ON CONFLICT(playername) DO UPDATE SET
+           total_pets = total_pets + 1,
+           most_recent_pet_name = COALESCE(?2, most_recent_pet_name),
+           most_recent_pet_date = COALESCE(?3, most_recent_pet_date)`
+      )
+        .bind(playername, petName || null, petName ? formattedDate : null)
+        .run();
       console.log(
-        `Pet count and recent pet successfully updated for ${json.playername}`
+        `Pet count and recent pet successfully updated for ${playername}`
       );
     } catch (error) {
       console.log(

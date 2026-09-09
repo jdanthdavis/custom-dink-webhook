@@ -134,7 +134,7 @@ CREATE TABLE loot_totals (
 `total_value` accumulates across every qualifying drop; `last_item_*` records the
 highest-value item from the most recent qualifying event. Surfaced only via the
 [Weekly Recap](#weekly-recap) — there's no chat command; see
-[getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js).
+[getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js).
 
 ## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
@@ -273,13 +273,13 @@ surfaces in the [Weekly Recap](#weekly-recap).
 Posts a combined recap to a dedicated Discord channel on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, currently Monday 9am EST / 14:00 UTC — Cron Triggers run in UTC only with no DST awareness, so this drifts to 10am Eastern during EDT) — no external scheduler involved. `src/index.js` exports a `scheduled()` handler alongside `fetch()`; on each trigger it builds the recap and posts it to the `RECAP_URL` webhook (set via `wrangler secret put RECAP_URL`).
 
 None of the tracked domains have a `!Fetch...`-style chat command — this recap is the only
-place any of this data surfaces, by design, so players can't manually trigger a fetch.
-Each domain contributes one section:
+place any of this data surfaces, by design, so players can't manually trigger a fetch. Every
+section-builder function lives in `src/core/recap/`:
 
-- [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/lootGraph.js) — **current standings**: a lifetime leaderboard, not a delta.
-- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/petGraph.js) and [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js) — **week-over-week change**, not a running total: each resets a `*_baseline` column to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress` baseline columns described above).
+- [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js) — **current standings**: a lifetime leaderboard, not a delta.
+- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js) and [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js) — **week-over-week change**, not a running total, both built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress` baseline columns described above).
 
-A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, deaths, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: write its section-builder function, then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
+A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, deaths, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section, like pets/TCG), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
 
 ### D1 database budget
 

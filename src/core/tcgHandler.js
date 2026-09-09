@@ -1,5 +1,5 @@
 import { EXTERNAL_PLUGIN } from "../constants";
-import { formatDate, formatLeaderboardTable } from "./helperFunctions";
+import { formatDate } from "./helperFunctions";
 
 const ACCEPTED_RARITIES = ["Mythic", "Godly", "Legendary"];
 const FOIL_MILESTONE_INTERVAL = 50;
@@ -265,75 +265,6 @@ async function recordTcgProgress(WEEKLY_RECAP_DB, playername, content, cardName)
       error instanceof Error ? error.message : error
     );
   }
-}
-
-/**
- * Builds the TCG section of the weekly recap: each player's change in
- * collection score / cards pulled / foils pulled since the *last* time this
- * ran, not their lifetime total. A player with no prior baseline (their
- * first pulls since this shipped) has their full current total counted as
- * this week's change. Players with no change since last time are omitted.
- *
- * This has a side effect: it resets every player's baseline to their current
- * values before returning, so the next call's deltas are measured from here.
- * Only call this once per recap cycle (via `RECAP_SECTIONS`) - calling it
- * outside that context would zero out real, unreported progress.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
- * @returns {Promise<string|null>}
- */
-export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
-  /** @type {Array<{ playername: string, collection_score?: number, unique_cards_owned?: number, foil_cards_owned?: number, collection_score_baseline?: number, unique_cards_owned_baseline?: number, foil_cards_owned_baseline?: number }>|null} */
-  let rows;
-  try {
-    const { results } = await WEEKLY_RECAP_DB.prepare(
-      'SELECT playername, collection_score, unique_cards_owned, foil_cards_owned, collection_score_baseline, unique_cards_owned_baseline, foil_cards_owned_baseline FROM tcg_progress'
-    ).all();
-    rows = results;
-  } catch (error) {
-    console.log('buildTcgWeeklyChangeSection error:', error instanceof Error ? error.message : error);
-    return null;
-  }
-
-  if (!rows || rows.length === 0) return null;
-
-  /** @param {number|null|undefined} current @param {number|null|undefined} baseline */
-  const delta = (current, baseline) => (Number(current) || 0) - (Number(baseline) || 0);
-
-  const changes = rows
-    .map((row) => ({
-      playername: row.playername,
-      scoreDelta: delta(row.collection_score, row.collection_score_baseline),
-      cardsDelta: delta(row.unique_cards_owned, row.unique_cards_owned_baseline),
-      foilsDelta: delta(row.foil_cards_owned, row.foil_cards_owned_baseline),
-    }))
-    .filter((row) => row.scoreDelta || row.cardsDelta || row.foilsDelta);
-
-  // Reset baselines to current values regardless of what was reported above,
-  // so next time's deltas are measured from this point on.
-  try {
-    await WEEKLY_RECAP_DB.prepare(
-      `UPDATE tcg_progress SET
-         collection_score_baseline = collection_score,
-         unique_cards_owned_baseline = unique_cards_owned,
-         foil_cards_owned_baseline = foil_cards_owned`
-    ).run();
-  } catch (error) {
-    console.log('buildTcgWeeklyChangeSection reset error:', error instanceof Error ? error.message : error);
-  }
-
-  if (changes.length === 0) return null;
-
-  const sorted = changes.sort((a, b) => b.scoreDelta - a.scoreDelta);
-
-  const headers = ['Name', 'Score Gained', 'Cards Gained', 'Foils Gained'];
-  const tableRows = sorted.map((row) => [
-    row.playername,
-    row.scoreDelta.toLocaleString('en-US'),
-    row.cardsDelta.toLocaleString('en-US'),
-    row.foilsDelta.toLocaleString('en-US'),
-  ]);
-
-  return formatLeaderboardTable('TCG Board (This Week)', headers, tableRows);
 }
 
 /**

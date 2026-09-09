@@ -1,11 +1,12 @@
-import { buildPetsWeeklyChangeSection } from './core/chatMsgHandler/petGraph';
-import { getLootLeaderboard } from './core/chatMsgHandler/lootGraph';
-import { buildTcgWeeklyChangeSection } from './core/tcgHandler';
+import { buildPetsWeeklyChangeSection } from './core/recap/petsRecap';
+import { getLootLeaderboard } from './core/recap/lootRecap';
+import { buildTcgWeeklyChangeSection } from './core/recap/tcgRecap';
 
-// Each entry builds one section of the recap. Loot reports current standings;
-// pets and TCG instead report the *change* since the last recap run rather
-// than a running total - each build function resets its own baselines as a
-// side effect each time it runs; see their JSDoc. None of these have a chat
+// Each entry builds one section of the recap, all living in src/core/recap/.
+// Loot reports current standings; pets and TCG instead report the *change*
+// since the last recap run rather than a running total, via the shared
+// computeAndResetDeltas helper (src/core/recap/deltaTracking.js) - see its
+// JSDoc for the baseline-reset side effect. None of these have a chat
 // command anymore (the last one, !Fetchloot, was removed as redundant once
 // the recap covered the same ground) — the weekly recap is the only surface
 // for this data, by design, so players can't manually trigger a fetch. TCG
@@ -15,8 +16,9 @@ import { buildTcgWeeklyChangeSection } from './core/tcgHandler';
 // time, or its binding isn't wired up yet) is simply omitted.
 //
 // Adding a new domain (clues, collection log, combat tasks, deaths, personal
-// bests) once it has its own tracking table is just one more entry here — no
-// other changes needed.
+// bests) once it has its own tracking table is a new file in
+// src/core/recap/ (built on computeAndResetDeltas if it's a change-since-
+// last-time section) plus one more entry here — no other changes needed.
 const RECAP_SECTIONS = [
   (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
   (env) => getLootLeaderboard(env.LOOT_DB),

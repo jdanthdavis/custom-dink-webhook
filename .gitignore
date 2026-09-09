@@ -3,3 +3,4 @@ assets
 test
 .env
 .claude
+.wrangler

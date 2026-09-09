@@ -1,6 +1,6 @@
 /**
  * Formats an auto-sized-column table wrapped in a titled code block, used by
- * every D1-backed leaderboard (!Fetchpets, !Fetchloot, and the weekly recap).
+ * every D1-backed weekly recap section.
  * @param {string} title - The table's heading, e.g. "Pet Board"
  * @param {string[]} headers - Column headers
  * @param {string[][]} rows - Row cell values, one array per row, same column order as headers

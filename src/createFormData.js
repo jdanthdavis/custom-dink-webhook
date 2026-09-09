@@ -96,11 +96,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         extra.message,
         PB_URL,
         LOOT_URL,
-        PET_URL,
         KC_URL,
-        PETS_DB,
-        CRAB_DB,
-        LOOT_DB
+        CRAB_DB
       );
       break;
     default:

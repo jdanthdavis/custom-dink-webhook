@@ -14,7 +14,7 @@ function makeStatement() {
 }
 
 /** @returns {*} */
-function makeLootDb() {
+function makeWeeklyRecapDb() {
   return { prepare: vi.fn().mockReturnValue(makeStatement()) };
 }
 
@@ -29,7 +29,7 @@ describe('lootHandler', () => {
       ],
       'Swap',
       'Man',
-      makeLootDb(),
+      makeWeeklyRecapDb(),
       'url'
     );
     const msg = firstMessage(msgMap);
@@ -44,7 +44,7 @@ describe('lootHandler', () => {
       [{ name: 'Whip', quantity: 1, priceEach: 1_500_000 }],
       'Swap',
       'Phantom Muspah',
-      makeLootDb(),
+      makeWeeklyRecapDb(),
       'url'
     );
     expect(firstMessage(msgMap)).toContain('from **The Grumbler!**');
@@ -57,7 +57,7 @@ describe('lootHandler', () => {
       [{ name: 'Blood moon chestplate', quantity: 1, priceEach: 3_952_036 }],
       'Swap',
       'Blood moon',
-      makeLootDb(),
+      makeWeeklyRecapDb(),
       'url'
     );
     expect(firstMessage(msgMap)).toContain(
@@ -75,7 +75,7 @@ describe('lootHandler', () => {
       ],
       'Swap',
       'Blood moon',
-      makeLootDb(),
+      makeWeeklyRecapDb(),
       'url'
     );
     expect(firstMessage(msgMap)).toContain(
@@ -94,7 +94,7 @@ describe('lootHandler', () => {
       ],
       'Swap',
       'Blood moon',
-      makeLootDb(),
+      makeWeeklyRecapDb(),
       'url'
     );
     expect(firstMessage(msgMap)).toContain(
@@ -114,7 +114,7 @@ describe('lootHandler', () => {
       ],
       'Swap',
       'Blood moon',
-      makeLootDb(),
+      makeWeeklyRecapDb(),
       'url'
     );
     expect(firstMessage(msgMap)).toContain(
@@ -124,23 +124,23 @@ describe('lootHandler', () => {
 
   it('does not set a message or touch D1 when no items clear the threshold', async () => {
     const msgMap = new Map();
-    const LOOT_DB = makeLootDb();
+    const WEEKLY_RECAP_DB = makeWeeklyRecapDb();
     const result = await lootHandler(
       msgMap,
       [{ name: 'Bones', quantity: 1, priceEach: 100 }],
       'Swap',
       'Man',
-      LOOT_DB,
+      WEEKLY_RECAP_DB,
       'url'
     );
     expect(result).toBeUndefined();
     expect(msgMap.size).toBe(0);
-    expect(LOOT_DB.prepare).not.toHaveBeenCalled();
+    expect(WEEKLY_RECAP_DB.prepare).not.toHaveBeenCalled();
   });
 
   it('records the summed qualifying value and the highest-value item in D1', async () => {
     const msgMap = new Map();
-    const LOOT_DB = makeLootDb();
+    const WEEKLY_RECAP_DB = makeWeeklyRecapDb();
     await lootHandler(
       msgMap,
       [
@@ -150,16 +150,16 @@ describe('lootHandler', () => {
       ],
       'Swap',
       'Blood moon',
-      LOOT_DB,
+      WEEKLY_RECAP_DB,
       'url'
     );
 
-    expect(LOOT_DB.prepare).toHaveBeenCalledTimes(1);
-    expect(LOOT_DB.prepare.mock.calls[0][0]).toContain(
+    expect(WEEKLY_RECAP_DB.prepare).toHaveBeenCalledTimes(1);
+    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain(
       'INSERT INTO loot_totals'
     );
-    expect(LOOT_DB.prepare.mock.calls[0][0]).toContain('weekly_top_item_value');
-    const statement = LOOT_DB.prepare.mock.results[0].value;
+    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain('weekly_top_item_value');
+    const statement = WEEKLY_RECAP_DB.prepare.mock.results[0].value;
     expect(statement.bind).toHaveBeenCalledWith(
       'Swap',
       3_952_036 + 2_824_150,

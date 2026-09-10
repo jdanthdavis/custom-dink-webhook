@@ -141,8 +141,8 @@ Handles generic loot-drop notifications. Items are filtered down to only those w
 
 ### Storage
 
-Qualifying drops (the same ones announced above) are also upserted into a Cloudflare D1
-database bound directly to this Worker (`LOOT_DB` -> `dink_loot`):
+Qualifying drops (the same ones announced above) are also upserted into the shared
+`dink_weekly_recap` D1 database (`WEEKLY_RECAP_DB` binding), table `loot_totals`:
 
 ```sql
 CREATE TABLE loot_totals (
@@ -333,10 +333,13 @@ A section that returns nothing (empty table, or nothing changed since last time)
 
 ### D1 database budget
 
-The Cloudflare account this Worker runs on caps out at 10 D1 databases. `pets`/`crab_kc`/
-`loot_totals` each have their own dedicated database (`dink_pets`, `dink_crab_kc`,
-`dink_loot`) from when they were built. Every domain added since (starting with TCG)
-instead gets its own **table** inside one shared `dink_weekly_recap` database
+The Cloudflare account this Worker runs on caps out at 10 D1 databases. `pets`/`crab_kc`
+each have their own dedicated database (`dink_pets`, `dink_crab_kc`) from when they were
+built. `loot_totals` originally did too (`dink_loot`), but was merged into the shared
+`dink_weekly_recap` database once loot became recap-only and fully weekly-scoped like
+every other domain here - nothing technical distinguished it from tcg_progress/deaths/
+collection_log anymore, so keeping it separate just spent a database slot for no reason.
+Every domain added since TCG gets its own **table** inside `dink_weekly_recap`
 (`WEEKLY_RECAP_DB` binding) — keep doing this for future domains rather than provisioning
 a new database per domain, to stay well under the cap.
 

@@ -53,7 +53,6 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     EXTERNAL_URL,
     PETS_DB,
     CRAB_DB,
-    LOOT_DB,
     WEEKLY_RECAP_DB,
     CA_PROGRESS,
   } = env;
@@ -92,7 +91,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         extra.items,
         playerName,
         extra.source,
-        LOOT_DB,
+        WEEKLY_RECAP_DB,
         LOOT_URL
       );
       break;

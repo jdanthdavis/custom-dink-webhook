@@ -16,11 +16,11 @@ import { computeAndResetDeltas } from './deltaTracking';
  * first run. weekly_top_item_* isn't a running total like total_value - it's
  * reset to NULL here (rather than diffed against a baseline) so next week's
  * top drop starts fresh.
- * @param {*} LOOT_DB - D1 database binding for loot value tracking
+ * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
  * @returns {Promise<string|null>}
  */
-export async function buildLootWeeklyChangeSection(LOOT_DB) {
-  const changes = await computeAndResetDeltas(LOOT_DB, {
+export async function buildLootWeeklyChangeSection(WEEKLY_RECAP_DB) {
+  const changes = await computeAndResetDeltas(WEEKLY_RECAP_DB, {
     table: 'loot_totals',
     extraColumns: ['weekly_top_item_name', 'weekly_top_item_value'],
     metrics: [
@@ -30,13 +30,13 @@ export async function buildLootWeeklyChangeSection(LOOT_DB) {
   if (!changes || changes.length === 0) return null;
 
   try {
-    await LOOT_DB.prepare(
+    await WEEKLY_RECAP_DB.prepare(
       `UPDATE loot_totals SET weekly_top_item_name = NULL, weekly_top_item_value = NULL
        WHERE weekly_top_item_value IS NOT NULL`
     ).run();
   } catch (error) {
     console.log(
-      'getLootLeaderboard reset error:',
+      'buildLootWeeklyChangeSection reset error:',
       error instanceof Error ? error.message : error
     );
   }

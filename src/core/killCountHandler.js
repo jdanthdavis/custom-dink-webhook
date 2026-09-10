@@ -2,13 +2,12 @@ import { customBossNames, killCountMsgConstructor } from './helperFunctions';
 import { bossMap, specialKills, KILL_COUNT, BRUTUS } from '../constants';
 
 /**
- * Check if the current killCount is divisible by 100.
- * If it's not but it is in specialKills then allow the notification.
- * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
- * @param {*} playerName - The player's name
- * @param {*} extra - Additional information
- * @param {*} URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ * Notifies on a kill-count milestone (every 100, a boss-specific interval, or a special first kill).
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap
+ * @param {*} playerName
+ * @param {*} extra
+ * @param {*} URL
+ * @returns {Map<{ ID: string, URL: string }, string>}
  */
 function killCountHandler(msgMap, playerName, extra, URL) {
   const { boss, count: killCount, gameMessage } = extra || {};

@@ -3,15 +3,15 @@ import { RANK_MAP, COLLECTION } from '../constants';
 
 /**
  * @typedef {Object} CollectionLogExtra
- * @property {number} totalEntries - Total number of collection log entries for the account.
- * @property {number} completedEntries - Number of entries the account has completed.
- * @property {string} itemName - Name of the item that triggered this update.
- * @property {string} [currentRank] - The account's current collection log rank (e.g. 'BRONZE', or 'NONE' if unranked).
- * @property {string} [justCompletedRank] - The rank just completed by this update, 'NONE' if none was completed, or omitted entirely.
+ * @property {number} totalEntries
+ * @property {number} completedEntries
+ * @property {string} itemName
+ * @property {string} [currentRank]
+ * @property {string} [justCompletedRank]
  */
 
 /**
- * Formats a rank string (e.g. "RUNE") into Title Case (e.g. "Rune").
+ * Formats a rank string to Title Case, e.g. "RUNE" -> "Rune".
  * @param {string} rank
  * @returns {string}
  */
@@ -20,12 +20,9 @@ export function formatRank(rank) {
 }
 
 /**
- * Upserts a player's collection log snapshot for the weekly recap. A
- * snapshot-replace domain (like tcg_progress), not a counter -
- * completedEntries/totalEntries/currentRank are the account's current
- * values on every event, not deltas. Missing values are preserved via
- * COALESCE rather than overwritten with null.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Upserts a player's collection log snapshot for the weekly recap
+ * (snapshot, not a delta; COALESCE-guarded).
+ * @param {*} WEEKLY_RECAP_DB
  * @param {string} playername
  * @param {number} [totalEntries]
  * @param {number} [completedEntries]
@@ -63,17 +60,21 @@ async function recordCollectionLog(
 }
 
 /**
- * Gathers the collection log item, records the account's current snapshot
- * for the weekly recap, and builds the account's total collection log
- * entries message.
- * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
- * @param {string} playerName - The player's name
- * @param {CollectionLogExtra} extra - Additional information
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
- * @param {string} URL - The associated URL
- * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map
+ * Records the collection log snapshot and builds the notification message.
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap
+ * @param {string} playerName
+ * @param {CollectionLogExtra} extra
+ * @param {*} WEEKLY_RECAP_DB
+ * @param {string} URL
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>}
  */
-async function collectionLogHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
+async function collectionLogHandler(
+  msgMap,
+  playerName,
+  extra,
+  WEEKLY_RECAP_DB,
+  URL
+) {
   const {
     totalEntries,
     completedEntries,

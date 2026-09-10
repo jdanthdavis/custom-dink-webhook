@@ -6,10 +6,9 @@ const FOIL_MILESTONE_INTERVAL = 50;
 const CARD_MILESTONE_INTERVAL = 250;
 
 /**
- * Extracts the total number of cards the game has from the content string and
- * pairs it with the "Total cards" count.
- * @param {string} content - The raw content from the TCG message
- * @returns {string|null} A formatted string in the format "owned/total (percentage%)", or null if data is missing
+ * Extracts owned/total card progress, e.g. "215/500 (43.0%)".
+ * @param {string} content
+ * @returns {string|null}
  */
 function extractCardProgress(content) {
   const gameTotalMatch = content?.match(
@@ -31,9 +30,9 @@ function extractCardProgress(content) {
 }
 
 /**
- * Extracts the "Opened packs" count from the raw content string.
- * @param {string} content - The raw content from the TCG message
- * @returns {string|null} The opened packs count formatted with thousands separators, or null if not found
+ * Extracts the opened-packs count, thousands-separated.
+ * @param {string} content
+ * @returns {string|null}
  */
 function extractOpenedPacks(content) {
   const match = content?.match(/Opened packs: ([\d ]+)/);
@@ -43,10 +42,9 @@ function extractOpenedPacks(content) {
 }
 
 /**
- * Extracts the unique-foil-card progress (owned/total and percentage) from
- * the raw content string.
- * @param {string} content - The raw content from the TCG message
- * @returns {string|null} A formatted string in the format "owned/total (percentage%)", or null if data is missing
+ * Extracts unique-foil-card progress, e.g. "12/500 (2.4%)".
+ * @param {string} content
+ * @returns {string|null}
  */
 function extractFoilCardProgress(content) {
   const match = content?.match(
@@ -61,10 +59,9 @@ function extractFoilCardProgress(content) {
 }
 
 /**
- * Extracts the raw (unformatted) unique-foil-cards-owned count from the raw
- * content string, used to check for interval milestones.
- * @param {string} content - The raw content from the TCG message
- * @returns {number|null} The number of unique foil cards owned, or null if not found
+ * Raw unique-foil-cards-owned count, used for interval milestones.
+ * @param {string} content
+ * @returns {number|null}
  */
 function extractFoilOwnedCount(content) {
   const match = content?.match(/Unique foil cards: ([\d ]+) \/ [\d ]+ \(/);
@@ -72,15 +69,10 @@ function extractFoilOwnedCount(content) {
 }
 
 /**
- * Extracts the raw (unformatted) unique-cards-owned count from the raw
- * content string, used to check for interval milestones.
- *
- * Despite the name, this reads the "Total cards" line (every pull, dupes
- * included), not the true-distinct "Unique cards" figure - matching the
- * message display's existing convention. Also reused for D1 tracking, where
- * dupes are meant to count toward the weekly recap.
- * @param {string} content - The raw content from the TCG message
- * @returns {number|null} The number of cards owned (dupes included), or null if not found
+ * Reads "Total cards" (every pull, dupes included) despite the name - matches
+ * the message display and D1 tracking convention, not the distinct-cards figure.
+ * @param {string} content
+ * @returns {number|null}
  */
 function extractUniqueCardOwnedCount(content) {
   const match = content?.match(/Total cards: ([\d ]+)/);
@@ -88,9 +80,9 @@ function extractUniqueCardOwnedCount(content) {
 }
 
 /**
- * Extracts the collection score and its percentage from the raw content string.
- * @param {string} content - The raw content from the TCG message
- * @returns {string|null} A formatted string in the format "score (percentage%)", or null if not found
+ * Extracts collection score and percentage, e.g. "1,234 (12.3%)".
+ * @param {string} content
+ * @returns {string|null}
  */
 function extractCollectionScore(content) {
   const match = content?.match(/Collection score: ([\d ]+) \(([\d.]+)%\)/);
@@ -101,9 +93,8 @@ function extractCollectionScore(content) {
 }
 
 /**
- * Extracts the raw (unformatted) collection score from the raw content
- * string, used for D1 tracking.
- * @param {string} content - The raw content from the TCG message
+ * Raw collection score, used for D1 tracking.
+ * @param {string} content
  * @returns {number|null}
  */
 function extractCollectionScoreValue(content) {
@@ -112,12 +103,8 @@ function extractCollectionScoreValue(content) {
 }
 
 /**
- * Extracts the raw "Total foil cards" count (every foil pull, dupes
- * included) from the raw content string, used for D1 tracking. This field
- * isn't used by any of the display logic above - dupes count toward the
- * weekly recap even though the pull message itself only ever shows the
- * true-distinct "Unique foil cards" figure.
- * @param {string} content - The raw content from the TCG message
+ * Raw "Total foil cards" count (dupes included), used for D1 tracking only.
+ * @param {string} content
  * @returns {number|null}
  */
 function extractTotalFoilCards(content) {
@@ -126,9 +113,8 @@ function extractTotalFoilCards(content) {
 }
 
 /**
- * Extracts the game's total possible unique cards (the denominator of the
- * "Unique cards: X / Y" line), used for D1 tracking.
- * @param {string} content - The raw content from the TCG message
+ * Game's total possible unique cards, used for D1 tracking.
+ * @param {string} content
  * @returns {number|null}
  */
 function extractUniqueCardsTotal(content) {
@@ -137,9 +123,8 @@ function extractUniqueCardsTotal(content) {
 }
 
 /**
- * Extracts the game's total possible unique foil cards (the denominator of
- * the "Unique foil cards: X / Y" line), used for D1 tracking.
- * @param {string} content - The raw content from the TCG message
+ * Game's total possible unique foil cards, used for D1 tracking.
+ * @param {string} content
  * @returns {number|null}
  */
 function extractFoilCardsTotal(content) {
@@ -148,9 +133,8 @@ function extractFoilCardsTotal(content) {
 }
 
 /**
- * Extracts the raw (unformatted) opened-packs count from the raw content
- * string, used for D1 tracking.
- * @param {string} content - The raw content from the TCG message
+ * Raw opened-packs count, used for D1 tracking.
+ * @param {string} content
  * @returns {number|null}
  */
 function extractOpenedPacksValue(content) {
@@ -159,9 +143,7 @@ function extractOpenedPacksValue(content) {
 }
 
 /**
- * Strips a trailing " (X%)" suffix from a formatted stat string, e.g.
- * "215/5,173 (4.2%)" -> "215/5,173". Leaves a string without that suffix
- * (like the "—" fallback) unchanged, and passes through null/undefined as-is.
+ * Strips a trailing " (X%)" suffix, e.g. "215/5,173 (4.2%)" -> "215/5,173".
  * @param {string|null|undefined} stat
  * @returns {string|null|undefined}
  */
@@ -170,10 +152,9 @@ function stripPercentage(stat) {
 }
 
 /**
- * Checks whether an owned count lands exactly on a milestone interval, e.g.
- * isMilestone(100, 50) -> true.
- * @param {number|null} count - The owned count, or null if unknown
- * @param {number} interval - The milestone interval (e.g. every 50)
+ * Whether count lands exactly on a milestone interval, e.g. isMilestone(100, 50) -> true.
+ * @param {number|null} count
+ * @param {number} interval
  * @returns {boolean}
  */
 function isMilestone(count, interval) {
@@ -181,19 +162,17 @@ function isMilestone(count, interval) {
 }
 
 /**
- * Builds the pull-line message for a qualifying card pull. Uses a distinct
- * milestone message when the foil or unique-card owned count lands exactly
- * on its interval (FOIL_MILESTONE_INTERVAL / CARD_MILESTONE_INTERVAL),
- * otherwise falls back to the standard pull message.
+ * Builds the pull-line message, using a milestone variant when the foil or
+ * card count lands exactly on its interval.
  * @param {object} params
- * @param {string} params.playerName - The player's name
- * @param {string} params.rarityTier - The card's rarity tier
- * @param {string} params.cardLabel - The card name, optionally linked
- * @param {string|null} params.openedPacks - The formatted opened-packs count
- * @param {boolean} params.foil - Whether the pulled card is a foil
- * @param {number|null} params.foilOwnedCount - Raw unique-foil-cards-owned count
- * @param {number|null} params.uniqueCardOwnedCount - Raw unique-cards-owned count
- * @returns {string} The formatted pull-line message
+ * @param {string} params.playerName
+ * @param {string} params.rarityTier
+ * @param {string} params.cardLabel
+ * @param {string|null} params.openedPacks
+ * @param {boolean} params.foil
+ * @param {number|null} params.foilOwnedCount
+ * @param {number|null} params.uniqueCardOwnedCount
+ * @returns {string}
  */
 function buildPullLine({
   playerName,
@@ -222,14 +201,11 @@ function buildPullLine({
 }
 
 /**
- * Upserts a player's TCG progress snapshot for the weekly recap. Every
- * column reflects cumulative state as of this pull, dupes included (a
- * duplicate foil/card pull still moves these numbers) - missing stats (a
- * field absent from `content`) are preserved via COALESCE rather than
- * overwritten with null.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Upserts a player's TCG progress snapshot for the weekly recap (dupes
+ * included; missing stats are preserved via COALESCE).
+ * @param {*} WEEKLY_RECAP_DB
  * @param {string} playername
- * @param {string} content - The raw content from the TCG message
+ * @param {string} content
  * @param {string} cardName
  */
 async function recordTcgProgress(
@@ -273,20 +249,15 @@ async function recordTcgProgress(
 }
 
 /**
- * Records the player's updated TCG progress for the weekly recap on every
- * pull, then creates a Discord pull notification only when the card
- * qualifies (new to the collection, and either a foil or an accepted
- * rarity). The D1 write is intentionally unconditional - a dupe or a common
- * non-foil still changes `content`'s stats (packs opened, at minimum), and
- * the weekly recap should reflect that even though it never triggers a
- * notification. The notification-qualification logic itself is unchanged.
- * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
- * @param {string} playerName - The player's name
- * @param {string} content - The raw content string containing card collection progress
- * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean, inspectUrl?: string } }} extra - Additional information about the card pull
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
- * @param {string} URL - The associated URL
- * @returns {Promise<Map<{ ID: string, URL: string }, string>|undefined>} The updated message map, or undefined if the pull doesn't qualify for a notification
+ * Records TCG progress on every pull (unconditionally, even dupes/non-foils),
+ * then notifies only when the card is new and either a foil or an accepted rarity.
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap
+ * @param {string} playerName
+ * @param {string} content
+ * @param {{ metadata: { cardName: string, rarityTier: string, newForCollection: boolean, foil: boolean, inspectUrl?: string } }} extra
+ * @param {*} WEEKLY_RECAP_DB
+ * @param {string} URL
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>|undefined>}
  */
 async function tcgHandler(
   msgMap,

@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - dev
-    types: [closed]  # Only trigger when PRs are closed
+    types: [closed] # Only trigger when PRs are closed
 
 jobs:
   deploy:
@@ -48,4 +48,3 @@ jobs:
           CA_URL: ${{ env.CA_URL }}
           COLLECTION_URL: ${{ env.COLLECTION_URL }}
           LEVEL_URL: ${{ env.LEVEL_URL }}
-          

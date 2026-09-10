@@ -2,15 +2,9 @@ import { formatLeaderboardTable } from '../helperFunctions';
 import { computeAndResetDeltas } from './deltaTracking';
 
 /**
- * Builds the collection log section of the weekly recap: each player's
- * entries completed since the *last* time this ran - not their lifetime
- * total. A player with no prior baseline (their first cycled log since this
- * shipped) has their full current count counted as this week's total.
- * Players with no new entries since last time are omitted.
- *
- * Recap-only by design - there's no chat command; this data only surfaces
- * here.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Builds the collection log section: entries completed since last time.
+ * Recap-only - no chat command.
+ * @param {*} WEEKLY_RECAP_DB
  * @returns {Promise<string|null>}
  */
 export async function buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB) {

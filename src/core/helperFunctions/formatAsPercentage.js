@@ -1,14 +1,9 @@
 /**
- * Calculates the percentage based on value and total, then formats it.
- *
- * If the percentage is less than 10, it will be formatted with 2 decimal places.
- * If the percentage is between 10 and 100, it will be formatted with 1 decimal place.
- * If the percentage is greater than 100, it will return `'100%'`.
- * If the input is not valid, it will return `'Invalid percentage'`.
- *
- * @param {number} value - The numerator (part of the total).
- * @param {number} total - The denominator (the total value).
- * @returns {string} - The formatted percentage as a string.
+ * Formats value/total as a percentage (2 decimals under 10%, 1 up to 100%,
+ * capped at "100%"; "Invalid percentage" for bad input).
+ * @param {number} value
+ * @param {number} total
+ * @returns {string}
  */
 const formatAsPercentage = (value, total) => {
   if (

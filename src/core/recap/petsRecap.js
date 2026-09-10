@@ -2,17 +2,9 @@ import { formatLeaderboardTable } from '../helperFunctions';
 import { computeAndResetDeltas } from './deltaTracking';
 
 /**
- * Builds the pets section of the weekly recap: each player's pets gained
- * since the *last* time this ran, alongside their most recent pet - not
- * their lifetime total. A player with no prior baseline (their first pet
- * since this shipped) has their full current total counted as this week's
- * gain. Players with no new pets since last time are omitted.
- *
- * Recap-only by design - there's no `!Fetchpets` chat command; this data
- * only surfaces here. Existing production rows were backfilled
- * (`total_pets_baseline = total_pets`) when that column was added, so their
- * pre-existing history doesn't appear as "gained this week" on the first run.
- * @param {*} PETS_DB - D1 database binding for pet tracking
+ * Builds the pets section of the weekly recap: pets gained since last time,
+ * plus the most recent pet. Recap-only - no chat command.
+ * @param {*} PETS_DB
  * @returns {Promise<string|null>}
  */
 export async function buildPetsWeeklyChangeSection(PETS_DB) {

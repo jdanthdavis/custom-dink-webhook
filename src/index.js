@@ -5,10 +5,9 @@ import buildWeeklyRecap from './recapHandler.js';
 
 export default {
   /**
-   * Handles an incoming Dink webhook request and relays formatted
-   * notifications to the configured Discord webhook URLs.
-   * @param {Request} request - The incoming webhook request
-   * @param {*} env - The Worker's environment bindings (URLs/secrets)
+   * Handles an incoming Dink webhook and relays notifications to Discord.
+   * @param {Request} request
+   * @param {*} env
    * @returns {Promise<Response>}
    */
   async fetch(request, env) {
@@ -69,14 +68,17 @@ export default {
 
   /**
    * Posts the weekly recap on the configured Cron Trigger schedule.
-   * @param {*} event - The scheduled event
-   * @param {*} env - The Worker's environment bindings (URLs/secrets)
-   * @param {*} ctx - The execution context
+   * @param {*} event
+   * @param {*} env
+   * @param {*} ctx
    */
   async scheduled(event, env, ctx) {
     ctx.waitUntil(
       (async () => {
-        const recap = await buildWeeklyRecap(env, new Date(event.scheduledTime));
+        const recap = await buildWeeklyRecap(
+          env,
+          new Date(event.scheduledTime)
+        );
         if (recap) {
           await sendDiscordMessage(env.RECAP_URL, recap);
         }
@@ -86,9 +88,8 @@ export default {
 };
 
 /**
- * Checks whether a request's User-Agent header looks like it came from the
- * Dink RuneLite plugin (or Postman, for manual testing).
- * @param {*} ua - The raw User-Agent header value
+ * Whether a User-Agent looks like the Dink RuneLite plugin (or Postman, for testing).
+ * @param {*} ua
  * @returns {boolean}
  */
 export function isValidAgent(ua) {

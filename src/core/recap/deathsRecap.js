@@ -2,22 +2,20 @@ import { formatValue, formatLeaderboardTable } from '../helperFunctions';
 import { computeAndResetDeltas } from './deltaTracking';
 
 /**
- * Builds the deaths section of the weekly recap: each player's deaths and
- * GP lost since the *last* time this ran, not a lifetime total. A player
- * with no prior baseline (their first death since this shipped) has their
- * full current count/value counted as this week's total. Players with no
- * deaths since last time are omitted.
- *
- * Recap-only by design - there's no chat command; this data only surfaces
- * here.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Builds the deaths section: deaths and GP lost since last time. Recap-only
+ * - no chat command.
+ * @param {*} WEEKLY_RECAP_DB
  * @returns {Promise<string|null>}
  */
 export async function buildDeathsWeeklyChangeSection(WEEKLY_RECAP_DB) {
   const changes = await computeAndResetDeltas(WEEKLY_RECAP_DB, {
     table: 'deaths',
     metrics: [
-      { current: 'death_count', baseline: 'death_count_baseline', key: 'deaths' },
+      {
+        current: 'death_count',
+        baseline: 'death_count_baseline',
+        key: 'deaths',
+      },
       {
         current: 'total_value_lost',
         baseline: 'total_value_lost_baseline',

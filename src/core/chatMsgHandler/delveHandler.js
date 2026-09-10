@@ -1,14 +1,13 @@
 import killCountHandler from '../killCountHandler';
 
 /**
- * Handles "Deep delves" chat messages by reporting a Doom of Mokhaiotl kill
- * count. Delve-level personal-best messages are ignored here (handled by
- * personalBestHandler instead).
- * @param {string} message - The raw chat message text
- * @param {string} playerName - The player's name
- * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
- * @param {string} KC_URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ * Reports a Doom of Mokhaiotl kill count from "Deep delves" chat messages.
+ * PB messages are ignored here (handled by personalBestHandler).
+ * @param {string} message
+ * @param {string} playerName
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap
+ * @param {string} KC_URL
+ * @returns {Map<{ ID: string, URL: string }, string>}
  */
 export function delveHandler(message, playerName, msgMap, KC_URL) {
   const delvePersonalBest = message?.match(

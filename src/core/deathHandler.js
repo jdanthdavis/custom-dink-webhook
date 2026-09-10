@@ -43,10 +43,8 @@ const INVALID_FOOD_ARR = ['Shark lure'];
 const GRUMBLER_REGION = 11330;
 
 /**
- * Upserts a player's death count and cumulative GP lost for the weekly
- * recap. A pure counter, unlike TCG's snapshot-replace - Dink reports one
- * death at a time, never a running total.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Upserts a player's death count and cumulative GP lost for the weekly recap.
+ * @param {*} WEEKLY_RECAP_DB
  * @param {string} playername
  * @param {number} valueLost
  */
@@ -67,18 +65,13 @@ async function recordDeath(WEEKLY_RECAP_DB, playername, valueLost) {
 }
 
 /**
- * Handles a player's death event, records it for the weekly recap, and
- * updates the message map with a formatted message.
- *
- * If the death was caused by PvP, includes the killer's name and value lost.
- * Otherwise, logs a simple death message.
- *
- * @param {Map<{ ID: string, URL: string }, string>} msgMap - The map to update with the death message.
- * @param {string} playerName - The name of the player who died.
- * @param {{ isPvp?: boolean, valueLost?: number, killerName?: string, keptItems?: Array<{ name: string, quantity: number }>, lostItems?: Array<{ name: string, quantity: number }>, location?: { regionId?: number } }} extra - Additional death information.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
- * @param {string} URL - The associated URL for the death event.
- * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map.
+ * Records a player's death for the weekly recap and formats the notification.
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap
+ * @param {string} playerName
+ * @param {{ isPvp?: boolean, valueLost?: number, killerName?: string, keptItems?: Array<{ name: string, quantity: number }>, lostItems?: Array<{ name: string, quantity: number }>, location?: { regionId?: number } }} extra
+ * @param {*} WEEKLY_RECAP_DB
+ * @param {string} URL
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>}
  */
 async function deathHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
   const {

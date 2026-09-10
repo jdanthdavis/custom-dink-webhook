@@ -158,7 +158,9 @@ describe('lootHandler', () => {
     expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain(
       'INSERT INTO loot_totals'
     );
-    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain('weekly_top_item_value');
+    expect(WEEKLY_RECAP_DB.prepare.mock.calls[0][0]).toContain(
+      'weekly_top_item_value'
+    );
     const statement = WEEKLY_RECAP_DB.prepare.mock.results[0].value;
     expect(statement.bind).toHaveBeenCalledWith(
       'Swap',

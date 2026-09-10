@@ -1,9 +1,9 @@
 import * as Constants from '../../constants';
 
 /**
- * Always check for the grumbler
- * @param {string} name - The name of the boss
- * @returns {string} - The updated name
+ * Renames a boss to its custom display name (e.g. Phantom Muspah -> The Grumbler).
+ * @param {string} name
+ * @returns {string}
  */
 function customBossNames(name) {
   const upperName = name.toUpperCase();

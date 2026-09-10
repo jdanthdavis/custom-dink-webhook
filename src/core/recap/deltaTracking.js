@@ -1,31 +1,15 @@
 /**
- * Fetches rows from a D1 table, computes each row's change on one or more
- * numeric columns since their last-recorded baseline, drops rows with no
- * change across every tracked metric, and resets every changed baseline to
- * the current value as a side effect - so the next call's deltas are
- * measured from here.
- *
- * A missing baseline (NULL) counts as 0, so a brand-new row's first
- * appearance has its full current value counted as "gained." The reset
- * UPDATE only rewrites rows that actually changed (`baseline IS NOT
- * current`), so an unchanged player's row isn't re-written every cycle for
- * nothing.
- *
- * Shared by every weekly-recap section that reports a change-since-last-time
- * rather than a running total (pets, TCG, and future domains built the same
- * way) - extracted because the fetch/diff/reset/shape was being hand-copied
- * per domain.
- *
- * Only call this once per recap cycle. Calling it outside that context would
- * zero out real, unreported progress.
- *
- * @param {*} DB - D1 database binding
+ * Fetches rows from a D1 table, diffs one or more columns against their
+ * baseline (NULL counts as 0), drops rows with no change, and resets every
+ * changed baseline to the current value. Shared by every weekly-recap
+ * section that reports a change since last time rather than a running
+ * total. Only call once per recap cycle - it consumes the baseline.
+ * @param {*} DB
  * @param {object} options
- * @param {string} options.table - The table to query
- * @param {Array<{ current: string, baseline: string, key: string }>} options.metrics -
- *   Column pairs to diff. Each produces a `<key>Delta` field on the result rows.
- * @param {string[]} [options.extraColumns] - Additional non-metric columns to carry through as-is (e.g. a display name).
- * @returns {Promise<Array<{ playername: string, [field: string]: any }>|null>} Rows with a nonzero delta on at least one metric, or null if the table's empty or the query fails.
+ * @param {string} options.table
+ * @param {Array<{ current: string, baseline: string, key: string }>} options.metrics - column pairs to diff; each produces a `<key>Delta` field
+ * @param {string[]} [options.extraColumns] - non-metric columns to carry through as-is
+ * @returns {Promise<Array<{ playername: string, [field: string]: any }>|null>}
  */
 export async function computeAndResetDeltas(
   DB,

@@ -1,9 +1,7 @@
 /**
- * Formats an array of strings using proper grammar:
- * - "A and B" for 2 items
- * - "A, B, and C" for 3+ items (Oxford comma)
- * @param {string[]} items - The list of string items to join.
- * @returns {string} - Grammatically correct joined string.
+ * Joins items with proper grammar: "A and B", or "A, B, and C" (Oxford comma).
+ * @param {string[]} items
+ * @returns {string}
  */
 function formatLists(items) {
   if (items.length === 0) return '';

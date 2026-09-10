@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import buildWeeklyRecap from '../recapHandler';
 
 /** @param {{ first?: any, all?: any }} [resolves] */
@@ -12,6 +12,16 @@ function makeStatement(resolves = {}) {
 }
 
 describe('buildWeeklyRecap', () => {
+  // The levels section polls the Hiscores API - stub fetch so these tests
+  // never make a real network call.
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('combines every non-empty section into one message', async () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue(

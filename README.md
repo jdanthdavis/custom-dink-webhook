@@ -24,7 +24,7 @@ Per-boss intervals are matched case-insensitively against `bossMap` in [constant
 | Corporeal Beast                   | 50       |
 | Herbiboar                         | 150      |
 
-A first kill of **Sol Heredit, TzKal-Zuk, TzTok-Jad, Doom of Mokhaiotl, Demonic Brutus, Brutus** always notifies regardless of interval. A first Brutus kill outside that list only notifies for `themildest1`.
+A first kill of **Sol Heredit, TzKal-Zuk, TzTok-Jad, Doom of Mokhaiotl, Demonic Brutus, Brutus** always notifies regardless of interval.
 
 ## [petHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/petHandler.js)
 
@@ -125,7 +125,7 @@ Routes chat-message payloads to the appropriate sub-handler by message type:
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 
-Formats level-up notifications: first-ever 99, any 99, max total level (2376), total-level intervals of 25, and XP milestones. Multiple skills leveling in one event are combined into a single message. Uses British spelling ("levelled").
+Formats level-up notifications: first-ever 99, any 99, max total level (2376), total-level intervals of 25, and XP milestones. Multiple skills leveling in one event are combined into a single message.
 
 ### Notification threshold
 
@@ -161,7 +161,7 @@ CREATE TABLE skill_xp (
 );
 ```
 
-"Total XP Gained" comes from the "Overall" row's own delta rather than summing individual skills, since a player can have XP in a skill they aren't ranked in yet. "Overall" is excluded from the "top skill" comparison. An unranked skill (`xp: -1`) is filtered out. The poll ([hiscoresXp.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/hiscoresXp.js)) is wrapped in its own try/catch so an outage there can't block the rest of the recap.
+"Total XP Gained" comes from the "Overall" row's own delta rather than summing individual skills, since a player can have XP in a skill they aren't ranked in yet. "Overall" is excluded from the "top skill" comparison. An unranked skill (`xp: -1`) is filtered out.
 
 ## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
 
@@ -209,7 +209,7 @@ Dupes count: `unique_cards_owned`/`foil_cards_owned` track every pull, not just 
 
 ## [Weekly Recap](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/recapHandler.js)
 
-Posts a combined recap to Discord on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, Monday 9am EST / 14:00 UTC — fixed UTC, so it drifts to 10am during EDT). `src/index.js`'s `scheduled()` handler builds the recap and posts it to the `RECAP_URL` webhook (`wrangler secret put RECAP_URL`).
+Posts a combined recap to Discord on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, Monday 9am EST / 14:00 UTC). `src/index.js`'s `scheduled()` handler builds the recap and posts it to the `RECAP_URL` webhook (`wrangler secret put RECAP_URL`).
 
 None of the tracked domains have a chat command — the recap is the only place this data surfaces. Section builders live in `src/core/recap/`:
 
@@ -217,18 +217,6 @@ None of the tracked domains have a chat command — the recap is the only place 
 - [buildLevelsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/levelsRecap.js) — hand-rolls the same fetch/diff/reset shape instead, since `skill_levels`/`skill_xp` have one row per player _per skill_. Merges in Total XP Gained from the Hiscores poll; a player appears if they gained either levels or XP.
 
 A section returning nothing is omitted; if every section is empty, nothing posts that week. Adding a new domain: a file in `src/core/recap/` plus one line in `RECAP_SECTIONS` in `recapHandler.js`.
-
-### D1 database budget
-
-The account caps out at 10 D1 databases. `pets`/`crab_kc` have their own dedicated databases (`dink_pets`, `dink_crab_kc`). Every other domain gets its own **table** inside the shared `dink_weekly_recap` database (`WEEKLY_RECAP_DB` binding) — keep doing this for future domains rather than provisioning a new database.
-
-### Local testing
-
-`wrangler dev --test-scheduled` exposes a `/__scheduled` endpoint to fire the cron handler on demand:
-
-```bash
-curl "http://localhost:8787/__scheduled"
-```
 
 ## Credits
 

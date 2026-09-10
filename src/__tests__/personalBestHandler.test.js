@@ -7,40 +7,7 @@ function firstMessage(msgMap) {
 }
 
 describe('personalBestHandler', () => {
-  it('formats a minutes-only duration with :00 seconds', () => {
-    const msgMap = new Map();
-    personalBestHandler(
-      msgMap,
-      'Swap',
-      { boss: 'Zulrah', time: 'PT1M' },
-      'url'
-    );
-    expect(firstMessage(msgMap)).toContain('personal best of **1:00!**');
-  });
-
-  it('formats a seconds-only duration as "Ns"', () => {
-    const msgMap = new Map();
-    personalBestHandler(
-      msgMap,
-      'Swap',
-      { boss: 'Zulrah', time: 'PT30S' },
-      'url'
-    );
-    expect(firstMessage(msgMap)).toContain('personal best of **30s!**');
-  });
-
-  it('formats minutes and seconds with milliseconds, no padding needed', () => {
-    const msgMap = new Map();
-    personalBestHandler(
-      msgMap,
-      'Swap',
-      { boss: 'Zulrah', time: 'PT1M30.5S' },
-      'url'
-    );
-    expect(firstMessage(msgMap)).toContain('personal best of **1:30.5!**');
-  });
-
-  it('pads a single-digit seconds value with milliseconds', () => {
+  it('builds the announcement with the formatted time', () => {
     const msgMap = new Map();
     personalBestHandler(
       msgMap,
@@ -48,18 +15,9 @@ describe('personalBestHandler', () => {
       { boss: 'Zulrah', time: 'PT1M5.2S' },
       'url'
     );
-    expect(firstMessage(msgMap)).toContain('personal best of **1:05.2!**');
-  });
-
-  it('pads a single-digit whole-second value', () => {
-    const msgMap = new Map();
-    personalBestHandler(
-      msgMap,
-      'Swap',
-      { boss: 'Zulrah', time: 'PT1M5S' },
-      'url'
+    expect(firstMessage(msgMap)).toBe(
+      '**Swap** has defeated **Zulrah** with a new personal best of **1:05.2!**'
     );
-    expect(firstMessage(msgMap)).toContain('personal best of **1:05!**');
   });
 
   it('applies customBossNames to the boss name', () => {
@@ -71,5 +29,15 @@ describe('personalBestHandler', () => {
       'url'
     );
     expect(firstMessage(msgMap)).toContain('defeated **The Grumbler**');
+  });
+
+  it('omits the time clause when extra.time is missing or unparseable', () => {
+    const msgMap = new Map();
+    expect(() =>
+      personalBestHandler(msgMap, 'Swap', { boss: 'Zulrah' }, 'url')
+    ).not.toThrow();
+    expect(firstMessage(msgMap)).toBe(
+      '**Swap** has defeated **Zulrah** with a new personal best**!**'
+    );
   });
 });

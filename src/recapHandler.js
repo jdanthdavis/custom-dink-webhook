@@ -1,28 +1,31 @@
 import { buildPetsWeeklyChangeSection } from './core/recap/petsRecap';
 import { getLootLeaderboard } from './core/recap/lootRecap';
 import { buildTcgWeeklyChangeSection } from './core/recap/tcgRecap';
+import { buildDeathsWeeklyChangeSection } from './core/recap/deathsRecap';
 
 // Each entry builds one section of the recap, all living in src/core/recap/.
-// Loot reports current standings; pets and TCG instead report the *change*
-// since the last recap run rather than a running total, via the shared
-// computeAndResetDeltas helper (src/core/recap/deltaTracking.js) - see its
-// JSDoc for the baseline-reset side effect. None of these have a chat
-// command anymore (the last one, !Fetchloot, was removed as redundant once
-// the recap covered the same ground) — the weekly recap is the only surface
-// for this data, by design, so players can't manually trigger a fetch. TCG
-// (and the domains after it) are tracked in the shared WEEKLY_RECAP_DB
-// database rather than a dedicated one, to stay under the account's D1
-// database cap. A section returning null (empty table, no change since last
-// time, or its binding isn't wired up yet) is simply omitted.
+// Loot reports current standings; pets, TCG, and deaths instead report the
+// *change* since the last recap run rather than a running total, via the
+// shared computeAndResetDeltas helper (src/core/recap/deltaTracking.js) -
+// see its JSDoc for the baseline-reset side effect. None of these have a
+// chat command anymore (the last one, !Fetchloot, was removed as redundant
+// once the recap covered the same ground) — the weekly recap is the only
+// surface for this data, by design, so players can't manually trigger a
+// fetch. TCG and deaths (and the domains after them) are tracked in the
+// shared WEEKLY_RECAP_DB database rather than a dedicated one, to stay under
+// the account's D1 database cap. A section returning null (empty table, no
+// change since last time, or its binding isn't wired up yet) is simply
+// omitted.
 //
-// Adding a new domain (clues, collection log, combat tasks, deaths, personal
-// bests) once it has its own tracking table is a new file in
-// src/core/recap/ (built on computeAndResetDeltas if it's a change-since-
-// last-time section) plus one more entry here — no other changes needed.
+// Adding a new domain (clues, collection log, combat tasks, personal bests)
+// once it has its own tracking table is a new file in src/core/recap/
+// (built on computeAndResetDeltas if it's a change-since-last-time section)
+// plus one more entry here — no other changes needed.
 const RECAP_SECTIONS = [
   (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
   (env) => getLootLeaderboard(env.LOOT_DB),
   (env) => buildTcgWeeklyChangeSection(env.WEEKLY_RECAP_DB),
+  (env) => buildDeathsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
 ];
 
 /**

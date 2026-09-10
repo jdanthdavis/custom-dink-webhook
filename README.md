@@ -219,6 +219,26 @@ Handles player death events by formatting and updating a death message based on 
 
 4. **Randomized Humor**: Each death message is enhanced with a randomly selected emoji for humor and personalization.
 
+### Storage
+
+Every death also upserts a counter into the shared `dink_weekly_recap` D1 database
+(`WEEKLY_RECAP_DB` binding), table `deaths`:
+
+```sql
+CREATE TABLE deaths (
+  playername TEXT PRIMARY KEY COLLATE NOCASE,
+  death_count INTEGER NOT NULL DEFAULT 0,
+  total_value_lost INTEGER NOT NULL DEFAULT 0,
+  death_count_baseline INTEGER,
+  total_value_lost_baseline INTEGER
+);
+```
+
+Unlike TCG's snapshot-replace, this is a pure counter (like pets/loot/crab) — Dink reports
+one death at a time, never a running total, so `death_count`/`total_value_lost` just
+accumulate. Recap-only — there's no chat command; this data only surfaces in the
+[Weekly Recap](#weekly-recap).
+
 ## [tcgHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js)
 
 Handles notifications for the Trading Card Game (TCG) pack-opening feature. When a player pulls a card that is new to their collection, the handler checks whether it meets the notification criteria and constructs a message with the player's overall collection progress and total packs opened.
@@ -277,9 +297,9 @@ place any of this data surfaces, by design, so players can't manually trigger a 
 section-builder function lives in `src/core/recap/`:
 
 - [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js) — **current standings**: a lifetime leaderboard, not a delta.
-- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js) and [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js) — **week-over-week change**, not a running total, both built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress` baseline columns described above).
+- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), and [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js) — **week-over-week change**, not a running total, all three built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress`/`deaths` baseline columns described above).
 
-A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, deaths, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section, like pets/TCG), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
+A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section, like pets/TCG/deaths), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
 
 ### D1 database budget
 

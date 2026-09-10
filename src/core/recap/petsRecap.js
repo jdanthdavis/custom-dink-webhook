@@ -34,5 +34,5 @@ export async function buildPetsWeeklyChangeSection(PETS_DB) {
     row.most_recent_pet_name ?? '-',
   ]);
 
-  return formatLeaderboardTable('Pet Board (This Week)', headers, tableRows);
+  return formatLeaderboardTable('Pet Board', headers, tableRows);
 }

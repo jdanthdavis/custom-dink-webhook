@@ -21,7 +21,6 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
               {
                 playername: 'LSx Swap',
                 completed_entries: 150,
-                current_rank: 'RUNE',
                 completed_entries_baseline: 100,
               },
             ],
@@ -32,9 +31,10 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
 
     const result = await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    expect(result).toContain('Collection Log (This Week)');
+    expect(result).toContain('Collection Logs Board');
+    expect(result).not.toContain('Rank');
     const line = result.split('\n').find((l) => l.includes('LSx Swap'));
-    expect(line.trim().split(/\s{2,}/)).toEqual(['LSx Swap', '50', 'Rune']);
+    expect(line.trim().split(/\s{2,}/)).toEqual(['LSx Swap', '50']);
   });
 
   it('shows the full total for a brand-new player with no baseline yet', async () => {
@@ -46,7 +46,6 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
               {
                 playername: 'Frosty Dad',
                 completed_entries: 5,
-                current_rank: 'BRONZE',
                 completed_entries_baseline: null,
               },
             ],
@@ -58,31 +57,7 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
     const result = await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB);
 
     const line = result.split('\n').find((l) => l.includes('Frosty Dad'));
-    expect(line.trim().split(/\s{2,}/)).toEqual(['Frosty Dad', '5', 'Bronze']);
-  });
-
-  it('shows "-" for the rank column when currentRank is NONE or missing', async () => {
-    const WEEKLY_RECAP_DB = {
-      prepare: vi.fn().mockReturnValue(
-        makeStatement({
-          all: {
-            results: [
-              {
-                playername: 'Unranked',
-                completed_entries: 5,
-                current_rank: 'NONE',
-                completed_entries_baseline: 0,
-              },
-            ],
-          },
-        })
-      ),
-    };
-
-    const result = await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB);
-
-    const line = result.split('\n').find((l) => l.includes('Unranked'));
-    expect(line.trim().split(/\s{2,}/)).toEqual(['Unranked', '5', '-']);
+    expect(line.trim().split(/\s{2,}/)).toEqual(['Frosty Dad', '5']);
   });
 
   it('omits a player with no entries completed since the last recap', async () => {
@@ -94,13 +69,11 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
               {
                 playername: 'Idle',
                 completed_entries: 10,
-                current_rank: 'IRON',
                 completed_entries_baseline: 10,
               },
               {
                 playername: 'Active',
                 completed_entries: 12,
-                current_rank: 'IRON',
                 completed_entries_baseline: 10,
               },
             ],
@@ -124,13 +97,11 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
               {
                 playername: 'SmallGain',
                 completed_entries: 11,
-                current_rank: 'IRON',
                 completed_entries_baseline: 10,
               },
               {
                 playername: 'BigGain',
                 completed_entries: 15,
-                current_rank: 'IRON',
                 completed_entries_baseline: 5,
               },
             ],
@@ -153,7 +124,6 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
               {
                 playername: 'Swap',
                 completed_entries: 150,
-                current_rank: 'RUNE',
                 completed_entries_baseline: 100,
               },
             ],
@@ -182,7 +152,6 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
               {
                 playername: 'Idle',
                 completed_entries: 10,
-                current_rank: 'IRON',
                 completed_entries_baseline: 10,
               },
             ],

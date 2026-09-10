@@ -47,5 +47,5 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
     row.foilsDelta.toLocaleString('en-US'),
   ]);
 
-  return formatLeaderboardTable('TCG Board (This Week)', headers, tableRows);
+  return formatLeaderboardTable('TCG Board', headers, tableRows);
 }

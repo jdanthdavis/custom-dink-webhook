@@ -10,7 +10,10 @@ const LOOT_THRESHOLD = 1_000_000;
 
 /**
  * Upserts a player's lifetime loot value total, recording the highest-value
- * qualifying item from this batch as their most recent notable drop.
+ * qualifying item from this batch as their most recent notable drop, and
+ * updating their weekly-top drop if this batch's biggest item beats it (or
+ * nothing's been recorded yet this week - weekly_top_item_* is reset to NULL
+ * by the recap after each run, see lootRecap.js).
  * @param {*} LOOT_DB - D1 database binding for loot value tracking
  * @param {string} playername
  * @param {Array<{ name: string, quantity: number, priceEach: number, totalValue: number }>} qualifyingItems
@@ -27,14 +30,22 @@ async function recordLoot(LOOT_DB, playername, qualifyingItems, source) {
 
   try {
     await LOOT_DB.prepare(
-      `INSERT INTO loot_totals (playername, total_value, last_item_name, last_item_value, last_source, last_drop_date)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6)
+      `INSERT INTO loot_totals (playername, total_value, last_item_name, last_item_value, last_source, last_drop_date, weekly_top_item_name, weekly_top_item_value)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?3, ?4)
        ON CONFLICT(playername) DO UPDATE SET
          total_value = total_value + ?2,
          last_item_name = ?3,
          last_item_value = ?4,
          last_source = ?5,
-         last_drop_date = ?6`
+         last_drop_date = ?6,
+         weekly_top_item_name = CASE
+           WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?3
+           ELSE weekly_top_item_name
+         END,
+         weekly_top_item_value = CASE
+           WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?4
+           ELSE weekly_top_item_value
+         END`
     )
       .bind(
         playername,

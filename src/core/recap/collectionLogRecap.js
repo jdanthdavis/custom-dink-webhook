@@ -1,14 +1,12 @@
 import { formatLeaderboardTable } from '../helperFunctions';
-import { formatRank } from '../collectionLogHandler';
 import { computeAndResetDeltas } from './deltaTracking';
 
 /**
  * Builds the collection log section of the weekly recap: each player's
- * entries completed since the *last* time this ran, alongside their current
- * rank - not their lifetime total. A player with no prior baseline (their
- * first cycled log since this shipped) has their full current count counted
- * as this week's total. Players with no new entries since last time are
- * omitted.
+ * entries completed since the *last* time this ran - not their lifetime
+ * total. A player with no prior baseline (their first cycled log since this
+ * shipped) has their full current count counted as this week's total.
+ * Players with no new entries since last time are omitted.
  *
  * Recap-only by design - there's no chat command; this data only surfaces
  * here.
@@ -18,7 +16,6 @@ import { computeAndResetDeltas } from './deltaTracking';
 export async function buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB) {
   const changes = await computeAndResetDeltas(WEEKLY_RECAP_DB, {
     table: 'collection_log',
-    extraColumns: ['current_rank'],
     metrics: [
       {
         current: 'completed_entries',
@@ -31,18 +28,11 @@ export async function buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB) {
 
   const sorted = changes.sort((a, b) => b.entriesDelta - a.entriesDelta);
 
-  const headers = ['Name', 'Entries', 'Current Rank'];
+  const headers = ['Name', 'Completed Logs'];
   const tableRows = sorted.map((row) => [
     row.playername,
     row.entriesDelta.toLocaleString('en-US'),
-    row.current_rank && row.current_rank !== 'NONE'
-      ? formatRank(row.current_rank)
-      : '-',
   ]);
 
-  return formatLeaderboardTable(
-    'Collection Log (This Week)',
-    headers,
-    tableRows
-  );
+  return formatLeaderboardTable('Collection Logs Board', headers, tableRows);
 }

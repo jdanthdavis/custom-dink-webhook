@@ -32,7 +32,7 @@ describe('buildPetsWeeklyChangeSection', () => {
 
     const result = await buildPetsWeeklyChangeSection(PETS_DB);
 
-    expect(result).toContain('Pet Board (This Week)');
+    expect(result).toContain('Pet Board');
     const line = result.split('\n').find((l) => l.includes('LSx Swap'));
     expect(line.trim().split(/\s{2,}/)).toEqual(['LSx Swap', '2', 'Herbi']);
   });

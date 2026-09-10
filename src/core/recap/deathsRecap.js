@@ -36,5 +36,5 @@ export async function buildDeathsWeeklyChangeSection(WEEKLY_RECAP_DB) {
     formatValue(row.gpLostDelta, true),
   ]);
 
-  return formatLeaderboardTable('Deaths (This Week)', headers, tableRows);
+  return formatLeaderboardTable('Deaths Board', headers, tableRows);
 }

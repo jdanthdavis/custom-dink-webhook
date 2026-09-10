@@ -250,6 +250,39 @@ CREATE TABLE skill_levels (
 level on every event, not a delta. Recap-only - there's no chat command; this data only
 surfaces in the [Weekly Recap](#weekly-recap).
 
+### XP tracking (OSRS Hiscores)
+
+Dink only reports level-*up* events, so once a skill is maxed (or between levels) there's
+no event at all - a maxed skill can rack up huge amounts of real XP with zero level-ups.
+To cover that, the Levels Board also polls the public
+[OSRS Hiscores API](https://secure.runescape.com/m=hiscore_oldschool/index_lite.json) -
+the first non-Dink data source in this app. This isn't event-driven, so it's actively
+polled once per weekly recap run: every player in the `theBoys` allowlist
+([constants.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/constants.js))
+is queried (the endpoint is case-insensitive, so the existing uppercase list works
+directly), and each skill's current XP - **including the API's own "Overall" row** - is
+upserted into `skill_xp` in the shared `dink_weekly_recap` database - same
+one-row-per-player-per-skill shape as `skill_levels`:
+
+```sql
+CREATE TABLE skill_xp (
+  playername TEXT NOT NULL COLLATE NOCASE,
+  skill_name TEXT NOT NULL,
+  xp INTEGER,
+  xp_baseline INTEGER,
+  PRIMARY KEY (playername, skill_name)
+);
+```
+
+"Total XP Gained" comes directly from the delta on the "Overall" row rather than summing
+every individual skill, since a player can have real XP in a skill they aren't ranked in
+yet (which never shows up per-skill) - summing would silently undercount. The "Overall"
+row is excluded from the "top skill" comparison, since it isn't a real skill. An unranked
+skill (`xp: -1` in the Hiscores response) is filtered out rather than stored. The whole
+poll ([hiscoresXp.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/hiscoresXp.js))
+is wrapped in its own try/catch inside the recap builder, so a Hiscores outage can't
+block the other boards from posting - the XP columns just come back empty that week.
+
 ## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
 
 Handles player death events by formatting and updating a death message based on whether the death occurred in PvP or PvM, or within a specific in-game region. If the player was killed by another player, the message includes the killer's name and the amount of coins lost. Otherwise, it generates a standard death message. Random humorous emojis are appended to each death message for added flavor.
@@ -358,7 +391,7 @@ place any of this data surfaces, by design, so players can't manually trigger a 
 section-builder function lives in `src/core/recap/`:
 
 - [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildLootWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js), and [buildCollectionLogWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/collectionLogRecap.js) — **week-over-week change**, not a running total, all five built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`loot_totals`/`tcg_progress`/`deaths`/`collection_log` baseline columns described above). Loot's `weekly_top_item_*` columns are the one exception — they track a single highest-value drop rather than a running total, so they're reset to `NULL` instead of diffed.
-- [buildLevelsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/levelsRecap.js) — also week-over-week, but hand-rolls the same fetch/diff/reset shape instead of using `computeAndResetDeltas`, since `skill_levels` has one row per player *per skill* rather than one row per player: it sums every skill's delta for a player (total levels gained) and tracks the single largest per-skill delta (skill most leveled).
+- [buildLevelsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/levelsRecap.js) — also week-over-week, but hand-rolls the same fetch/diff/reset shape instead of using `computeAndResetDeltas`, since `skill_levels` (and `skill_xp`, see below) have one row per player *per skill* rather than one row per player: it sums every skill's delta for a player (total levels gained) and tracks the single largest per-skill delta (skill most leveled). It also merges in Total XP Gained and the top XP-gaining skill, polled from the OSRS Hiscores API rather than Dink - see the levelUpHandler section's "XP tracking" note above for why. A player appears if they gained *either* levels or XP.
 
 A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, combat tasks, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section with one row per player, like pets/TCG/deaths/collection log), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
 

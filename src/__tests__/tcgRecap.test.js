@@ -34,7 +34,7 @@ describe('buildTcgWeeklyChangeSection', () => {
 
     const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    expect(result).toContain('TCG Board (This Week)');
+    expect(result).toContain('TCG Board');
     expect(result).toContain('45');
     expect(result).toContain('12');
     expect(result).toContain('2');

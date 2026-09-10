@@ -31,19 +31,35 @@ const RECAP_SECTIONS = [
 ];
 
 /**
+ * Formats a date as `M/D` (no leading zeros), in UTC - matching the Cron
+ * Trigger's fixed UTC firing time (see wrangler.toml's DST note).
+ * @param {Date} date
+ * @returns {string}
+ */
+function formatRecapDate(date) {
+  return `${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+}
+
+/**
  * Builds the weekly recap message from every registered section, or returns
- * null if every section came back empty (nothing worth posting).
+ * null if every section came back empty (nothing worth posting). The heading
+ * includes the date range covered - the 7 days ending on `now`.
  * @param {*} env - The Worker's environment bindings
+ * @param {Date} [now] - The recap's end date, defaulting to the current time; pass the scheduled event's own time in production so it reflects when the cron actually fired
  * @returns {Promise<string|null>}
  */
-async function buildWeeklyRecap(env) {
+async function buildWeeklyRecap(env, now = new Date()) {
   const sections = (
     await Promise.all(RECAP_SECTIONS.map((build) => build(env)))
   ).filter(Boolean);
 
   if (sections.length === 0) return null;
 
-  return `# Weekly Recap\n\n${sections.join('\n\n')}`;
+  const weekStart = new Date(now);
+  weekStart.setUTCDate(weekStart.getUTCDate() - 7);
+  const heading = `Weekly Recap: ${formatRecapDate(weekStart)} - ${formatRecapDate(now)}`;
+
+  return `# ${heading}\n\n${sections.join('\n\n')}`;
 }
 
 export default buildWeeklyRecap;

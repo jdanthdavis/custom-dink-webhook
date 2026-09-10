@@ -76,7 +76,7 @@ export default {
   async scheduled(event, env, ctx) {
     ctx.waitUntil(
       (async () => {
-        const recap = await buildWeeklyRecap(env);
+        const recap = await buildWeeklyRecap(env, new Date(event.scheduledTime));
         if (recap) {
           await sendDiscordMessage(env.RECAP_URL, recap);
         }

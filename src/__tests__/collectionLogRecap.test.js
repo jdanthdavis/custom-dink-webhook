@@ -32,7 +32,7 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
 
     const result = await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    expect(result).toContain('Collection Log (This Week)');
+    expect(result).toContain('Collection Log');
     const line = result.split('\n').find((l) => l.includes('LSx Swap'));
     expect(line.trim().split(/\s{2,}/)).toEqual(['LSx Swap', '50', 'Rune']);
   });

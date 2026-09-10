@@ -32,11 +32,35 @@ describe('buildWeeklyRecap', () => {
       ),
     };
 
-    const recap = await buildWeeklyRecap({ PETS_DB, LOOT_DB });
+    const recap = await buildWeeklyRecap(
+      { PETS_DB, LOOT_DB },
+      new Date('2026-09-08T14:00:00Z')
+    );
 
-    expect(recap).toContain('# Weekly Recap');
+    expect(recap).toContain('# Weekly Recap: 9/1 - 9/8');
     expect(recap).toContain('Pet Board');
     expect(recap).toContain('Loot Board');
+  });
+
+  it('formats the heading as a M/D - M/D range across a month boundary', async () => {
+    const PETS_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              { playername: 'Swap', total_pets: 5, total_pets_baseline: 0 },
+            ],
+          },
+        })
+      ),
+    };
+
+    const recap = await buildWeeklyRecap(
+      { PETS_DB },
+      new Date('2026-09-07T14:00:00Z')
+    );
+
+    expect(recap).toContain('# Weekly Recap: 8/31 - 9/7');
   });
 
   it('omits a section with no data', async () => {

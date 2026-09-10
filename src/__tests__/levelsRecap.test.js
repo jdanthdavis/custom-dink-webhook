@@ -29,10 +29,7 @@ describe('buildLevelsWeeklyChangeSection', () => {
   // The Hiscores XP poll runs at the start of every call - stub fetch so no
   // real network call happens and it gracefully no-ops by default.
   beforeEach(() => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({ ok: false })
-    );
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false }));
   });
 
   afterEach(() => {

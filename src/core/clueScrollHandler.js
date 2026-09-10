@@ -2,12 +2,12 @@ import { formatValue } from './helperFunctions';
 import { CLUE } from '../constants';
 
 /**
- * Formats a clue scroll's rewards
- * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
- * @param {string} playerName - The player's name
- * @param {*} extra - Additional information
- * @param {string} URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ * Formats a completed clue scroll's rewards.
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap
+ * @param {string} playerName
+ * @param {*} extra
+ * @param {string} URL
+ * @returns {Map<{ ID: string, URL: string }, string>}
  */
 function clueScrollHandler(msgMap, playerName, extra, URL) {
   const { clueType, numberCompleted } = extra;

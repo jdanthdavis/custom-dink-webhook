@@ -3,18 +3,12 @@ import { theBoys } from '../../constants';
 import { fetchAndRecordAllHiscoresXp } from './hiscoresXp';
 
 /**
- * Fetches every row from a per-skill table (one row per player per skill),
- * aggregates each player's total delta and single largest per-skill delta,
- * then resets every changed row's baseline to its current value. Shared by
- * `skill_levels` and `skill_xp`, which are structurally identical (one row
- * per player per skill) but track different things (levels vs. XP).
- *
- * `totalSkillName`, when given, names a row (e.g. Hiscores' "Overall") whose
- * own delta is used directly as the player's total instead of summing every
- * row - that row is also excluded from the "top skill" comparison, since
- * it isn't a real skill. Without it, the total is the sum of every row's
- * delta (skill_levels has no such rollup row, so it's always summed).
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Fetches a per-skill table (one row per player per skill), diffs each row
+ * against its baseline, aggregates per player, and resets changed baselines.
+ * If `totalSkillName` names a rollup row (e.g. Hiscores' "Overall"), its own
+ * delta is used as the total instead of summing every row, and it's excluded
+ * from the "top skill" comparison.
+ * @param {*} WEEKLY_RECAP_DB
  * @param {object} options
  * @param {string} options.table
  * @param {string} options.currentColumn
@@ -89,15 +83,10 @@ async function aggregatePerSkillDeltas(
 }
 
 /**
- * Looks up every player's real display-case name from their `skill_levels`
- * history (not just this week's changes) - Dink sends the account's actual
- * capitalization (e.g. "Frosty Dad"), unlike `skill_xp`, which is seeded
- * from the uppercase `theBoys` allowlist (e.g. "FROSTY DAD", built for
- * case-insensitive webhook matching, not display). Used so a player who
- * only gained XP this week (no level-ups) still displays with their real
- * name instead of theBoys' all-caps form.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
- * @returns {Promise<Map<string, string>>} uppercase playername -> real display-case name
+ * Looks up each player's real display-case name from `skill_levels` history,
+ * so an XP-only player (no level-ups this week) doesn't show theBoys' all-caps form.
+ * @param {*} WEEKLY_RECAP_DB
+ * @returns {Promise<Map<string, string>>} uppercase playername -> display-case name
  */
 async function getKnownDisplayNames(WEEKLY_RECAP_DB) {
   /** @type {Map<string, string>} */
@@ -119,30 +108,13 @@ async function getKnownDisplayNames(WEEKLY_RECAP_DB) {
 }
 
 /**
- * Builds the Levels Board section of the weekly recap: each player's total
- * levels gained (from Dink's level-up events, `skill_levels`) and total XP
- * gained (polled from the public OSRS Hiscores API, `skill_xp`) since the
- * *last* time this ran, alongside the single skill that drove the most of
- * each - not lifetime totals. Total XP Gained comes from the delta on
- * Hiscores' own "Overall" row rather than summing individual skills, since a
- * player can have real XP in a skill they aren't ranked in yet (which never
- * shows up per-skill). A player appears if they gained *either* levels or
- * XP - a maxed/near-maxed skill can rack up real XP with zero level-ups,
- * which Dink alone can't see at all.
- *
- * Unlike every other weekly-recap section, this doesn't use the shared
- * computeAndResetDeltas helper (src/core/recap/deltaTracking.js) - that
- * helper assumes one row per player with named metric columns, but both
- * `skill_levels` and `skill_xp` have one row per player *per skill*. See
- * aggregatePerSkillDeltas above for the shared fetch/diff/reset shape.
- *
- * The Hiscores poll (src/core/recap/hiscoresXp.js) is wrapped in its own
- * try/catch so an outage there can't block the rest of the recap - the XP
- * columns just come back empty that week instead.
- *
- * Recap-only by design - there's no chat command; this data only surfaces
- * here.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Builds the Levels Board: levels gained (skill_levels) and Total XP Gained
+ * (polled from OSRS Hiscores, skill_xp) since last time, each with the
+ * skill that drove the most. A player appears if they gained either.
+ * Doesn't use the shared computeAndResetDeltas helper since both tables have
+ * one row per player *per skill* - see aggregatePerSkillDeltas above.
+ * Recap-only - no chat command.
+ * @param {*} WEEKLY_RECAP_DB
  * @returns {Promise<string|null>}
  */
 export async function buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB) {
@@ -233,9 +205,7 @@ export async function buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB) {
     row.levelsDelta.toLocaleString('en-US'),
     row.topLevelSkill ?? '-',
     formatValue(row.xpDelta, true),
-    row.topXpSkill
-      ? `${row.topXpSkill} ${formatValue(row.topXpDelta)}`
-      : '-',
+    row.topXpSkill ? `${row.topXpSkill} ${formatValue(row.topXpDelta)}` : '-',
   ]);
 
   return formatLeaderboardTable('Levels Board', headers, tableRows);

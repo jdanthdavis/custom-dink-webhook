@@ -139,7 +139,12 @@ describe('deathHandler', () => {
     await deathHandler(
       msgMap,
       'Swap',
-      { isPvp: false, keptItems: [], lostItems: [], location: { regionId: 1234 } },
+      {
+        isPvp: false,
+        keptItems: [],
+        lostItems: [],
+        location: { regionId: 1234 },
+      },
       WEEKLY_RECAP_DB,
       'url'
     );

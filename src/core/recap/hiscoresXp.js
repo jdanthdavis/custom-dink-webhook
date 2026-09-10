@@ -3,13 +3,9 @@ const HISCORES_URL =
 
 /**
  * Fetches one player's current per-skill XP from the public OSRS Hiscores
- * API, including "Overall" - that's the authoritative total XP figure (used
- * directly for "Total XP Gained" rather than summed from individual skills,
- * since a player can have real XP in a skill they aren't ranked in yet,
- * which never shows up per-skill). A skill the account isn't ranked in comes
- * back as `xp: -1` and is filtered out rather than stored as a real value.
- * @param {string} playername - Case-insensitive; the Hiscores API doesn't care about casing
- * @returns {Promise<Array<{ skillName: string, xp: number }>|null>} null on a network error or non-OK response
+ * API, including "Overall". Filters out unranked skills (`xp: -1`).
+ * @param {string} playername - case-insensitive
+ * @returns {Promise<Array<{ skillName: string, xp: number }>|null>} null on error or non-OK response
  */
 export async function fetchPlayerHiscoresXp(playername) {
   try {
@@ -33,9 +29,7 @@ export async function fetchPlayerHiscoresXp(playername) {
 
 /**
  * Upserts a player's current per-skill XP snapshot into `skill_xp`.
- * `COALESCE`-guarded, same shape as `recordSkillLevels` in
- * levelUpHandler.js - a skill's current XP on every fetch, not a delta.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * @param {*} WEEKLY_RECAP_DB
  * @param {string} playername
  * @param {Array<{ skillName: string, xp: number }>} skills
  */
@@ -62,13 +56,15 @@ async function recordPlayerHiscoresXp(WEEKLY_RECAP_DB, playername, skills) {
 }
 
 /**
- * Fetches and records current Hiscores XP for every player in `playernames`.
- * Each player is independent (`Promise.allSettled`) - one player's network
- * failure, Hiscores 404, or unranked account doesn't block the others.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Fetches and records Hiscores XP for every player independently, so one
+ * failure doesn't block the others.
+ * @param {*} WEEKLY_RECAP_DB
  * @param {string[]} playernames
  */
-export async function fetchAndRecordAllHiscoresXp(WEEKLY_RECAP_DB, playernames) {
+export async function fetchAndRecordAllHiscoresXp(
+  WEEKLY_RECAP_DB,
+  playernames
+) {
   await Promise.allSettled(
     playernames.map(async (playername) => {
       const skills = await fetchPlayerHiscoresXp(playername);

@@ -1,11 +1,11 @@
 /**
  * Looks up a single numeric column for one player from a D1 table.
- * @param {*} DB - D1 database binding
- * @param {string} table - The table to query
- * @param {string} column - The column to select
- * @param {string} playername - The player to look up
- * @param {string} [errorLabel] - Label prefixed to a logged error; defaults to "<table>.<column>"
- * @returns {Promise<number|null>} The column's value, or null if the row/value is missing or the query fails
+ * @param {*} DB
+ * @param {string} table
+ * @param {string} column
+ * @param {string} playername
+ * @param {string} [errorLabel] - defaults to "<table>.<column>"
+ * @returns {Promise<number|null>}
  */
 async function getSingleColumn(DB, table, column, playername, errorLabel) {
   try {

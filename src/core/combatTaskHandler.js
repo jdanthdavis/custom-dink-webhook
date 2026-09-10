@@ -2,17 +2,12 @@ import { formatAsPercentage } from './helperFunctions';
 import { COMBAT_ACHIEVEMENT } from '../constants';
 
 /**
- * Reconciles this event's tierProgress against our own KV-tracked running
- * total for the player. Dink/OSRS applies every same-tick combat task
- * completion to the tier counter before firing any webhook event, so
- * simultaneous completions (e.g. one kill satisfying two tasks) arrive with
- * identical tierProgress. We track our own running total per player using
- * each event's taskPoints, capped at the authoritative payload value, so
- * same-batch siblings still display distinct, increasing numbers.
- * @param {string} playerName - The player's name
- * @param {*} extra - The payload's `extra` object
- * @param {*} [CA_PROGRESS] - KV namespace binding for combat achievement progress
- * @returns {Promise<number>} The reconciled tier progress to display
+ * Reconciles tierProgress against our own KV-tracked running total, since
+ * same-tick combat task completions all arrive with identical tierProgress.
+ * @param {string} playerName
+ * @param {*} extra
+ * @param {*} [CA_PROGRESS]
+ * @returns {Promise<number>}
  */
 async function getReconciledProgress(playerName, extra, CA_PROGRESS) {
   const { tierProgress, taskPoints, currentTier } = extra;
@@ -50,13 +45,13 @@ async function getReconciledProgress(playerName, extra, CA_PROGRESS) {
 }
 
 /**
- * Formats the player's CA completion % with the completion of a new collection log slot
- * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
- * @param {*} playerName - The player's name
- * @param {*} extra - Additional information
- * @param {*} CA_PROGRESS - KV namespace binding used to reconcile simultaneous task completions
- * @param {*} URL - The associated URL
- * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map
+ * Formats a combat achievement notification (tier completion or task progress).
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap
+ * @param {*} playerName
+ * @param {*} extra
+ * @param {*} CA_PROGRESS
+ * @param {*} URL
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>}
  */
 async function combatTaskHandler(msgMap, playerName, extra, CA_PROGRESS, URL) {
   const {

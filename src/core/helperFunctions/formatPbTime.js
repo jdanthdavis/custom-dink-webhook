@@ -1,11 +1,9 @@
 const PB_TIME_REGEX = /^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?$/;
 
 /**
- * Formats an in-game ISO-8601 personal best duration (e.g. "PT1M30.5S")
- * into display text (e.g. "1:30.5"). Seconds-only durations are rendered
- * as "Ns"; durations with minutes or hours are zero-padded (H:MM:SS or M:SS).
- * @param {string} time - The raw ISO-8601 duration string
- * @returns {string | null} The formatted duration, or `null` if `time` isn't parseable
+ * Formats an ISO-8601 PB duration (e.g. "PT1M30.5S") into display text (e.g. "1:30.5").
+ * @param {string} time
+ * @returns {string | null} null if unparseable
  */
 function formatPbTime(time) {
   const match = typeof time === 'string' ? time.match(PB_TIME_REGEX) : null;

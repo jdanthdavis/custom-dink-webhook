@@ -10,15 +10,11 @@ import {
 } from '../constants';
 
 /**
- * Upserts each levelled skill's current level for the weekly recap - one row
- * per player per skill (table `skill_levels`), diffed against its own
- * baseline so the recap can sum levels gained across every skill and find
- * the single skill gained the most. Every level is recorded here regardless
- * of LEVEL_NOTIFICATION_THRESHOLD - only the Discord notification is
- * filtered, not the tracking.
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * Upserts each levelled skill's current level into `skill_levels` for the
+ * weekly recap - unconditional, regardless of LEVEL_NOTIFICATION_THRESHOLD.
+ * @param {*} WEEKLY_RECAP_DB
  * @param {string} playername
- * @param {Record<string, number>} levelledSkills - Skill name -> new level, for skills that levelled up this event
+ * @param {Record<string, number>} levelledSkills - skill name -> new level
  */
 async function recordSkillLevels(WEEKLY_RECAP_DB, playername, levelledSkills) {
   const entries = Object.entries(levelledSkills);
@@ -46,13 +42,13 @@ async function recordSkillLevels(WEEKLY_RECAP_DB, playername, levelledSkills) {
 }
 
 /**
- * Constructs special messages depending on the level information
- * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
- * @param {*} playerName - The player's name
- * @param {*} extra - Additional information
- * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
- * @param {*} URL - The associated URL
- * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map
+ * Constructs level-up/XP-milestone messages.
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap
+ * @param {*} playerName
+ * @param {*} extra
+ * @param {*} WEEKLY_RECAP_DB
+ * @param {*} URL
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>}
  */
 async function levelUpHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
   const {

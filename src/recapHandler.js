@@ -6,24 +6,14 @@ import { buildCollectionLogWeeklyChangeSection } from './core/recap/collectionLo
 import { buildLevelsWeeklyChangeSection } from './core/recap/levelsRecap';
 
 // Each entry builds one section of the recap, all living in src/core/recap/.
-// Every section reports the *change* since the last recap run rather than a
-// running total. Most are built on the shared computeAndResetDeltas helper
-// (src/core/recap/deltaTracking.js) - see its JSDoc for the baseline-reset
-// side effect - except levels, which hand-rolls the same fetch/diff/reset
-// shape since skill_levels has one row per player *per skill*, not one row
-// per player (see levelsRecap.js). None of these have a chat command
-// anymore (the last one, !Fetchloot, was removed as redundant once the
-// recap covered the same ground) — the weekly recap is the only surface for
-// this data, by design, so players can't manually trigger a fetch. Every
-// domain except pets is tracked in the shared WEEKLY_RECAP_DB database
-// rather than a dedicated one, to stay under the account's D1 database cap.
-// A section returning null (empty table, no change since last time, or its
-// binding isn't wired up yet) is simply omitted.
+// Every section reports the change since the last run, mostly via the
+// shared computeAndResetDeltas helper (deltaTracking.js) - levels is the
+// exception, hand-rolling the same shape since its tables have one row per
+// player per skill (see levelsRecap.js). Recap-only, no chat commands.
+// Every domain except pets shares the WEEKLY_RECAP_DB database to stay
+// under the account's D1 cap. A section returning null is omitted.
 //
-// Adding a new domain (clues, combat tasks, personal bests) once it has its
-// own tracking table is a new file in src/core/recap/ (built on
-// computeAndResetDeltas if it's a change-since-last-time section) plus one
-// more entry here — no other changes needed.
+// New domain: a file in src/core/recap/ plus one entry here.
 const RECAP_SECTIONS = [
   (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
   (env) => buildLootWeeklyChangeSection(env.WEEKLY_RECAP_DB),
@@ -48,11 +38,9 @@ function formatRecapDate(date) {
 }
 
 /**
- * Builds the weekly recap message from every registered section, or returns
- * null if every section came back empty (nothing worth posting). The heading
- * includes the date range covered - the 7 days ending on `now`.
- * @param {*} env - The Worker's environment bindings
- * @param {Date} [now] - The recap's end date, defaulting to the current time; pass the scheduled event's own time in production so it reflects when the cron actually fired
+ * Builds the weekly recap message from every section, or null if all are empty.
+ * @param {*} env
+ * @param {Date} [now] - recap end date; pass the scheduled event's own time in production
  * @returns {Promise<string|null>}
  */
 async function buildWeeklyRecap(env, now = new Date()) {

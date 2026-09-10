@@ -3,13 +3,12 @@ import { GEMSTONE_CRAB } from '../../constants';
 import { getSingleColumn } from '../helperFunctions';
 
 /**
- * Increments and reports the Gemstone Crab kill count for a player, then
- * delegates to killCountHandler to format the milestone notification.
- * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
- * @param {string} playerName - The player's name
- * @param {string} URL - The associated URL
- * @param {*} CRAB_DB - D1 database binding for Gemstone Crab kill count tracking
- * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map
+ * Increments a player's Gemstone Crab kill count, then formats the milestone via killCountHandler.
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap
+ * @param {string} playerName
+ * @param {string} URL
+ * @param {*} CRAB_DB
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>}
  */
 export async function crabHandler(msgMap, playerName, URL, CRAB_DB) {
   /** @param {string} playername */

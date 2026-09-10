@@ -173,7 +173,9 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
     };
-    expect(await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB)).toBeNull();
+    expect(
+      await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB)
+    ).toBeNull();
   });
 
   it('returns null when the query fails', async () => {
@@ -182,6 +184,8 @@ describe('buildCollectionLogWeeklyChangeSection', () => {
         all: vi.fn().mockRejectedValue(new Error('D1 error')),
       }),
     };
-    expect(await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB)).toBeNull();
+    expect(
+      await buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB)
+    ).toBeNull();
   });
 });

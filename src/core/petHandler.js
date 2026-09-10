@@ -7,12 +7,12 @@ import {
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
 
 /**
- * Gathers the pet information
- * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
- * @param {*} playerName - The player's name
- * @param {*} extra - Additional information. See {@link https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#pets} for all the information.
- * @param {*} PETS_DB - D1 database binding for pet tracking
- * @param {*} URL - The associated URL
+ * Formats a pet-drop notification and increments the player's pet count.
+ * @param {Map<{ ID: string, URL: string}, string>} msgMap
+ * @param {*} playerName
+ * @param {*} extra - see {@link https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#pets}
+ * @param {*} PETS_DB
+ * @param {*} URL
  */
 async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
   const {

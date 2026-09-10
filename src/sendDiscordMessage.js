@@ -1,10 +1,9 @@
 /**
- * Posts a message to a Discord webhook URL, retrying once if rate-limited
- * (HTTP 429), honoring Discord's requested retry_after delay.
- * @param {string} url - The Discord webhook URL
- * @param {string} content - The message content to send
- * @param {FormDataEntryValue | null} [file] - An optional screenshot attachment
- * @returns {Promise<Response|undefined>} The final response, or undefined if the request threw
+ * Posts a message to a Discord webhook, retrying once on a 429 rate-limit.
+ * @param {string} url
+ * @param {string} content
+ * @param {FormDataEntryValue | null} [file] - optional screenshot attachment
+ * @returns {Promise<Response|undefined>}
  */
 async function sendDiscordMessage(url, content, file = null) {
   const formData = new FormData();

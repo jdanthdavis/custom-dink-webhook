@@ -12,13 +12,13 @@ import { crabHandler } from './crabHandler';
 
 /**
  * Delegates a chat message to the appropriate sub-handler based on its content.
- * @param {Map<{ ID: string, URL: string }, string>} msgMap - The message map to update
- * @param {string} playerName - The player's name
- * @param {string} message - The raw chat message text
- * @param {string} PB_URL - The personal-best notification URL
- * @param {string} LOOT_URL - The loot notification URL
- * @param {string} KC_URL - The kill-count notification URL
- * @param {*} CRAB_DB - D1 database binding for Gemstone Crab kill count tracking
+ * @param {Map<{ ID: string, URL: string }, string>} msgMap
+ * @param {string} playerName
+ * @param {string} message
+ * @param {string} PB_URL
+ * @param {string} LOOT_URL
+ * @param {string} KC_URL
+ * @param {*} CRAB_DB
  */
 async function chatHandler(
   msgMap,

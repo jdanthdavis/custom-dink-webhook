@@ -34,13 +34,17 @@ const RECAP_SECTIONS = [
 ];
 
 /**
- * Formats a date as `M/D` (no leading zeros), in UTC - matching the Cron
- * Trigger's fixed UTC firing time (see wrangler.toml's DST note).
+ * Formats a date as `MM/DD/YY` (zero-padded, two-digit year), in UTC -
+ * matching the Cron Trigger's fixed UTC firing time (see wrangler.toml's
+ * DST note).
  * @param {Date} date
  * @returns {string}
  */
 function formatRecapDate(date) {
-  return `${date.getUTCMonth() + 1}/${date.getUTCDate()}`;
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const year = String(date.getUTCFullYear()).slice(-2);
+  return `${month}/${day}/${year}`;
 }
 
 /**

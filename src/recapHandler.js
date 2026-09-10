@@ -11,11 +11,11 @@ import { buildCollectionLogWeeklyChangeSection } from './core/recap/collectionLo
 // side effect. None of these have a chat command anymore (the last one,
 // !Fetchloot, was removed as redundant once the recap covered the same
 // ground) — the weekly recap is the only surface for this data, by design,
-// so players can't manually trigger a fetch. TCG, deaths, and collection log
-// (and the domains after them) are tracked in the shared WEEKLY_RECAP_DB
-// database rather than a dedicated one, to stay under the account's D1
-// database cap. A section returning null (empty table, no change since last
-// time, or its binding isn't wired up yet) is simply omitted.
+// so players can't manually trigger a fetch. Every domain except pets is
+// tracked in the shared WEEKLY_RECAP_DB database rather than a dedicated
+// one, to stay under the account's D1 database cap. A section returning
+// null (empty table, no change since last time, or its binding isn't wired
+// up yet) is simply omitted.
 //
 // Adding a new domain (clues, combat tasks, personal bests) once it has its
 // own tracking table is a new file in src/core/recap/ (built on
@@ -23,7 +23,7 @@ import { buildCollectionLogWeeklyChangeSection } from './core/recap/collectionLo
 // more entry here — no other changes needed.
 const RECAP_SECTIONS = [
   (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
-  (env) => buildLootWeeklyChangeSection(env.LOOT_DB),
+  (env) => buildLootWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildTcgWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildDeathsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildCollectionLogWeeklyChangeSection(env.WEEKLY_RECAP_DB),

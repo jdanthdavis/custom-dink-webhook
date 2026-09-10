@@ -13,7 +13,7 @@ function makeStatement(resolves = {}) {
 
 describe('buildLootWeeklyChangeSection', () => {
   it('shows only value gained since the baseline, alongside the weekly top drop, sorted descending', async () => {
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
           all: {
@@ -38,7 +38,7 @@ describe('buildLootWeeklyChangeSection', () => {
       ),
     };
 
-    const result = await buildLootWeeklyChangeSection(LOOT_DB);
+    const result = await buildLootWeeklyChangeSection(WEEKLY_RECAP_DB);
 
     expect(result).toContain('Loot Board');
     expect(result).toContain('Total Value Gained');
@@ -56,7 +56,7 @@ describe('buildLootWeeklyChangeSection', () => {
   });
 
   it('omits a player with no value gained since the last recap', async () => {
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
           all: {
@@ -81,14 +81,14 @@ describe('buildLootWeeklyChangeSection', () => {
       ),
     };
 
-    const result = await buildLootWeeklyChangeSection(LOOT_DB);
+    const result = await buildLootWeeklyChangeSection(WEEKLY_RECAP_DB);
 
     expect(result).toContain('Active');
     expect(result).not.toContain('Idle');
   });
 
   it('shows "-" for the weekly top drop when nothing was recorded', async () => {
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
           all: {
@@ -106,14 +106,14 @@ describe('buildLootWeeklyChangeSection', () => {
       ),
     };
 
-    const result = await buildLootWeeklyChangeSection(LOOT_DB);
+    const result = await buildLootWeeklyChangeSection(WEEKLY_RECAP_DB);
 
     const line = result.split('\n').find((l) => l.includes('Swap'));
     expect(line.trim().split(/\s{2,}/)).toEqual(['Swap', '2M', '-']);
   });
 
   it('resets weekly_top_item_* to NULL after building the section', async () => {
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
           all: {
@@ -131,32 +131,32 @@ describe('buildLootWeeklyChangeSection', () => {
       ),
     };
 
-    await buildLootWeeklyChangeSection(LOOT_DB);
+    await buildLootWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    const resetCall = LOOT_DB.prepare.mock.calls.find(([sql]) =>
+    const resetCall = WEEKLY_RECAP_DB.prepare.mock.calls.find(([sql]) =>
       sql.includes('weekly_top_item_name = NULL')
     );
     expect(resetCall).toBeDefined();
 
-    const baselineResetCall = LOOT_DB.prepare.mock.calls.find(([sql]) =>
+    const baselineResetCall = WEEKLY_RECAP_DB.prepare.mock.calls.find(([sql]) =>
       sql.includes('UPDATE loot_totals SET total_value_baseline')
     );
     expect(baselineResetCall).toBeDefined();
   });
 
   it('returns null when the table is empty', async () => {
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
     };
-    expect(await buildLootWeeklyChangeSection(LOOT_DB)).toBeNull();
+    expect(await buildLootWeeklyChangeSection(WEEKLY_RECAP_DB)).toBeNull();
   });
 
   it('returns null when the query fails', async () => {
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue({
         all: vi.fn().mockRejectedValue(new Error('D1 error')),
       }),
     };
-    expect(await buildLootWeeklyChangeSection(LOOT_DB)).toBeNull();
+    expect(await buildLootWeeklyChangeSection(WEEKLY_RECAP_DB)).toBeNull();
   });
 });

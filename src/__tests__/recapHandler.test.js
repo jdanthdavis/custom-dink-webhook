@@ -24,7 +24,7 @@ describe('buildWeeklyRecap', () => {
         })
       ),
     };
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
           all: { results: [{ playername: 'Swap', total_value: 2_000_000 }] },
@@ -33,7 +33,7 @@ describe('buildWeeklyRecap', () => {
     };
 
     const recap = await buildWeeklyRecap(
-      { PETS_DB, LOOT_DB },
+      { PETS_DB, WEEKLY_RECAP_DB },
       new Date('2026-09-08T14:00:00Z')
     );
 
@@ -75,11 +75,11 @@ describe('buildWeeklyRecap', () => {
         })
       ),
     };
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
     };
 
-    const recap = await buildWeeklyRecap({ PETS_DB, LOOT_DB });
+    const recap = await buildWeeklyRecap({ PETS_DB, WEEKLY_RECAP_DB });
 
     expect(recap).toContain('Pet Board');
     expect(recap).not.toContain('Loot Board');
@@ -89,11 +89,11 @@ describe('buildWeeklyRecap', () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
     };
-    const LOOT_DB = {
+    const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
     };
 
-    const recap = await buildWeeklyRecap({ PETS_DB, LOOT_DB });
+    const recap = await buildWeeklyRecap({ PETS_DB, WEEKLY_RECAP_DB });
 
     expect(recap).toBeNull();
   });
@@ -109,9 +109,6 @@ describe('buildWeeklyRecap', () => {
           },
         })
       ),
-    };
-    const LOOT_DB = {
-      prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),
     };
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
@@ -133,7 +130,7 @@ describe('buildWeeklyRecap', () => {
       ),
     };
 
-    const recap = await buildWeeklyRecap({ PETS_DB, LOOT_DB, WEEKLY_RECAP_DB });
+    const recap = await buildWeeklyRecap({ PETS_DB, WEEKLY_RECAP_DB });
 
     expect(recap).toContain('Pet Board');
     expect(recap).not.toContain('Loot Board');
@@ -153,7 +150,7 @@ describe('buildWeeklyRecap', () => {
       ),
     };
 
-    // No LOOT_DB/WEEKLY_RECAP_DB in env at all
+    // No WEEKLY_RECAP_DB in env at all
     const recap = await buildWeeklyRecap({ PETS_DB });
 
     expect(recap).toContain('Pet Board');

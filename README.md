@@ -95,6 +95,30 @@ Handles collection log item notifications by validating the item name and calcul
 
 3. **Normal Update**: For regular collection log additions, the handler provides an update that includes the item name and the player's progress (completed vs total entries).
 
+### Storage
+
+Every collection log event also upserts a progress snapshot into the shared
+`dink_weekly_recap` D1 database (`WEEKLY_RECAP_DB` binding), table `collection_log`:
+
+```sql
+CREATE TABLE collection_log (
+  playername TEXT PRIMARY KEY COLLATE NOCASE,
+  completed_entries INTEGER,
+  total_entries INTEGER,
+  current_rank TEXT,
+  completed_entries_baseline INTEGER
+);
+```
+
+A snapshot-replace domain (like `tcg_progress`), not a counter — `completed_entries`/
+`total_entries`/`current_rank` are the account's current values on every event, not
+deltas, so they're written via `COALESCE` (a missing value leaves the stored one
+untouched). Dink's `0`/`0` sentinel for "log not yet cycled" is treated the same way —
+never written over previously-known-good values. The write happens unconditionally, even
+on the fallback-message path above, so a not-yet-cycled event doesn't skip tracking.
+**Recap-only** — there's no chat command; this data only surfaces in the
+[Weekly Recap](#weekly-recap).
+
 ## [combatTaskHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/combatTaskHandler.js)
 
 Tracks combat achievement progress by formatting completion percentages and structuring notifications for newly completed combat tasks. If a player completes an entire tier, a specialized message highlights their achievement, while regular task completions update their progress within the current tier. Progress is reconciled per player via the `CA_PROGRESS` KV namespace, since Dink reports the same `tierProgress` for multiple combat tasks that complete in the same game tick.
@@ -297,9 +321,9 @@ place any of this data surfaces, by design, so players can't manually trigger a 
 section-builder function lives in `src/core/recap/`:
 
 - [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js) — **current standings**: a lifetime leaderboard, not a delta.
-- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), and [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js) — **week-over-week change**, not a running total, all three built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress`/`deaths` baseline columns described above).
+- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js), and [buildCollectionLogWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/collectionLogRecap.js) — **week-over-week change**, not a running total, all four built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress`/`deaths`/`collection_log` baseline columns described above).
 
-A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, collection log, combat tasks, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section, like pets/TCG/deaths), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
+A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, combat tasks, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section, like pets/TCG/deaths/collection log), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
 
 ### D1 database budget
 

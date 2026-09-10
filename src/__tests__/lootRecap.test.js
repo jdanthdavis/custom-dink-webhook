@@ -45,6 +45,32 @@ describe('getLootLeaderboard', () => {
     expect(goutIndex).toBeLessThan(swapIndex);
   });
 
+  it('shows "Total Value Gained" and omits the Source column', async () => {
+    const LOOT_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Swap',
+                total_value: 2_000_000,
+                last_item_name: 'Rocky',
+                last_source: 'Man',
+                last_drop_date: '01/01/2026',
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await getLootLeaderboard(LOOT_DB);
+
+    expect(result).toContain('Total Value Gained');
+    expect(result).not.toContain('Source');
+    expect(result).not.toContain('Man');
+  });
+
   it('returns null when the table is empty', async () => {
     const LOOT_DB = {
       prepare: vi.fn().mockReturnValue(makeStatement({ all: { results: [] } })),

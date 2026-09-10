@@ -34,12 +34,11 @@ export async function getLootLeaderboard(LOOT_DB) {
   const rows = await getAllLoot(LOOT_DB);
   if (!rows || rows.length === 0) return null;
 
-  const headers = ['Name', 'Total Value', 'Last Item', 'Source'];
+  const headers = ['Name', 'Total Value Gained', 'Last Item'];
   const tableRows = rows.map((row) => [
     row.playername,
     formatValue(Number(row.total_value) || 0, true),
     row.last_item_name ?? '-',
-    row.last_source ?? '-',
   ]);
   return formatLeaderboardTable('Loot Board', headers, tableRows);
 }

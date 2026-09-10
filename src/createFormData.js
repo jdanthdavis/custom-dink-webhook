@@ -65,7 +65,13 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       await petHandler(msgMap, playerName, extra, PETS_DB, PET_URL);
       break;
     case Constants.COLLECTION:
-      collectionLogHandler(msgMap, playerName, extra, COLLECTION_URL);
+      await collectionLogHandler(
+        msgMap,
+        playerName,
+        extra,
+        WEEKLY_RECAP_DB,
+        COLLECTION_URL
+      );
       break;
     case Constants.LEVEL:
     case Constants.XP_MILESTONE:

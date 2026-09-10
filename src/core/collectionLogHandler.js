@@ -11,14 +11,69 @@ import { RANK_MAP, COLLECTION } from '../constants';
  */
 
 /**
- * Gathers the collection log item and builds the accounts total collection log entries
+ * Formats a rank string (e.g. "RUNE") into Title Case (e.g. "Rune").
+ * @param {string} rank
+ * @returns {string}
+ */
+export function formatRank(rank) {
+  return rank.charAt(0).toUpperCase() + rank.slice(1).toLowerCase();
+}
+
+/**
+ * Upserts a player's collection log snapshot for the weekly recap. A
+ * snapshot-replace domain (like tcg_progress), not a counter -
+ * completedEntries/totalEntries/currentRank are the account's current
+ * values on every event, not deltas. Missing values are preserved via
+ * COALESCE rather than overwritten with null.
+ * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * @param {string} playername
+ * @param {number} [totalEntries]
+ * @param {number} [completedEntries]
+ * @param {string} [currentRank]
+ */
+async function recordCollectionLog(
+  WEEKLY_RECAP_DB,
+  playername,
+  totalEntries,
+  completedEntries,
+  currentRank
+) {
+  try {
+    await WEEKLY_RECAP_DB.prepare(
+      `INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank)
+       VALUES (?1, ?2, ?3, ?4)
+       ON CONFLICT(playername) DO UPDATE SET
+         completed_entries = COALESCE(?2, completed_entries),
+         total_entries = COALESCE(?3, total_entries),
+         current_rank = COALESCE(?4, current_rank)`
+    )
+      .bind(
+        playername,
+        completedEntries ?? null,
+        totalEntries ?? null,
+        currentRank ?? null
+      )
+      .run();
+  } catch (error) {
+    console.log(
+      'recordCollectionLog ',
+      error instanceof Error ? error.message : error
+    );
+  }
+}
+
+/**
+ * Gathers the collection log item, records the account's current snapshot
+ * for the weekly recap, and builds the account's total collection log
+ * entries message.
  * @param {Map<{ ID: string, URL: string}, string>} msgMap - The message map to update
  * @param {string} playerName - The player's name
  * @param {CollectionLogExtra} extra - Additional information
+ * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
  * @param {string} URL - The associated URL
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map
  */
-function collectionLogHandler(msgMap, playerName, extra, URL) {
+async function collectionLogHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
   const {
     totalEntries,
     completedEntries,
@@ -31,12 +86,20 @@ function collectionLogHandler(msgMap, playerName, extra, URL) {
     completedEntries,
     totalEntries
   );
-  /** @param {string} rank */
-  const formatedRanks = (rank) =>
-    rank.charAt(0).toUpperCase() + rank.slice(1).toLowerCase();
   const formattedJustCompletedRank =
-    justCompletedRank && formatedRanks(justCompletedRank);
-  const formattedCurrentRank = currentRank && formatedRanks(currentRank);
+    justCompletedRank && formatRank(justCompletedRank);
+  const formattedCurrentRank = currentRank && formatRank(currentRank);
+
+  // Dink sends 0/0 to mean "log not yet cycled," same as the fallback check
+  // below - treat that as missing here too, so it doesn't COALESCE a real
+  // zero over previously-known-good values.
+  await recordCollectionLog(
+    WEEKLY_RECAP_DB,
+    playerName,
+    totalEntries || null,
+    completedEntries || null,
+    currentRank
+  );
 
   if (!totalEntries || !completedEntries) {
     // If the user hasn't cycled their collection log we will use this fallback to prevent errors

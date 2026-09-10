@@ -1,12 +1,11 @@
 import { buildPetsWeeklyChangeSection } from './core/recap/petsRecap';
-import { getLootLeaderboard } from './core/recap/lootRecap';
+import { buildLootWeeklyChangeSection } from './core/recap/lootRecap';
 import { buildTcgWeeklyChangeSection } from './core/recap/tcgRecap';
 import { buildDeathsWeeklyChangeSection } from './core/recap/deathsRecap';
 import { buildCollectionLogWeeklyChangeSection } from './core/recap/collectionLogRecap';
 
 // Each entry builds one section of the recap, all living in src/core/recap/.
-// Loot reports current standings; pets, TCG, deaths, and collection log
-// instead report the *change* since the last recap run rather than a
+// Every section reports the *change* since the last recap run rather than a
 // running total, via the shared computeAndResetDeltas helper
 // (src/core/recap/deltaTracking.js) - see its JSDoc for the baseline-reset
 // side effect. None of these have a chat command anymore (the last one,
@@ -24,7 +23,7 @@ import { buildCollectionLogWeeklyChangeSection } from './core/recap/collectionLo
 // more entry here — no other changes needed.
 const RECAP_SECTIONS = [
   (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
-  (env) => getLootLeaderboard(env.LOOT_DB),
+  (env) => buildLootWeeklyChangeSection(env.LOOT_DB),
   (env) => buildTcgWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildDeathsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildCollectionLogWeeklyChangeSection(env.WEEKLY_RECAP_DB),

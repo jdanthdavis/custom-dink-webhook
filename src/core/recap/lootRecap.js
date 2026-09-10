@@ -1,44 +1,55 @@
 import { formatValue, formatLeaderboardTable } from '../helperFunctions';
+import { computeAndResetDeltas } from './deltaTracking';
 
 /**
- * Fetches every tracked player's loot totals, sorted by total value descending.
- * @param {*} LOOT_DB - D1 database binding for loot value tracking
- * @returns {Promise<Array<{ playername: string, total_value?: number, last_item_name?: string, last_item_value?: number, last_source?: string, last_drop_date?: string }>|null>}
- */
-export async function getAllLoot(LOOT_DB) {
-  try {
-    const { results } = await LOOT_DB.prepare(
-      'SELECT playername, total_value, last_item_name, last_item_value, last_source, last_drop_date FROM loot_totals'
-    ).all();
-    return results?.sort(
-      (a, b) => (Number(b.total_value) || 0) - (Number(a.total_value) || 0)
-    );
-  } catch (error) {
-    console.log(
-      'getAllLoot error:',
-      error instanceof Error ? error.message : error
-    );
-    return null;
-  }
-}
-
-/**
- * Fetches and formats the full loot leaderboard as a titled table, or null if
- * no player has any tracked loot. Recap-only by design - there's no chat
- * command exposing this on demand. Unlike pets/TCG, this reports current
- * standings (a lifetime total), not a change since the last recap.
+ * Builds the loot section of the weekly recap: each player's loot value
+ * gained since the *last* time this ran, alongside their single most
+ * valuable qualifying drop this week - not their lifetime total/most recent
+ * drop. A player with no prior baseline (their first drop since this
+ * shipped) has their full current total counted as this week's gain.
+ * Players with no new qualifying loot since last time are omitted.
+ *
+ * Recap-only by design - there's no `!Fetchloot` chat command; this data
+ * only surfaces here. Existing production rows were backfilled
+ * (`total_value_baseline = total_value`) when that column was added, so
+ * their pre-existing history doesn't appear as "gained this week" on the
+ * first run. weekly_top_item_* isn't a running total like total_value - it's
+ * reset to NULL here (rather than diffed against a baseline) so next week's
+ * top drop starts fresh.
  * @param {*} LOOT_DB - D1 database binding for loot value tracking
  * @returns {Promise<string|null>}
  */
-export async function getLootLeaderboard(LOOT_DB) {
-  const rows = await getAllLoot(LOOT_DB);
-  if (!rows || rows.length === 0) return null;
+export async function buildLootWeeklyChangeSection(LOOT_DB) {
+  const changes = await computeAndResetDeltas(LOOT_DB, {
+    table: 'loot_totals',
+    extraColumns: ['weekly_top_item_name', 'weekly_top_item_value'],
+    metrics: [
+      { current: 'total_value', baseline: 'total_value_baseline', key: 'value' },
+    ],
+  });
+  if (!changes || changes.length === 0) return null;
 
-  const headers = ['Name', 'Total Value Gained', 'Last Item'];
-  const tableRows = rows.map((row) => [
+  try {
+    await LOOT_DB.prepare(
+      `UPDATE loot_totals SET weekly_top_item_name = NULL, weekly_top_item_value = NULL
+       WHERE weekly_top_item_value IS NOT NULL`
+    ).run();
+  } catch (error) {
+    console.log(
+      'getLootLeaderboard reset error:',
+      error instanceof Error ? error.message : error
+    );
+  }
+
+  const sorted = changes.sort((a, b) => b.valueDelta - a.valueDelta);
+
+  const headers = ['Name', 'Total Value Gained', 'Most Valuable Drop'];
+  const tableRows = sorted.map((row) => [
     row.playername,
-    formatValue(Number(row.total_value) || 0, true),
-    row.last_item_name ?? '-',
+    formatValue(row.valueDelta, true),
+    row.weekly_top_item_name
+      ? `${row.weekly_top_item_name} ${formatValue(row.weekly_top_item_value)}`
+      : '-',
   ]);
   return formatLeaderboardTable('Loot Board', headers, tableRows);
 }

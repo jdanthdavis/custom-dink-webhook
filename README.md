@@ -151,14 +151,21 @@ CREATE TABLE loot_totals (
   last_item_name TEXT,
   last_item_value INTEGER,
   last_source TEXT,
-  last_drop_date TEXT
+  last_drop_date TEXT,
+  total_value_baseline INTEGER,
+  weekly_top_item_name TEXT,
+  weekly_top_item_value INTEGER
 );
 ```
 
 `total_value` accumulates across every qualifying drop; `last_item_*` records the
-highest-value item from the most recent qualifying event. Surfaced only via the
+highest-value item from the most recent qualifying event (independent of the recap).
+`total_value_baseline`/`weekly_top_item_*` back the weekly recap section: the former is
+diffed like pets/TCG/deaths/collection log to show value gained since last time, while
+the latter tracks the single highest-value drop since last time and is reset to `NULL`
+(not diffed) after each recap run. Surfaced only via the
 [Weekly Recap](#weekly-recap) — there's no chat command; see
-[getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js).
+[buildLootWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js).
 
 ## [chatHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/chatHandler.js)
 
@@ -320,8 +327,7 @@ None of the tracked domains have a `!Fetch...`-style chat command — this recap
 place any of this data surfaces, by design, so players can't manually trigger a fetch. Every
 section-builder function lives in `src/core/recap/`:
 
-- [getLootLeaderboard](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js) — **current standings**: a lifetime leaderboard, not a delta.
-- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js), and [buildCollectionLogWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/collectionLogRecap.js) — **week-over-week change**, not a running total, all four built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`tcg_progress`/`deaths`/`collection_log` baseline columns described above).
+- [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildLootWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js), and [buildCollectionLogWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/collectionLogRecap.js) — **week-over-week change**, not a running total, all five built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`loot_totals`/`tcg_progress`/`deaths`/`collection_log` baseline columns described above). Loot's `weekly_top_item_*` columns are the one exception — they track a single highest-value drop rather than a running total, so they're reset to `NULL` instead of diffed.
 
 A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, combat tasks, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section, like pets/TCG/deaths/collection log), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
 

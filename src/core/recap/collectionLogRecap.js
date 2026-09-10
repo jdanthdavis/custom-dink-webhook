@@ -40,5 +40,5 @@ export async function buildCollectionLogWeeklyChangeSection(WEEKLY_RECAP_DB) {
       : '-',
   ]);
 
-  return formatLeaderboardTable('Collection Log', headers, tableRows);
+  return formatLeaderboardTable('Collection Logs Board', headers, tableRows);
 }

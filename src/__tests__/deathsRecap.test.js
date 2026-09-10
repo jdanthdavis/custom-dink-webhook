@@ -32,7 +32,7 @@ describe('buildDeathsWeeklyChangeSection', () => {
 
     const result = await buildDeathsWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    expect(result).toContain('Deaths');
+    expect(result).toContain('Deaths Board');
     const line = result.split('\n').find((l) => l.includes('Gout Haver'));
     expect(line.trim().split(/\s{2,}/)).toEqual(['Gout Haver', '2', '5M']);
   });

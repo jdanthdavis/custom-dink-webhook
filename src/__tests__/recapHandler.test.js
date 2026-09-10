@@ -47,12 +47,12 @@ describe('buildWeeklyRecap', () => {
       new Date('2026-09-08T14:00:00Z')
     );
 
-    expect(recap).toContain('# Weekly Recap: 9/1 - 9/8');
+    expect(recap).toContain('# Weekly Recap: 09/01/26 - 09/08/26');
     expect(recap).toContain('Pet Board');
     expect(recap).toContain('Loot Board');
   });
 
-  it('formats the heading as a M/D - M/D range across a month boundary', async () => {
+  it('formats the heading as a MM/DD/YY - MM/DD/YY range across a month boundary', async () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
@@ -70,7 +70,7 @@ describe('buildWeeklyRecap', () => {
       new Date('2026-09-07T14:00:00Z')
     );
 
-    expect(recap).toContain('# Weekly Recap: 8/31 - 9/7');
+    expect(recap).toContain('# Weekly Recap: 08/31/26 - 09/07/26');
   });
 
   it('omits a section with no data', async () => {

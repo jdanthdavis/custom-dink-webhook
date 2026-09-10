@@ -53,6 +53,10 @@ export const ALL_PETS = 71;
 // levels
 export const LEVEL = 'LEVEL';
 export const MAX_TOTAL_LEVEL = 2376;
+// Dink now sends a LEVEL event for every level (not just 50+) so the weekly
+// recap can track true totals, but Discord notifications should stay
+// limited to 50+, same as before - see levelUpHandler.js.
+export const LEVEL_NOTIFICATION_THRESHOLD = 50;
 
 // kill count
 export const KILL_COUNT = 'KILL_COUNT';

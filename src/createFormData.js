@@ -74,7 +74,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       break;
     case Constants.LEVEL:
     case Constants.XP_MILESTONE:
-      levelUpHandler(msgMap, playerName, extra, LEVEL_URL);
+      await levelUpHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, LEVEL_URL);
       break;
     case Constants.COMBAT_ACHIEVEMENT:
       await combatTaskHandler(msgMap, playerName, extra, CA_PROGRESS, CA_URL);

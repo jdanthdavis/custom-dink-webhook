@@ -3,19 +3,22 @@ import { buildLootWeeklyChangeSection } from './core/recap/lootRecap';
 import { buildTcgWeeklyChangeSection } from './core/recap/tcgRecap';
 import { buildDeathsWeeklyChangeSection } from './core/recap/deathsRecap';
 import { buildCollectionLogWeeklyChangeSection } from './core/recap/collectionLogRecap';
+import { buildLevelsWeeklyChangeSection } from './core/recap/levelsRecap';
 
 // Each entry builds one section of the recap, all living in src/core/recap/.
 // Every section reports the *change* since the last recap run rather than a
-// running total, via the shared computeAndResetDeltas helper
+// running total. Most are built on the shared computeAndResetDeltas helper
 // (src/core/recap/deltaTracking.js) - see its JSDoc for the baseline-reset
-// side effect. None of these have a chat command anymore (the last one,
-// !Fetchloot, was removed as redundant once the recap covered the same
-// ground) — the weekly recap is the only surface for this data, by design,
-// so players can't manually trigger a fetch. Every domain except pets is
-// tracked in the shared WEEKLY_RECAP_DB database rather than a dedicated
-// one, to stay under the account's D1 database cap. A section returning
-// null (empty table, no change since last time, or its binding isn't wired
-// up yet) is simply omitted.
+// side effect - except levels, which hand-rolls the same fetch/diff/reset
+// shape since skill_levels has one row per player *per skill*, not one row
+// per player (see levelsRecap.js). None of these have a chat command
+// anymore (the last one, !Fetchloot, was removed as redundant once the
+// recap covered the same ground) — the weekly recap is the only surface for
+// this data, by design, so players can't manually trigger a fetch. Every
+// domain except pets is tracked in the shared WEEKLY_RECAP_DB database
+// rather than a dedicated one, to stay under the account's D1 database cap.
+// A section returning null (empty table, no change since last time, or its
+// binding isn't wired up yet) is simply omitted.
 //
 // Adding a new domain (clues, combat tasks, personal bests) once it has its
 // own tracking table is a new file in src/core/recap/ (built on
@@ -27,6 +30,7 @@ const RECAP_SECTIONS = [
   (env) => buildTcgWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildDeathsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildCollectionLogWeeklyChangeSection(env.WEEKLY_RECAP_DB),
+  (env) => buildLevelsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
 ];
 
 /**

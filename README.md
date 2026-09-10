@@ -220,6 +220,36 @@ Note: messages use British spelling ("levelled"), and XP amounts are formatted i
 > **playerName** has reached **1M XP** in **Attack!**
 > **playerName** has reached **2M XP** in **Strength!**
 
+### Notification threshold
+
+Dink sends a `LEVEL` event for every level gained (not just 50+), so the weekly recap can
+track true totals - but Discord notifications stay limited to level **50 and up**
+(`LEVEL_NOTIFICATION_THRESHOLD` in `constants.js`), same as before. A level below the
+threshold is still tracked in D1; it just doesn't produce a message. In a mixed event
+(e.g. one skill reaches 45, another reaches 55 in the same tick), only the qualifying
+skill(s) appear in the notification, while both are still recorded.
+
+### Storage
+
+Every levelled skill (regardless of the notification threshold above) is upserted into
+the shared `dink_weekly_recap` D1 database (`WEEKLY_RECAP_DB` binding), table
+`skill_levels` - **one row per player per skill**, not one row per player, so the recap
+can tell which skill drove the gains:
+
+```sql
+CREATE TABLE skill_levels (
+  playername TEXT NOT NULL COLLATE NOCASE,
+  skill_name TEXT NOT NULL,
+  level INTEGER,
+  level_baseline INTEGER,
+  PRIMARY KEY (playername, skill_name)
+);
+```
+
+`level` is COALESCE-guarded like TCG/collection log's snapshot columns - a skill's current
+level on every event, not a delta. Recap-only - there's no chat command; this data only
+surfaces in the [Weekly Recap](#weekly-recap).
+
 ## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
 
 Handles player death events by formatting and updating a death message based on whether the death occurred in PvP or PvM, or within a specific in-game region. If the player was killed by another player, the message includes the killer's name and the amount of coins lost. Otherwise, it generates a standard death message. Random humorous emojis are appended to each death message for added flavor.
@@ -328,8 +358,9 @@ place any of this data surfaces, by design, so players can't manually trigger a 
 section-builder function lives in `src/core/recap/`:
 
 - [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildLootWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js), and [buildCollectionLogWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/collectionLogRecap.js) — **week-over-week change**, not a running total, all five built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: it diffs each row's current value against a `*_baseline` column (a missing baseline counts as 0) and resets that baseline to the current value as a side effect every time it runs, so the next run's numbers are measured from there (see the `total_pets_baseline`/`loot_totals`/`tcg_progress`/`deaths`/`collection_log` baseline columns described above). Loot's `weekly_top_item_*` columns are the one exception — they track a single highest-value drop rather than a running total, so they're reset to `NULL` instead of diffed.
+- [buildLevelsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/levelsRecap.js) — also week-over-week, but hand-rolls the same fetch/diff/reset shape instead of using `computeAndResetDeltas`, since `skill_levels` has one row per player *per skill* rather than one row per player: it sums every skill's delta for a player (total levels gained) and tracks the single largest per-skill delta (skill most leveled).
 
-A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, combat tasks, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section, like pets/TCG/deaths/collection log), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
+A section that returns nothing (empty table, or nothing changed since last time) is omitted from the recap; if every section is empty, nothing is posted that week. Adding a new domain (clues, combat tasks, personal bests) is a two-step follow-up once that domain has its own D1 tracking table: add a file to `src/core/recap/` (via `computeAndResetDeltas` if it's a change-since-last-time section with one row per player, like pets/TCG/deaths/collection log), then add one line to the `RECAP_SECTIONS` list in `recapHandler.js`.
 
 ### D1 database budget
 

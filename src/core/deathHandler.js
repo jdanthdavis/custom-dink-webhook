@@ -43,7 +43,32 @@ const INVALID_FOOD_ARR = ['Shark lure'];
 const GRUMBLER_REGION = 11330;
 
 /**
- * Handles a player's death event and updates the message map with a formatted message.
+ * Upserts a player's death count and cumulative GP lost for the weekly
+ * recap. A pure counter, unlike TCG's snapshot-replace - Dink reports one
+ * death at a time, never a running total.
+ * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
+ * @param {string} playername
+ * @param {number} valueLost
+ */
+async function recordDeath(WEEKLY_RECAP_DB, playername, valueLost) {
+  try {
+    await WEEKLY_RECAP_DB.prepare(
+      `INSERT INTO deaths (playername, death_count, total_value_lost)
+       VALUES (?1, 1, ?2)
+       ON CONFLICT(playername) DO UPDATE SET
+         death_count = death_count + 1,
+         total_value_lost = total_value_lost + ?2`
+    )
+      .bind(playername, valueLost)
+      .run();
+  } catch (error) {
+    console.log('recordDeath ', error instanceof Error ? error.message : error);
+  }
+}
+
+/**
+ * Handles a player's death event, records it for the weekly recap, and
+ * updates the message map with a formatted message.
  *
  * If the death was caused by PvP, includes the killer's name and value lost.
  * Otherwise, logs a simple death message.
@@ -51,10 +76,11 @@ const GRUMBLER_REGION = 11330;
  * @param {Map<{ ID: string, URL: string }, string>} msgMap - The map to update with the death message.
  * @param {string} playerName - The name of the player who died.
  * @param {{ isPvp?: boolean, valueLost?: number, killerName?: string, keptItems?: Array<{ name: string, quantity: number }>, lostItems?: Array<{ name: string, quantity: number }>, location?: { regionId?: number } }} extra - Additional death information.
+ * @param {*} WEEKLY_RECAP_DB - D1 database binding shared by weekly-recap-tracked domains
  * @param {string} URL - The associated URL for the death event.
- * @returns {Map<{ ID: string, URL: string }, string>} The updated message map.
+ * @returns {Promise<Map<{ ID: string, URL: string }, string>>} The updated message map.
  */
-function deathHandler(msgMap, playerName, extra, URL) {
+async function deathHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
   const {
     isPvp,
     valueLost,
@@ -64,6 +90,8 @@ function deathHandler(msgMap, playerName, extra, URL) {
     location,
   } = extra;
   const regionId = location?.regionId;
+
+  await recordDeath(WEEKLY_RECAP_DB, playerName, valueLost ?? 0);
 
   const formattedValueLost = formatValue(valueLost ?? 0);
   const randomIndex = Math.floor(Math.random() * DEATH_EMOJIS.length);

@@ -91,7 +91,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
       );
       break;
     case Constants.DEATH:
-      deathHandler(msgMap, playerName, extra, DEATH_URL);
+      await deathHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, DEATH_URL);
       break;
     case Constants.EXTERNAL_PLUGIN:
       await tcgHandler(

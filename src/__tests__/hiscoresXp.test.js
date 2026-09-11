@@ -39,8 +39,8 @@ describe('fetchPlayerHiscoresXp', () => {
     const skills = await fetchPlayerHiscoresXp('Swap');
 
     expect(skills).toEqual([
-      { skillName: 'Overall', xp: 50000 },
-      { skillName: 'Attack', xp: 300000 },
+      { skillName: 'Overall', level: 100, xp: 50000 },
+      { skillName: 'Attack', level: 60, xp: 300000 },
     ]);
   });
 
@@ -88,9 +88,9 @@ describe('fetchAndRecordAllHiscoresXp', () => {
     );
     const statement = WEEKLY_RECAP_DB.prepare.mock.results[0].value;
     expect(statement.bind.mock.calls).toEqual([
-      ['Swap', 'Overall', 400000],
-      ['Swap', 'Attack', 300000],
-      ['Swap', 'Woodcutting', 100000],
+      ['Swap', 'Overall', 100, 400000],
+      ['Swap', 'Attack', 60, 300000],
+      ['Swap', 'Woodcutting', 50, 100000],
     ]);
   });
 
@@ -116,7 +116,7 @@ describe('fetchAndRecordAllHiscoresXp', () => {
 
     expect(WEEKLY_RECAP_DB.prepare).toHaveBeenCalledTimes(1);
     const statement = WEEKLY_RECAP_DB.prepare.mock.results[0].value;
-    expect(statement.bind).toHaveBeenCalledWith('Working', 'Attack', 5000);
+    expect(statement.bind).toHaveBeenCalledWith('Working', 'Attack', 60, 5000);
   });
 
   it('does not touch D1 when nothing is returned for a player', async () => {

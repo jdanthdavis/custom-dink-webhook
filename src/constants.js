@@ -20,18 +20,25 @@ export const XP_MILESTONE = 'XP_MILESTONE';
 export const DANSE = '<a:danseParty:1281063903933104160>';
 export const DANSE_PARTY = '<a:danseParty:1281063903933104160>';
 export const FISHH = '<:fishh:1285367875531575306>';
-export const theBoys = [
-  'LSX SWAP',
-  'PIGEON CAM',
-  'GOUT HAVER',
-  '6OUT',
-  'GLASSFACE',
-  'Z4M',
-  'Z4M I',
-  'THEMILDEST1',
-  'CAN IT WORM',
-  'FROSTY DAD',
-];
+// Real display-case names for the tracked roster, keyed by the uppercase
+// form used for case-insensitive matching elsewhere (the webhook allowlist
+// check, the Hiscores poll roster). Hand-maintained alongside the roster
+// itself - used so the Levels Board (sourced entirely from Hiscores, which
+// only knows the uppercase query string) can still show real casing instead
+// of all-caps.
+export const PLAYER_DISPLAY_NAMES = {
+  'LSX SWAP': 'LSx Swap',
+  'PIGEON CAM': 'Pigeon Cam',
+  'GOUT HAVER': 'Gout Haver',
+  '6OUT': '6out',
+  GLASSFACE: 'Glassface',
+  Z4M: 'Z4M',
+  'Z4M I': 'Z4M I',
+  THEMILDEST1: 'themildest1',
+  'CAN IT WORM': 'Can It Worm',
+  'FROSTY DAD': 'Frosty Dad',
+};
+export const theBoys = Object.keys(PLAYER_DISPLAY_NAMES);
 export const acceptedPayloads = [
   'KILL_COUNT',
   'CHAT',
@@ -53,10 +60,6 @@ export const ALL_PETS = 71;
 // levels
 export const LEVEL = 'LEVEL';
 export const MAX_TOTAL_LEVEL = 2376;
-// Dink now sends a LEVEL event for every level (not just 50+) so the weekly
-// recap can track true totals, but Discord notifications should stay
-// limited to 50+, same as before - see levelUpHandler.js.
-export const LEVEL_NOTIFICATION_THRESHOLD = 50;
 
 // kill count
 export const KILL_COUNT = 'KILL_COUNT';

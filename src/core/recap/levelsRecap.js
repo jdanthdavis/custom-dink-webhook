@@ -1,33 +1,37 @@
 import { formatValue, formatLeaderboardTable } from '../helperFunctions';
-import { theBoys } from '../../constants';
+import { theBoys, PLAYER_DISPLAY_NAMES } from '../../constants';
 import { fetchAndRecordAllHiscoresXp } from './hiscoresXp';
 
 /**
- * Fetches a per-skill table (one row per player per skill), diffs each row
- * against its baseline, aggregates per player, and resets changed baselines.
- * If `totalSkillName` names a rollup row (e.g. Hiscores' "Overall"), its own
- * delta is used as the total instead of summing every row, and it's excluded
- * from the "top skill" comparison.
+ * Fetches a per-skill table (one row per player per skill), diffs one or
+ * more metrics against their own baseline, aggregates per player, and
+ * resets every changed baseline in one pass.
+ *
+ * A metric's `totalSkillName`, when given, names a row (e.g. Hiscores'
+ * "Overall") whose own delta is used directly as that metric's total
+ * instead of summing every row - that row is also excluded from that
+ * metric's "top skill" comparison, since it isn't a real skill.
  * @param {*} WEEKLY_RECAP_DB
  * @param {object} options
  * @param {string} options.table
- * @param {string} options.currentColumn
- * @param {string} options.baselineColumn
- * @param {string} [options.totalSkillName]
- * @returns {Promise<Map<string, { playername: string, delta: number, topSkill: string|null, topDelta: number }>>}
+ * @param {Array<{ current: string, baseline: string, key: string, totalSkillName?: string }>} options.metrics
+ * @returns {Promise<Map<string, { playername: string, [field: string]: any }>>} playername -> `{ playername, <key>Delta, <key>TopSkill, <key>TopDelta }` per metric
  */
-async function aggregatePerSkillDeltas(
-  WEEKLY_RECAP_DB,
-  { table, currentColumn, baselineColumn, totalSkillName }
-) {
-  /** @type {Map<string, { playername: string, delta: number, topSkill: string|null, topDelta: number }>} */
+async function aggregatePerSkillDeltas(WEEKLY_RECAP_DB, { table, metrics }) {
+  /** @type {Map<string, { playername: string, [field: string]: any }>} */
   const byPlayer = new Map();
+
+  const columns = [
+    'playername',
+    'skill_name',
+    ...metrics.flatMap(({ current, baseline }) => [current, baseline]),
+  ];
 
   /** @type {any[]|null} */
   let rows;
   try {
     const { results } = await WEEKLY_RECAP_DB.prepare(
-      `SELECT playername, skill_name, ${currentColumn}, ${baselineColumn} FROM ${table}`
+      `SELECT ${columns.join(', ')} FROM ${table}`
     ).all();
     rows = results;
   } catch (error) {
@@ -39,38 +43,44 @@ async function aggregatePerSkillDeltas(
   }
 
   for (const row of rows ?? []) {
-    const delta =
-      (Number(row[currentColumn]) || 0) - (Number(row[baselineColumn]) || 0);
-    if (delta <= 0) continue;
+    for (const { current, baseline, key, totalSkillName } of metrics) {
+      const delta = (Number(row[current]) || 0) - (Number(row[baseline]) || 0);
+      if (delta <= 0) continue;
 
-    const entry = byPlayer.get(row.playername) ?? {
-      playername: row.playername,
-      delta: 0,
-      topSkill: null,
-      topDelta: 0,
-    };
+      const entry = byPlayer.get(row.playername) ?? {
+        playername: row.playername,
+      };
+      entry[`${key}Delta`] ??= 0;
+      entry[`${key}TopSkill`] ??= null;
+      entry[`${key}TopDelta`] ??= 0;
 
-    const isTotalRow = totalSkillName && row.skill_name === totalSkillName;
-    if (isTotalRow) {
-      entry.delta = delta;
-    } else if (!totalSkillName) {
-      entry.delta += delta;
+      const isTotalRow = totalSkillName && row.skill_name === totalSkillName;
+      if (isTotalRow) {
+        entry[`${key}Delta`] = delta;
+      } else if (!totalSkillName) {
+        entry[`${key}Delta`] += delta;
+      }
+      if (!isTotalRow && delta > entry[`${key}TopDelta`]) {
+        entry[`${key}TopDelta`] = delta;
+        entry[`${key}TopSkill`] = row.skill_name;
+      }
+      byPlayer.set(row.playername, entry);
     }
-    if (!isTotalRow && delta > entry.topDelta) {
-      entry.topDelta = delta;
-      entry.topSkill = row.skill_name;
-    }
-    byPlayer.set(row.playername, entry);
   }
 
-  // Reset baselines regardless of what was reported above, so next time's
-  // deltas are measured from here - but only rows that actually changed
-  // (SQLite's IS NOT is null-safe, so a brand-new row with a NULL baseline
-  // still counts as "changed" and gets reset).
+  // Reset every metric's baseline regardless of what was reported above, so
+  // next time's deltas are measured from here - but only rows that actually
+  // changed (SQLite's IS NOT is null-safe, so a brand-new row with a NULL
+  // baseline still counts as "changed" and gets reset).
+  const resetAssignments = metrics
+    .map(({ current, baseline }) => `${baseline} = ${current}`)
+    .join(', ');
+  const changedCondition = metrics
+    .map(({ current, baseline }) => `${baseline} IS NOT ${current}`)
+    .join(' OR ');
   try {
     await WEEKLY_RECAP_DB.prepare(
-      `UPDATE ${table} SET ${baselineColumn} = ${currentColumn}
-       WHERE ${baselineColumn} IS NOT ${currentColumn}`
+      `UPDATE ${table} SET ${resetAssignments} WHERE ${changedCondition}`
     ).run();
   } catch (error) {
     console.log(
@@ -83,37 +93,23 @@ async function aggregatePerSkillDeltas(
 }
 
 /**
- * Looks up each player's real display-case name from `skill_levels` history,
- * so an XP-only player (no level-ups this week) doesn't show theBoys' all-caps form.
- * @param {*} WEEKLY_RECAP_DB
- * @returns {Promise<Map<string, string>>} uppercase playername -> display-case name
- */
-async function getKnownDisplayNames(WEEKLY_RECAP_DB) {
-  /** @type {Map<string, string>} */
-  const displayNames = new Map();
-  try {
-    const { results } = await WEEKLY_RECAP_DB.prepare(
-      'SELECT DISTINCT playername FROM skill_levels'
-    ).all();
-    for (const row of results ?? []) {
-      displayNames.set(row.playername.toUpperCase(), row.playername);
-    }
-  } catch (error) {
-    console.log(
-      'getKnownDisplayNames error:',
-      error instanceof Error ? error.message : error
-    );
-  }
-  return displayNames;
-}
-
-/**
- * Builds the Levels Board: levels gained (skill_levels) and Total XP Gained
- * (polled from OSRS Hiscores, skill_xp) since last time, each with the
- * skill that drove the most. A player appears if they gained either.
- * Doesn't use the shared computeAndResetDeltas helper since both tables have
+ * Builds the Levels Board: levels gained and Total XP Gained since last
+ * time, both polled from the public OSRS Hiscores API (skill_xp), each with
+ * the skill that drove the most. Both totals come from the delta on
+ * Hiscores' own "Overall" row rather than summing individual skills, since a
+ * player can have a real level/XP in a skill they aren't ranked in yet
+ * (filtered out of the per-skill rows entirely). A player appears if they
+ * gained either levels or XP.
+ *
+ * Doesn't use the shared computeAndResetDeltas helper since `skill_xp` has
  * one row per player *per skill* - see aggregatePerSkillDeltas above.
- * Recap-only - no chat command.
+ *
+ * The Hiscores poll (src/core/recap/hiscoresXp.js) is wrapped in its own
+ * try/catch so an outage there can't block the rest of the recap - the
+ * board just comes back empty that week instead.
+ *
+ * Recap-only by design - there's no chat command; this data only surfaces
+ * here.
  * @param {*} WEEKLY_RECAP_DB
  * @returns {Promise<string|null>}
  */
@@ -127,85 +123,50 @@ export async function buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB) {
     );
   }
 
-  const [levelsByPlayer, xpByPlayer, displayNames] = await Promise.all([
-    aggregatePerSkillDeltas(WEEKLY_RECAP_DB, {
-      table: 'skill_levels',
-      currentColumn: 'level',
-      baselineColumn: 'level_baseline',
-    }),
-    aggregatePerSkillDeltas(WEEKLY_RECAP_DB, {
-      table: 'skill_xp',
-      currentColumn: 'xp',
-      baselineColumn: 'xp_baseline',
-      totalSkillName: 'Overall',
-    }),
-    getKnownDisplayNames(WEEKLY_RECAP_DB),
-  ]);
+  const byPlayer = await aggregatePerSkillDeltas(WEEKLY_RECAP_DB, {
+    table: 'skill_xp',
+    metrics: [
+      {
+        current: 'level',
+        baseline: 'level_baseline',
+        key: 'levels',
+        totalSkillName: 'Overall',
+      },
+      {
+        current: 'xp',
+        baseline: 'xp_baseline',
+        key: 'xp',
+        totalSkillName: 'Overall',
+      },
+    ],
+  });
 
-  // Merge by playername, case-insensitively - skill_xp is seeded from the
-  // uppercase theBoys allowlist, while skill_levels uses Dink's actual
-  // display-case name. A player with levels data this week already gets
-  // that nicer casing for free below; an XP-only player falls back to
-  // getKnownDisplayNames's lookup (their real name from any past
-  // skill_levels row), and only to the raw theBoys casing if that player
-  // has genuinely never appeared in skill_levels at all.
-  /** @type {Map<string, { playername: string, levelsDelta: number, topLevelSkill: string|null, xpDelta: number, topXpSkill: string|null, topXpDelta: number }>} */
-  const merged = new Map();
-
-  for (const entry of levelsByPlayer.values()) {
-    merged.set(entry.playername.toUpperCase(), {
-      playername: entry.playername,
-      levelsDelta: entry.delta,
-      topLevelSkill: entry.topSkill,
-      xpDelta: 0,
-      topXpSkill: null,
-      topXpDelta: 0,
-    });
-  }
-
-  for (const entry of xpByPlayer.values()) {
-    const key = entry.playername.toUpperCase();
-    const existing = merged.get(key);
-    if (existing) {
-      existing.xpDelta = entry.delta;
-      existing.topXpSkill = entry.topSkill;
-      existing.topXpDelta = entry.topDelta;
-    } else {
-      merged.set(key, {
-        playername: displayNames.get(key) ?? entry.playername,
-        levelsDelta: 0,
-        topLevelSkill: null,
-        xpDelta: entry.delta,
-        topXpSkill: entry.topSkill,
-        topXpDelta: entry.topDelta,
-      });
-    }
-  }
-
-  const changes = [...merged.values()].filter(
-    (row) => row.levelsDelta > 0 || row.xpDelta > 0
+  const changes = [...byPlayer.values()].filter(
+    (row) => (row.levelsDelta ?? 0) > 0 || (row.xpDelta ?? 0) > 0
   );
   if (changes.length === 0) return null;
 
   // Primarily by XP gained (the more meaningful, continuous metric now that
   // maxed skills can show up here); ties broken by levels gained.
   const sorted = changes.sort(
-    (a, b) => b.xpDelta - a.xpDelta || b.levelsDelta - a.levelsDelta
+    (a, b) =>
+      (b.xpDelta ?? 0) - (a.xpDelta ?? 0) ||
+      (b.levelsDelta ?? 0) - (a.levelsDelta ?? 0)
   );
 
   const headers = [
     'Name',
     'Levels Gained',
-    'Skill Most Leveled',
+    'Skill Most Levelled',
     'Total XP Gained',
     'Top Skill (XP)',
   ];
   const tableRows = sorted.map((row) => [
-    row.playername,
-    row.levelsDelta.toLocaleString('en-US'),
-    row.topLevelSkill ?? '-',
-    formatValue(row.xpDelta, true),
-    row.topXpSkill ? `${row.topXpSkill} ${formatValue(row.topXpDelta)}` : '-',
+    PLAYER_DISPLAY_NAMES[row.playername.toUpperCase()] ?? row.playername,
+    (row.levelsDelta ?? 0).toLocaleString('en-US'),
+    row.levelsTopSkill ?? '-',
+    formatValue(row.xpDelta ?? 0, true),
+    row.xpTopSkill ? `${row.xpTopSkill} ${formatValue(row.xpTopDelta)}` : '-',
   ]);
 
   return formatLeaderboardTable('Levels Board', headers, tableRows);

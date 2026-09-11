@@ -125,43 +125,25 @@ Routes chat-message payloads to the appropriate sub-handler by message type:
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 
-Formats level-up notifications: first-ever 99, any 99, max total level (2376), total-level intervals of 25, and XP milestones. Multiple skills leveling in one event are combined into a single message.
+Formats level-up notifications: first-ever 99, any 99, max total level (2376), total-level intervals of 25, and XP milestones. Multiple skills leveling in one event are combined into a single message. Dink is configured to only send `LEVEL` events for level 50+ - there's no in-app gating (this handler notifies on whatever Dink sends), and no D1 write here at all; see below for how levels are actually tracked.
 
-### Notification threshold
+### Levels & XP tracking (OSRS Hiscores)
 
-Dink sends a `LEVEL` event for every level (not just 50+), so the weekly recap can track true totals — but Discord notifications stay limited to level **50+** (`LEVEL_NOTIFICATION_THRESHOLD` in `constants.js`). A level below the threshold is still tracked in D1; it just doesn't produce a message. In a mixed event, only the qualifying skill(s) appear in the notification.
-
-### Storage
-
-Every levelled skill (regardless of the threshold above) upserts into the shared `dink_weekly_recap` D1 database (`WEEKLY_RECAP_DB` binding), table `skill_levels` — one row per player **per skill**, so the recap can tell which skill drove the gains:
-
-```sql
-CREATE TABLE skill_levels (
-  playername TEXT NOT NULL COLLATE NOCASE,
-  skill_name TEXT NOT NULL,
-  level INTEGER,
-  level_baseline INTEGER,
-  PRIMARY KEY (playername, skill_name)
-);
-```
-
-`level` is COALESCE-guarded, like TCG/collection log's snapshot columns. Recap-only.
-
-### XP tracking (OSRS Hiscores)
-
-Dink only reports level-_up_ events, so a maxed skill can gain real XP with zero level-ups. The Levels Board also polls the public [OSRS Hiscores API](https://secure.runescape.com/m=hiscore_oldschool/index_lite.json) once per recap run for every player in the `theBoys` allowlist (case-insensitive), upserting each skill's current XP — including the API's own "Overall" row — into `skill_xp` (same shape as `skill_levels`):
+Dink only reports level-_up_ events, so it can't see XP gained without a level-up, and (now that it's back to 50+ only) it can't see levels below 50 either. The Levels Board instead polls the public [OSRS Hiscores API](https://secure.runescape.com/m=hiscore_oldschool/index_lite.json) once per recap run for every player in the `theBoys` allowlist (case-insensitive), upserting each skill's current level and XP — including the API's own "Overall" row — into the shared `dink_weekly_recap` D1 database (`WEEKLY_RECAP_DB` binding), table `skill_xp` - one row per player **per skill**, so the recap can tell which skill drove the gains:
 
 ```sql
 CREATE TABLE skill_xp (
   playername TEXT NOT NULL COLLATE NOCASE,
   skill_name TEXT NOT NULL,
+  level INTEGER,
+  level_baseline INTEGER,
   xp INTEGER,
   xp_baseline INTEGER,
   PRIMARY KEY (playername, skill_name)
 );
 ```
 
-"Total XP Gained" comes from the "Overall" row's own delta rather than summing individual skills, since a player can have XP in a skill they aren't ranked in yet. "Overall" is excluded from the "top skill" comparison. An unranked skill (`xp: -1`) is filtered out.
+"Levels Gained" and "Total XP Gained" both come from the "Overall" row's own delta rather than summing individual skills, since a player can have a real level/XP in a skill they aren't ranked in yet (that skill's row is filtered out entirely). "Overall" is excluded from both "Skill Most Levelled"/"Top Skill (XP)" comparisons, since it isn't a real skill. An unranked skill (`xp: -1`) is filtered out. Since every row here comes from Hiscores (queried using `theBoys`' uppercase form), display names resolve through the hand-maintained `PLAYER_DISPLAY_NAMES` map in [constants.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/constants.js) rather than a live lookup.
 
 ## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
 
@@ -214,7 +196,7 @@ Posts a combined recap to Discord on a Cloudflare [Cron Trigger](https://develop
 None of the tracked domains have a chat command — the recap is the only place this data surfaces. Section builders live in `src/core/recap/`:
 
 - [buildPetsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/petsRecap.js), [buildLootWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/lootRecap.js), [buildTcgWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/tcgRecap.js), [buildDeathsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deathsRecap.js), and [buildCollectionLogWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/collectionLogRecap.js) — week-over-week change, built on the shared [computeAndResetDeltas](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/deltaTracking.js) helper: diffs each row against a `*_baseline` column and resets it after every run.
-- [buildLevelsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/levelsRecap.js) — hand-rolls the same fetch/diff/reset shape instead, since `skill_levels`/`skill_xp` have one row per player _per skill_. Merges in Total XP Gained from the Hiscores poll; a player appears if they gained either levels or XP.
+- [buildLevelsWeeklyChangeSection](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/recap/levelsRecap.js) — hand-rolls the same fetch/diff/reset shape instead, since `skill_xp` has one row per player _per skill_. Levels and Total XP Gained are both sourced from the Hiscores poll; a player appears if they gained either.
 
 A section returning nothing is omitted; if every section is empty, nothing posts that week. Adding a new domain: a file in `src/core/recap/` plus one line in `RECAP_SECTIONS` in `recapHandler.js`.
 

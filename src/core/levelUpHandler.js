@@ -3,54 +3,20 @@ import {
   MAX_TOTAL_LEVEL,
   LEVEL,
   XP_MILESTONE,
-  LEVEL_NOTIFICATION_THRESHOLD,
   DANSE,
   DANSE_PARTY,
   FISHH,
 } from '../constants';
 
 /**
- * Upserts each levelled skill's current level into `skill_levels` for the
- * weekly recap - unconditional, regardless of LEVEL_NOTIFICATION_THRESHOLD.
- * @param {*} WEEKLY_RECAP_DB
- * @param {string} playername
- * @param {Record<string, number>} levelledSkills - skill name -> new level
- */
-async function recordSkillLevels(WEEKLY_RECAP_DB, playername, levelledSkills) {
-  const entries = Object.entries(levelledSkills);
-  if (entries.length === 0) return;
-
-  try {
-    await Promise.all(
-      entries.map(([skillName, skillLevel]) =>
-        WEEKLY_RECAP_DB.prepare(
-          `INSERT INTO skill_levels (playername, skill_name, level)
-           VALUES (?1, ?2, ?3)
-           ON CONFLICT(playername, skill_name) DO UPDATE SET
-             level = COALESCE(?3, level)`
-        )
-          .bind(playername, skillName, skillLevel ?? null)
-          .run()
-      )
-    );
-  } catch (error) {
-    console.log(
-      'recordSkillLevels ',
-      error instanceof Error ? error.message : error
-    );
-  }
-}
-
-/**
  * Constructs level-up/XP-milestone messages.
  * @param {Map<{ ID: string, URL: string}, string>} msgMap
  * @param {*} playerName
  * @param {*} extra
- * @param {*} WEEKLY_RECAP_DB
  * @param {*} URL
- * @returns {Promise<Map<{ ID: string, URL: string }, string>>}
+ * @returns {Map<{ ID: string, URL: string }, string>}
  */
-async function levelUpHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
+function levelUpHandler(msgMap, playerName, extra, URL) {
   const {
     allSkills = {},
     levelledSkills = {},
@@ -70,22 +36,7 @@ async function levelUpHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
     return msgMap;
   }
 
-  // Tracked unconditionally, before any of the notification-gating logic
-  // below - every level counts toward the weekly recap even though only
-  // levels >= LEVEL_NOTIFICATION_THRESHOLD get a Discord message.
-  await recordSkillLevels(WEEKLY_RECAP_DB, playerName, levelledSkills);
-
-  // Discord notifications stay limited to LEVEL_NOTIFICATION_THRESHOLD+,
-  // same as before Dink started sending every level - a mixed event (e.g.
-  // one skill below the threshold, one at/above) still notifies for just
-  // the qualifying skill(s).
-  const qualifyingLevelledSkills = Object.fromEntries(
-    Object.entries(levelledSkills).filter(
-      ([, skillLevel]) => skillLevel >= LEVEL_NOTIFICATION_THRESHOLD
-    )
-  );
-
-  const levelledSkillsLength = Object.keys(qualifyingLevelledSkills).length;
+  const levelledSkillsLength = Object.keys(levelledSkills).length;
   const totalLevel = Object.values(allSkills).reduce(
     (sum, skillLevel) => sum + (skillLevel > 99 ? 99 : skillLevel),
     0
@@ -160,7 +111,7 @@ async function levelUpHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
         : `**${name}** to **${level}${bang}**`;
     };
 
-    const entries = Object.entries(qualifyingLevelledSkills);
+    const entries = Object.entries(levelledSkills);
 
     if (levelledSkillsLength === 1) {
       const [skillName, skillLevel] = entries[0];
@@ -174,7 +125,7 @@ async function levelUpHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
     return formatLists(skillMessages);
   };
 
-  const firstLevelledEntry = Object.entries(qualifyingLevelledSkills)[0];
+  const firstLevelledEntry = Object.entries(levelledSkills)[0];
   if (!firstLevelledEntry) return msgMap;
 
   const [skillName, skillLevel] = firstLevelledEntry;

@@ -171,4 +171,94 @@ describe('lootHandler', () => {
       expect.any(String)
     );
   });
+
+  it('retries once and still records the drop after one transient D1 failure', async () => {
+    const msgMap = new Map();
+    const run = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('D1 error'))
+      .mockResolvedValueOnce({ success: true });
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+
+    await lootHandler(
+      msgMap,
+      [{ name: 'Whip', quantity: 1, priceEach: 1_500_000 }],
+      'Swap',
+      'Man',
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain('has received **1x Whip');
+  });
+
+  it('does not crash when D1 write fails on both the original attempt and the retry', async () => {
+    const msgMap = new Map();
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+
+    await lootHandler(
+      msgMap,
+      [{ name: 'Whip', quantity: 1, priceEach: 1_500_000 }],
+      'Swap',
+      'Man',
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain('has received **1x Whip');
+  });
+
+  it('logs a ready-to-run fix when D1 write fails on both attempts', async () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const msgMap = new Map();
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+
+    await lootHandler(
+      msgMap,
+      [{ name: 'Whip', quantity: 1, priceEach: 1_500_000 }],
+      'Swap',
+      'Man',
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain(
+      "UPDATE loot_totals SET total_value = total_value + 1500000 WHERE playername = 'Swap';"
+    );
+    expect(logMessage).toContain('Dropped drop: Whip (1.50M) from Man on');
+    consoleSpy.mockRestore();
+  });
+
+  it("escapes a single quote in the player's name in the fix-it SQL", async () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const msgMap = new Map();
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+
+    await lootHandler(
+      msgMap,
+      [{ name: 'Whip', quantity: 1, priceEach: 1_500_000 }],
+      "O'Brien",
+      'Man',
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain("playername = 'O''Brien';");
+    consoleSpy.mockRestore();
+  });
 });

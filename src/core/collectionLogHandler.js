@@ -1,4 +1,8 @@
-import { customBossNames, formatAsPercentage } from './helperFunctions';
+import {
+  customBossNames,
+  formatAsPercentage,
+  runD1Write,
+} from './helperFunctions';
 import { RANK_MAP, COLLECTION } from '../constants';
 
 /**
@@ -35,28 +39,21 @@ async function recordCollectionLog(
   completedEntries,
   currentRank
 ) {
-  try {
-    await WEEKLY_RECAP_DB.prepare(
-      `INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank)
-       VALUES (?1, ?2, ?3, ?4)
-       ON CONFLICT(playername) DO UPDATE SET
-         completed_entries = COALESCE(?2, completed_entries),
-         total_entries = COALESCE(?3, total_entries),
-         current_rank = COALESCE(?4, current_rank)`
-    )
-      .bind(
-        playername,
-        completedEntries ?? null,
-        totalEntries ?? null,
-        currentRank ?? null
-      )
-      .run();
-  } catch (error) {
-    console.log(
-      'recordCollectionLog ',
-      error instanceof Error ? error.message : error
-    );
-  }
+  await runD1Write(WEEKLY_RECAP_DB, {
+    label: 'recordCollectionLog',
+    sql: `INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank)
+          VALUES (?1, ?2, ?3, ?4)
+          ON CONFLICT(playername) DO UPDATE SET
+            completed_entries = COALESCE(?2, completed_entries),
+            total_entries = COALESCE(?3, total_entries),
+            current_rank = COALESCE(?4, current_rank)`,
+    values: [
+      playername,
+      completedEntries ?? null,
+      totalEntries ?? null,
+      currentRank ?? null,
+    ],
+  });
 }
 
 /**

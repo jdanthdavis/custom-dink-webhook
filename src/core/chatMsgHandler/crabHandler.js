@@ -1,6 +1,6 @@
 import killCountHandler from '../killCountHandler';
 import { GEMSTONE_CRAB } from '../../constants';
-import { getSingleColumn } from '../helperFunctions';
+import { getSingleColumn, runD1Write } from '../helperFunctions';
 
 /**
  * Increments a player's Gemstone Crab kill count, then formats the milestone via killCountHandler.
@@ -24,22 +24,12 @@ export async function crabHandler(msgMap, playerName, URL, CRAB_DB) {
 
   /** @param {string} playername */
   async function incrementCrabKc(playername) {
-    try {
-      await CRAB_DB.prepare(
-        `INSERT INTO crab_kc (playername, count) VALUES (?, 1)
-         ON CONFLICT(playername) DO UPDATE SET count = count + 1`
-      )
-        .bind(playername)
-        .run();
-      console.log(
-        `Crab count and recent pet successfully updated for ${playername}`
-      );
-    } catch (error) {
-      console.log(
-        'incrementCrabKc ',
-        error instanceof Error ? error.message : error
-      );
-    }
+    await runD1Write(CRAB_DB, {
+      label: 'incrementCrabKc',
+      sql: `INSERT INTO crab_kc (playername, count) VALUES (?, 1)
+            ON CONFLICT(playername) DO UPDATE SET count = count + 1`,
+      values: [playername],
+    });
   }
 
   return (async () => {

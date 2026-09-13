@@ -25,7 +25,7 @@ describe('formatValue', () => {
     expect(formatValue(3000e6)).toBe('Very valuable!');
   });
 
-  it('strips parens when xpInterval is true', () => {
+  it('strips parens when stripParens is true', () => {
     expect(formatValue(500, true)).toBe('500');
     expect(formatValue(1500, true)).toBe('1.5K');
   });

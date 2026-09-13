@@ -1,11 +1,11 @@
 /**
  * Formats a value into shorthand, e.g. "(1.20B)", "(45.6M)", "(2.3K)".
- * `xpInterval` strips the parens. Values >= 2,147,000,000 return "Very valuable!".
+ * `stripParens` strips the parens. Values >= 2,147,000,000 return "Very valuable!".
  * @param {number} value
- * @param {boolean} [xpInterval]
+ * @param {boolean} [stripParens]
  * @returns {string}
  */
-function formatValue(value, xpInterval = false) {
+function formatValue(value, stripParens = false) {
   if (value >= 2147e6) return 'Very valuable!';
 
   let formatted;
@@ -19,7 +19,7 @@ function formatValue(value, xpInterval = false) {
     formatted = `(${value})`;
   }
 
-  return xpInterval ? formatted.replace(/[()]/g, '') : formatted;
+  return stripParens ? formatted.replace(/[()]/g, '') : formatted;
 }
 
 export default formatValue;

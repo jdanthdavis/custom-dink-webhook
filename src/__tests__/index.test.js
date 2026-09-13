@@ -180,3 +180,79 @@ describe('worker.fetch', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+describe('worker.scheduled', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  /** @param {*} [db] */
+  function makeEnv(db = { prepare: vi.fn() }) {
+    return {
+      WEEKLY_RECAP_DB: db,
+      PETS_DB: db,
+      RECAP_URL: 'https://discord.example/recap',
+    };
+  }
+
+  /** Collects every promise passed to ctx.waitUntil() so the test can await it. */
+  function makeCtx() {
+    const pending = [];
+    return { pending, waitUntil: (p) => pending.push(p) };
+  }
+
+  it('skips without posting when the event lands on a day other than Monday', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    // 2026-09-13 is a Sunday - simulates the observed Cron Trigger misfire,
+    // where event.cron still reads "0 14 * * 1" despite firing on the wrong day.
+    const event = {
+      cron: '0 14 * * 1',
+      scheduledTime: new Date('2026-09-13T14:00:58Z').getTime(),
+    };
+    const ctx = makeCtx();
+
+    await worker.scheduled(event, makeEnv(), ctx);
+    await Promise.all(ctx.pending);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('proceeds normally when the event actually lands on Monday', async () => {
+    // Generic response shape covers both the Hiscores polls (which read
+    // .json()) and the Discord webhook post (which doesn't).
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ skills: [] }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const db = {
+      prepare: vi.fn().mockReturnValue({
+        all: vi.fn().mockResolvedValue({
+          results: [
+            { playername: 'Swap', total_pets: 5, total_pets_baseline: 3 },
+          ],
+        }),
+        run: vi.fn().mockResolvedValue({ success: true }),
+      }),
+    };
+    const event = {
+      cron: '0 14 * * 1',
+      scheduledTime: new Date('2026-09-14T14:00:00Z').getTime(),
+    };
+    const ctx = makeCtx();
+
+    await worker.scheduled(event, makeEnv(db), ctx);
+    await Promise.all(ctx.pending);
+
+    // The pets section has a real delta, so the recap builds and posts -
+    // the Hiscores poll calls fetch too, so just check the Discord webhook
+    // was one of the calls made, not an exact count.
+    expect(
+      fetchMock.mock.calls.some(
+        ([url]) => url === 'https://discord.example/recap'
+      )
+    ).toBe(true);
+  });
+});

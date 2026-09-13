@@ -143,7 +143,7 @@ CREATE TABLE skill_xp (
 );
 ```
 
-"Levels Gained" and "Total XP Gained" both come from the "Overall" row's own delta rather than summing individual skills, since a player can have a real level/XP in a skill they aren't ranked in yet (that skill's row is filtered out entirely). "Overall" is excluded from both "Skill Most Levelled"/"Top Skill (XP)" comparisons, since it isn't a real skill. An unranked skill (`xp: -1`) is filtered out. Since every row here comes from Hiscores (queried using `theBoys`' uppercase form), display names resolve through the hand-maintained `PLAYER_DISPLAY_NAMES` map in [constants.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/constants.js) rather than a live lookup.
+"Levels Gained" and "Total XP Gained" both come from the "Overall" row's own delta rather than summing individual skills, since a player can have a real level/XP in a skill they aren't ranked in yet (that skill's row is filtered out entirely). "Overall" is excluded from both "Skill Most Levelled"/"Top Skill" comparisons, since it isn't a real skill. An unranked skill (`xp: -1`) is filtered out. Since every row here comes from Hiscores (queried using `theBoys`' uppercase form), display names resolve through the hand-maintained `PLAYER_DISPLAY_NAMES` map in [constants.js](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/constants.js) rather than a live lookup.
 
 ## [deathHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/deathHandler.js)
 

@@ -146,12 +146,11 @@ export async function buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB) {
   );
   if (changes.length === 0) return null;
 
-  // Primarily by XP gained (the more meaningful, continuous metric now that
-  // maxed skills can show up here); ties broken by levels gained.
+  // Primarily by levels gained; ties broken by XP gained.
   const sorted = changes.sort(
     (a, b) =>
-      (b.xpDelta ?? 0) - (a.xpDelta ?? 0) ||
-      (b.levelsDelta ?? 0) - (a.levelsDelta ?? 0)
+      (b.levelsDelta ?? 0) - (a.levelsDelta ?? 0) ||
+      (b.xpDelta ?? 0) - (a.xpDelta ?? 0)
   );
 
   const headers = [
@@ -159,7 +158,7 @@ export async function buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB) {
     'Levels Gained',
     'Skill Most Levelled',
     'Total XP Gained',
-    'Top Skill (XP)',
+    'Top Skill',
   ];
   const tableRows = sorted.map((row) => [
     PLAYER_DISPLAY_NAMES[row.playername.toUpperCase()] ?? row.playername,

@@ -154,7 +154,7 @@ describe('buildLevelsWeeklyChangeSection', () => {
     expect(result).not.toContain('Idle');
   });
 
-  it('sorts by total levels gained descending when XP is tied (both zero)', async () => {
+  it('sorts by total levels gained descending', async () => {
     const WEEKLY_RECAP_DB = makeDb([
       {
         playername: 'SmallGain',
@@ -331,7 +331,7 @@ describe('buildLevelsWeeklyChangeSection', () => {
     expect(result).not.toContain('Overall');
   });
 
-  it('sorts by XP gained descending, even when levels gained favors someone else', async () => {
+  it('sorts by levels gained descending, even when XP gained favors someone else', async () => {
     const WEEKLY_RECAP_DB = makeDb([
       {
         playername: 'GOUT HAVER',
@@ -354,6 +354,33 @@ describe('buildLevelsWeeklyChangeSection', () => {
       {
         playername: 'PIGEON CAM',
         skill_name: 'Attack',
+        xp: 5_000_000,
+        xp_baseline: 1_000_000,
+      },
+    ]);
+
+    const result = await buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    expect(result.indexOf('Gout Haver')).toBeLessThan(
+      result.indexOf('Pigeon Cam')
+    );
+  });
+
+  it('breaks a levels tie by XP gained descending', async () => {
+    const WEEKLY_RECAP_DB = makeDb([
+      {
+        playername: 'GOUT HAVER',
+        skill_name: 'Overall',
+        level: 1010,
+        level_baseline: 1000,
+        xp: 2_000_000,
+        xp_baseline: 1_000_000,
+      },
+      {
+        playername: 'PIGEON CAM',
+        skill_name: 'Overall',
+        level: 1010,
+        level_baseline: 1000,
         xp: 5_000_000,
         xp_baseline: 1_000_000,
       },

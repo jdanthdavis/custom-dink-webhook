@@ -63,7 +63,16 @@ async function recordLoot(
         .run()
     );
   } catch (error) {
-    console.log('recordLoot ', error instanceof Error ? error.message : error);
+    // Both attempts failed - the drop's Discord message already went out,
+    // but loot_totals was never updated. Log a ready-to-run fix so it's a
+    // copy/paste away instead of lost data no one notices.
+    const escapedName = playername.replace(/'/g, "''");
+    console.log(
+      `recordLoot FAILED for "${playername}" after retry - loot_totals was NOT updated. ` +
+        `To fix manually, run: UPDATE loot_totals SET total_value = total_value + ${totalQualifyingValue} WHERE playername = '${escapedName}'; ` +
+        `Dropped drop: ${biggestItem.name} ${formatValue(biggestItem.totalValue)} from ${source} on ${formatDate()}`,
+      error instanceof Error ? error.message : error
+    );
   }
 }
 

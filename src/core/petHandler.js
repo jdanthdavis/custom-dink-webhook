@@ -3,6 +3,8 @@ import {
   formatAsPercentage,
   formatDate,
   getSingleColumn,
+  runD1Write,
+  escapeSqlString,
 } from './helperFunctions';
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
 
@@ -41,26 +43,33 @@ async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
   async function incrementPetCount(playername, petName) {
     const formattedDate = formatDate();
 
-    try {
-      await PETS_DB.prepare(
-        `INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date)
-         VALUES (?1, 1, ?2, ?3)
-         ON CONFLICT(playername) DO UPDATE SET
-           total_pets = total_pets + 1,
-           most_recent_pet_name = COALESCE(?2, most_recent_pet_name),
-           most_recent_pet_date = COALESCE(?3, most_recent_pet_date)`
-      )
-        .bind(playername, petName || null, petName ? formattedDate : null)
-        .run();
-      console.log(
-        `Pet count and recent pet successfully updated for ${playername}`
-      );
-    } catch (error) {
-      console.log(
-        'incrementPetCount ',
-        error instanceof Error ? error.message : error
-      );
-    }
+    await runD1Write(
+      () =>
+        PETS_DB.prepare(
+          `INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date)
+           VALUES (?1, 1, ?2, ?3)
+           ON CONFLICT(playername) DO UPDATE SET
+             total_pets = total_pets + 1,
+             most_recent_pet_name = COALESCE(?2, most_recent_pet_name),
+             most_recent_pet_date = COALESCE(?3, most_recent_pet_date)`
+        )
+          .bind(playername, petName || null, petName ? formattedDate : null)
+          .run(),
+      {
+        label: 'incrementPetCount',
+        buildFixSql: () => {
+          const nameSql = petName ? `'${escapeSqlString(petName)}'` : 'NULL';
+          const dateSql = petName ? `'${formattedDate}'` : 'NULL';
+          return (
+            `INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date) ` +
+            `VALUES ('${escapeSqlString(playername)}', 1, ${nameSql}, ${dateSql}) ` +
+            `ON CONFLICT(playername) DO UPDATE SET total_pets = total_pets + 1, ` +
+            `most_recent_pet_name = COALESCE(${nameSql}, most_recent_pet_name), ` +
+            `most_recent_pet_date = COALESCE(${dateSql}, most_recent_pet_date);`
+          );
+        },
+      }
+    );
   }
 
   return (async () => {

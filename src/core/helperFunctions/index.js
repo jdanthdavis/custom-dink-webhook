@@ -8,3 +8,5 @@ export { default as formatPbTime } from './formatPbTime';
 export { default as formatLeaderboardTable } from './formatLeaderboardTable';
 export { default as getSingleColumn } from './getSingleColumn';
 export { default as retryOnce } from './retryOnce';
+export { default as runD1Write } from './runD1Write';
+export { default as escapeSqlString } from './escapeSqlString';

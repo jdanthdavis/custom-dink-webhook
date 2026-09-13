@@ -189,13 +189,14 @@ describe('collectionLogHandler', () => {
     expect(statement.bind).toHaveBeenCalledWith('Swap', null, null, null);
   });
 
-  it('does not crash when D1 write fails, message still sends', async () => {
+  it('retries once and still records the snapshot after one transient D1 failure', async () => {
     const msgMap = new Map();
+    const run = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('D1 error'))
+      .mockResolvedValueOnce({ success: true });
     const WEEKLY_RECAP_DB = {
-      prepare: vi.fn().mockReturnValue({
-        bind: vi.fn().mockReturnThis(),
-        run: vi.fn().mockRejectedValue(new Error('D1 error')),
-      }),
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
     };
     await collectionLogHandler(
       msgMap,
@@ -209,8 +210,39 @@ describe('collectionLogHandler', () => {
       WEEKLY_RECAP_DB,
       'url'
     );
+    expect(run).toHaveBeenCalledTimes(2);
     expect(firstMessage(msgMap)).toContain(
       'has added a new item to their collection log: **Twisted bow**'
     );
+  });
+
+  it('does not crash and logs a ready-to-run fix when D1 write fails on both attempts', async () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const msgMap = new Map();
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+    await collectionLogHandler(
+      msgMap,
+      'Swap',
+      {
+        itemName: 'Twisted bow',
+        totalEntries: 100,
+        completedEntries: 50,
+        currentRank: 'IRON',
+      },
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain(
+      'has added a new item to their collection log: **Twisted bow**'
+    );
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain(
+      "INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank) VALUES ('Swap', 50, 100, 'IRON')"
+    );
+    consoleSpy.mockRestore();
   });
 });

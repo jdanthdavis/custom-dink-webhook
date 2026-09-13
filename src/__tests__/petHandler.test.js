@@ -71,6 +71,67 @@ describe('petHandler', () => {
     expect(msg).toContain('would have been followed by **Baby mole**');
   });
 
+  it('retries once and still records the pet after one transient D1 failure', async () => {
+    const run = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('D1 error'))
+      .mockResolvedValueOnce({ success: true });
+    // A failed attempt costs an extra prepare() call (the retry), so branch
+    // on the SQL text instead of call order.
+    const PETS_DB = {
+      prepare: vi
+        .fn()
+        .mockImplementation((sql) =>
+          sql.includes('INSERT')
+            ? { bind: vi.fn().mockReturnThis(), run }
+            : makeStatement({ first: { total_pets: 5 } })
+        ),
+    };
+
+    const msgMap = new Map();
+    await petHandler(
+      msgMap,
+      'Swap',
+      { milestone: '500 kills', duplicate: false, petName: 'Baby mole' },
+      PETS_DB,
+      'url'
+    );
+
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain(
+      "they're being followed by **Baby mole**"
+    );
+  });
+
+  it('logs a ready-to-run fix when the pet write fails on both attempts', async () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const PETS_DB = {
+      prepare: vi
+        .fn()
+        .mockImplementation((sql) =>
+          sql.includes('INSERT')
+            ? { bind: vi.fn().mockReturnThis(), run }
+            : makeStatement({ first: { total_pets: 5 } })
+        ),
+    };
+
+    await petHandler(
+      new Map(),
+      'Swap',
+      { milestone: '500 kills', duplicate: false, petName: 'Baby mole' },
+      PETS_DB,
+      'url'
+    );
+
+    expect(run).toHaveBeenCalledTimes(2);
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain(
+      "INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date) VALUES ('Swap', 1, 'Baby mole'"
+    );
+    consoleSpy.mockRestore();
+  });
+
   it('falls back gracefully when the D1 query fails', async () => {
     const PETS_DB = {
       prepare: vi.fn().mockReturnValue({

@@ -2,6 +2,10 @@
 
 A custom webhook that takes in requests from Dink and constructs custom messages that are dependent on checks against the data from Dink.
 
+## D1 writes
+
+Every handler's D1 write for a live Dink event (pets, loot, deaths, collection log, TCG, crab KC) goes through [`runD1Write`](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/helperFunctions/runD1Write.js), which retries once on failure and, if the retry also fails, logs a ready-to-run fix-it SQL statement instead of a bare error - so a lost write is a copy/paste away from fixed rather than silently lost data. The Discord notification for the event still sends either way; only the D1 write is retried. Recap-side reads and baseline resets (`computeAndResetDeltas`, `aggregatePerSkillDeltas`) aren't covered by this - a failure there just means that section is skipped for one run, self-correcting the next time the recap builds.
+
 ## [killCountHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/killCountHandler.js)
 
 Checks if a player's kill count for a boss is a notable milestone (every 100 kills by default, or a boss-specific interval) and sends a notification if so. Also invoked indirectly from [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) and [delveHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/delveHandler.js), which parse kill counts from chat text.

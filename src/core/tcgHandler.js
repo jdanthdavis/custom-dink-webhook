@@ -1,5 +1,5 @@
 import { EXTERNAL_PLUGIN } from '../constants';
-import { formatDate } from './helperFunctions';
+import { formatDate, runD1Write, escapeSqlString } from './helperFunctions';
 
 const ACCEPTED_RARITIES = ['Mythic', 'Godly', 'Legendary'];
 const FOIL_MILESTONE_INTERVAL = 50;
@@ -214,38 +214,57 @@ async function recordTcgProgress(
   content,
   cardName
 ) {
-  try {
-    await WEEKLY_RECAP_DB.prepare(
-      `INSERT INTO tcg_progress (playername, collection_score, unique_cards_owned, unique_cards_total, foil_cards_owned, foil_cards_total, opened_packs, last_card_name, last_updated)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
-       ON CONFLICT(playername) DO UPDATE SET
-         collection_score = COALESCE(?2, collection_score),
-         unique_cards_owned = COALESCE(?3, unique_cards_owned),
-         unique_cards_total = COALESCE(?4, unique_cards_total),
-         foil_cards_owned = COALESCE(?5, foil_cards_owned),
-         foil_cards_total = COALESCE(?6, foil_cards_total),
-         opened_packs = COALESCE(?7, opened_packs),
-         last_card_name = ?8,
-         last_updated = ?9`
-    )
-      .bind(
-        playername,
-        extractCollectionScoreValue(content),
-        extractUniqueCardOwnedCount(content),
-        extractUniqueCardsTotal(content),
-        extractTotalFoilCards(content),
-        extractFoilCardsTotal(content),
-        extractOpenedPacksValue(content),
-        cardName,
-        formatDate()
+  const collectionScore = extractCollectionScoreValue(content);
+  const uniqueCardsOwned = extractUniqueCardOwnedCount(content);
+  const uniqueCardsTotal = extractUniqueCardsTotal(content);
+  const foilCardsOwned = extractTotalFoilCards(content);
+  const foilCardsTotal = extractFoilCardsTotal(content);
+  const openedPacks = extractOpenedPacksValue(content);
+  const lastUpdated = formatDate();
+
+  await runD1Write(
+    () =>
+      WEEKLY_RECAP_DB.prepare(
+        `INSERT INTO tcg_progress (playername, collection_score, unique_cards_owned, unique_cards_total, foil_cards_owned, foil_cards_total, opened_packs, last_card_name, last_updated)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+         ON CONFLICT(playername) DO UPDATE SET
+           collection_score = COALESCE(?2, collection_score),
+           unique_cards_owned = COALESCE(?3, unique_cards_owned),
+           unique_cards_total = COALESCE(?4, unique_cards_total),
+           foil_cards_owned = COALESCE(?5, foil_cards_owned),
+           foil_cards_total = COALESCE(?6, foil_cards_total),
+           opened_packs = COALESCE(?7, opened_packs),
+           last_card_name = ?8,
+           last_updated = ?9`
       )
-      .run();
-  } catch (error) {
-    console.log(
-      'recordTcgProgress ',
-      error instanceof Error ? error.message : error
-    );
-  }
+        .bind(
+          playername,
+          collectionScore,
+          uniqueCardsOwned,
+          uniqueCardsTotal,
+          foilCardsOwned,
+          foilCardsTotal,
+          openedPacks,
+          cardName,
+          lastUpdated
+        )
+        .run(),
+    {
+      label: 'recordTcgProgress',
+      buildFixSql: () => {
+        const num = (v) => v ?? 'NULL';
+        const str = (v) => (v ? `'${escapeSqlString(v)}'` : 'NULL');
+        return (
+          `INSERT INTO tcg_progress (playername, collection_score, unique_cards_owned, unique_cards_total, foil_cards_owned, foil_cards_total, opened_packs, last_card_name, last_updated) ` +
+          `VALUES ('${escapeSqlString(playername)}', ${num(collectionScore)}, ${num(uniqueCardsOwned)}, ${num(uniqueCardsTotal)}, ${num(foilCardsOwned)}, ${num(foilCardsTotal)}, ${num(openedPacks)}, ${str(cardName)}, '${lastUpdated}') ` +
+          `ON CONFLICT(playername) DO UPDATE SET collection_score = COALESCE(${num(collectionScore)}, collection_score), ` +
+          `unique_cards_owned = COALESCE(${num(uniqueCardsOwned)}, unique_cards_owned), unique_cards_total = COALESCE(${num(uniqueCardsTotal)}, unique_cards_total), ` +
+          `foil_cards_owned = COALESCE(${num(foilCardsOwned)}, foil_cards_owned), foil_cards_total = COALESCE(${num(foilCardsTotal)}, foil_cards_total), ` +
+          `opened_packs = COALESCE(${num(openedPacks)}, opened_packs), last_card_name = ${str(cardName)}, last_updated = '${lastUpdated}';`
+        );
+      },
+    }
+  );
 }
 
 /**

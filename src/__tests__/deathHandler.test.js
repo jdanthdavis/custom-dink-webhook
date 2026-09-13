@@ -128,13 +128,14 @@ describe('deathHandler', () => {
     expect(statement.bind).toHaveBeenCalledWith('Swap', 5_000_000);
   });
 
-  it('does not crash when D1 write fails, message still sends', async () => {
+  it('retries once and still records the death after one transient D1 failure', async () => {
     const msgMap = new Map();
+    const run = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('D1 error'))
+      .mockResolvedValueOnce({ success: true });
     const WEEKLY_RECAP_DB = {
-      prepare: vi.fn().mockReturnValue({
-        bind: vi.fn().mockReturnThis(),
-        run: vi.fn().mockRejectedValue(new Error('D1 error')),
-      }),
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
     };
     await deathHandler(
       msgMap,
@@ -148,6 +149,36 @@ describe('deathHandler', () => {
       WEEKLY_RECAP_DB,
       'url'
     );
+    expect(run).toHaveBeenCalledTimes(2);
     expect(firstMessage(msgMap)).toContain('**Swap** has died');
+  });
+
+  it('does not crash and logs a ready-to-run fix when D1 write fails on both attempts', async () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const msgMap = new Map();
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+    await deathHandler(
+      msgMap,
+      'Swap',
+      {
+        isPvp: false,
+        valueLost: 50000,
+        keptItems: [],
+        lostItems: [],
+        location: { regionId: 1234 },
+      },
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain('**Swap** has died');
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain(
+      "UPDATE deaths SET death_count = death_count + 1, total_value_lost = total_value_lost + 50000 WHERE playername = 'Swap';"
+    );
+    consoleSpy.mockRestore();
   });
 });

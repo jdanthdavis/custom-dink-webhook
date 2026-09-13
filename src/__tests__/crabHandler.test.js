@@ -35,4 +35,51 @@ describe('crabHandler', () => {
     );
     expect(firstMessage(msgMap)).toContain('Gemstone Crab');
   });
+
+  it('retries once and still records the kill after one transient D1 failure', async () => {
+    const run = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('D1 error'))
+      .mockResolvedValueOnce({ success: true });
+    // A failed attempt costs an extra prepare() call (the retry), so branch
+    // on the SQL text instead of call order.
+    const CRAB_DB = {
+      prepare: vi
+        .fn()
+        .mockImplementation((sql) =>
+          sql.includes('INSERT')
+            ? { bind: vi.fn().mockReturnThis(), run }
+            : makeStatement({ first: { count: 10 } })
+        ),
+    };
+
+    const msgMap = new Map();
+    await crabHandler(msgMap, 'Swap', 'url', CRAB_DB);
+
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain('Gemstone Crab');
+  });
+
+  it('logs a ready-to-run fix when the crab write fails on both attempts', async () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const CRAB_DB = {
+      prepare: vi
+        .fn()
+        .mockImplementation((sql) =>
+          sql.includes('INSERT')
+            ? { bind: vi.fn().mockReturnThis(), run }
+            : makeStatement({ first: { count: 10 } })
+        ),
+    };
+
+    await crabHandler(new Map(), 'Swap', 'url', CRAB_DB);
+
+    expect(run).toHaveBeenCalledTimes(2);
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain(
+      "INSERT INTO crab_kc (playername, count) VALUES ('Swap', 1) ON CONFLICT(playername) DO UPDATE SET count = count + 1;"
+    );
+    consoleSpy.mockRestore();
+  });
 });

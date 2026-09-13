@@ -236,7 +236,7 @@ describe('lootHandler', () => {
     expect(logMessage).toContain(
       "UPDATE loot_totals SET total_value = total_value + 1500000 WHERE playername = 'Swap';"
     );
-    expect(logMessage).toContain('Dropped drop: Whip (1.50M) from Man on');
+    expect(logMessage).toContain('(dropped drop: Whip (1.50M) from Man on');
     consoleSpy.mockRestore();
   });
 

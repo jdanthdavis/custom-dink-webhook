@@ -4,7 +4,6 @@ import {
   formatDate,
   getSingleColumn,
   runD1Write,
-  escapeSqlString,
 } from './helperFunctions';
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
 
@@ -43,33 +42,16 @@ async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
   async function incrementPetCount(playername, petName) {
     const formattedDate = formatDate();
 
-    await runD1Write(
-      () =>
-        PETS_DB.prepare(
-          `INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date)
-           VALUES (?1, 1, ?2, ?3)
-           ON CONFLICT(playername) DO UPDATE SET
-             total_pets = total_pets + 1,
-             most_recent_pet_name = COALESCE(?2, most_recent_pet_name),
-             most_recent_pet_date = COALESCE(?3, most_recent_pet_date)`
-        )
-          .bind(playername, petName || null, petName ? formattedDate : null)
-          .run(),
-      {
-        label: 'incrementPetCount',
-        buildFixSql: () => {
-          const nameSql = petName ? `'${escapeSqlString(petName)}'` : 'NULL';
-          const dateSql = petName ? `'${formattedDate}'` : 'NULL';
-          return (
-            `INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date) ` +
-            `VALUES ('${escapeSqlString(playername)}', 1, ${nameSql}, ${dateSql}) ` +
-            `ON CONFLICT(playername) DO UPDATE SET total_pets = total_pets + 1, ` +
-            `most_recent_pet_name = COALESCE(${nameSql}, most_recent_pet_name), ` +
-            `most_recent_pet_date = COALESCE(${dateSql}, most_recent_pet_date);`
-          );
-        },
-      }
-    );
+    await runD1Write(PETS_DB, {
+      label: 'incrementPetCount',
+      sql: `INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date)
+            VALUES (?1, 1, ?2, ?3)
+            ON CONFLICT(playername) DO UPDATE SET
+              total_pets = total_pets + 1,
+              most_recent_pet_name = COALESCE(?2, most_recent_pet_name),
+              most_recent_pet_date = COALESCE(?3, most_recent_pet_date)`,
+      values: [playername, petName || null, petName ? formattedDate : null],
+    });
   }
 
   return (async () => {

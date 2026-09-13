@@ -176,9 +176,9 @@ describe('deathHandler', () => {
     expect(run).toHaveBeenCalledTimes(2);
     expect(firstMessage(msgMap)).toContain('**Swap** has died');
     const [logMessage] = consoleSpy.mock.calls[0];
-    expect(logMessage).toContain(
-      "UPDATE deaths SET death_count = death_count + 1, total_value_lost = total_value_lost + 50000 WHERE playername = 'Swap';"
-    );
+    expect(logMessage).toContain('recordDeath FAILED after retry');
+    expect(logMessage).toContain("VALUES ('Swap', 1, 50000)");
+    expect(logMessage).toContain('total_value_lost = total_value_lost + 50000');
     consoleSpy.mockRestore();
   });
 });

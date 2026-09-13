@@ -240,9 +240,8 @@ describe('collectionLogHandler', () => {
       'has added a new item to their collection log: **Twisted bow**'
     );
     const [logMessage] = consoleSpy.mock.calls[0];
-    expect(logMessage).toContain(
-      "INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank) VALUES ('Swap', 50, 100, 'IRON')"
-    );
+    expect(logMessage).toContain('recordCollectionLog FAILED after retry');
+    expect(logMessage).toContain("VALUES ('Swap', 50, 100, 'IRON')");
     consoleSpy.mockRestore();
   });
 });

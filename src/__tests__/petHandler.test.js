@@ -126,9 +126,8 @@ describe('petHandler', () => {
 
     expect(run).toHaveBeenCalledTimes(2);
     const [logMessage] = consoleSpy.mock.calls[0];
-    expect(logMessage).toContain(
-      "INSERT INTO pets (playername, total_pets, most_recent_pet_name, most_recent_pet_date) VALUES ('Swap', 1, 'Baby mole'"
-    );
+    expect(logMessage).toContain('incrementPetCount FAILED after retry');
+    expect(logMessage).toContain("VALUES ('Swap', 1, 'Baby mole'");
     consoleSpy.mockRestore();
   });
 

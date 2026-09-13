@@ -4,7 +4,6 @@ import {
   formatLists,
   formatDate,
   runD1Write,
-  escapeSqlString,
 } from './helperFunctions';
 import { LOOT } from '../constants';
 
@@ -33,42 +32,33 @@ async function recordLoot(
     item.totalValue > max.totalValue ? item : max
   );
 
-  await runD1Write(
-    () =>
-      WEEKLY_RECAP_DB.prepare(
-        `INSERT INTO loot_totals (playername, total_value, last_item_name, last_item_value, last_source, last_drop_date, weekly_top_item_name, weekly_top_item_value)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?3, ?4)
-         ON CONFLICT(playername) DO UPDATE SET
-           total_value = total_value + ?2,
-           last_item_name = ?3,
-           last_item_value = ?4,
-           last_source = ?5,
-           last_drop_date = ?6,
-           weekly_top_item_name = CASE
-             WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?3
-             ELSE weekly_top_item_name
-           END,
-           weekly_top_item_value = CASE
-             WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?4
-             ELSE weekly_top_item_value
-           END`
-      )
-        .bind(
-          playername,
-          totalQualifyingValue,
-          biggestItem.name,
-          biggestItem.totalValue,
-          source,
-          formatDate()
-        )
-        .run(),
-    {
-      label: 'recordLoot',
-      buildFixSql: () =>
-        `UPDATE loot_totals SET total_value = total_value + ${totalQualifyingValue} WHERE playername = '${escapeSqlString(playername)}'; ` +
-        `(dropped drop: ${biggestItem.name} ${formatValue(biggestItem.totalValue)} from ${source} on ${formatDate()})`,
-    }
-  );
+  await runD1Write(WEEKLY_RECAP_DB, {
+    label: 'recordLoot',
+    sql: `INSERT INTO loot_totals (playername, total_value, last_item_name, last_item_value, last_source, last_drop_date, weekly_top_item_name, weekly_top_item_value)
+          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?3, ?4)
+          ON CONFLICT(playername) DO UPDATE SET
+            total_value = total_value + ?2,
+            last_item_name = ?3,
+            last_item_value = ?4,
+            last_source = ?5,
+            last_drop_date = ?6,
+            weekly_top_item_name = CASE
+              WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?3
+              ELSE weekly_top_item_name
+            END,
+            weekly_top_item_value = CASE
+              WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?4
+              ELSE weekly_top_item_value
+            END`,
+    values: [
+      playername,
+      totalQualifyingValue,
+      biggestItem.name,
+      biggestItem.totalValue,
+      source,
+      formatDate(),
+    ],
+  });
 }
 
 /**

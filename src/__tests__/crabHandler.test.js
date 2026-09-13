@@ -77,9 +77,8 @@ describe('crabHandler', () => {
 
     expect(run).toHaveBeenCalledTimes(2);
     const [logMessage] = consoleSpy.mock.calls[0];
-    expect(logMessage).toContain(
-      "INSERT INTO crab_kc (playername, count) VALUES ('Swap', 1) ON CONFLICT(playername) DO UPDATE SET count = count + 1;"
-    );
+    expect(logMessage).toContain('incrementCrabKc FAILED after retry');
+    expect(logMessage).toContain("VALUES ('Swap', 1)");
     consoleSpy.mockRestore();
   });
 });

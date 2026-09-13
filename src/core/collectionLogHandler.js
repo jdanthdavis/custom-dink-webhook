@@ -2,7 +2,6 @@ import {
   customBossNames,
   formatAsPercentage,
   runD1Write,
-  escapeSqlString,
 } from './helperFunctions';
 import { RANK_MAP, COLLECTION } from '../constants';
 
@@ -40,40 +39,21 @@ async function recordCollectionLog(
   completedEntries,
   currentRank
 ) {
-  await runD1Write(
-    () =>
-      WEEKLY_RECAP_DB.prepare(
-        `INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank)
-         VALUES (?1, ?2, ?3, ?4)
-         ON CONFLICT(playername) DO UPDATE SET
-           completed_entries = COALESCE(?2, completed_entries),
-           total_entries = COALESCE(?3, total_entries),
-           current_rank = COALESCE(?4, current_rank)`
-      )
-        .bind(
-          playername,
-          completedEntries ?? null,
-          totalEntries ?? null,
-          currentRank ?? null
-        )
-        .run(),
-    {
-      label: 'recordCollectionLog',
-      buildFixSql: () => {
-        const completedSql = completedEntries ?? 'NULL';
-        const totalSql = totalEntries ?? 'NULL';
-        const rankSql = currentRank
-          ? `'${escapeSqlString(currentRank)}'`
-          : 'NULL';
-        return (
-          `INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank) ` +
-          `VALUES ('${escapeSqlString(playername)}', ${completedSql}, ${totalSql}, ${rankSql}) ` +
-          `ON CONFLICT(playername) DO UPDATE SET completed_entries = COALESCE(${completedSql}, completed_entries), ` +
-          `total_entries = COALESCE(${totalSql}, total_entries), current_rank = COALESCE(${rankSql}, current_rank);`
-        );
-      },
-    }
-  );
+  await runD1Write(WEEKLY_RECAP_DB, {
+    label: 'recordCollectionLog',
+    sql: `INSERT INTO collection_log (playername, completed_entries, total_entries, current_rank)
+          VALUES (?1, ?2, ?3, ?4)
+          ON CONFLICT(playername) DO UPDATE SET
+            completed_entries = COALESCE(?2, completed_entries),
+            total_entries = COALESCE(?3, total_entries),
+            current_rank = COALESCE(?4, current_rank)`,
+    values: [
+      playername,
+      completedEntries ?? null,
+      totalEntries ?? null,
+      currentRank ?? null,
+    ],
+  });
 }
 
 /**

@@ -233,10 +233,11 @@ describe('lootHandler', () => {
     );
 
     const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain('recordLoot FAILED after retry');
     expect(logMessage).toContain(
-      "UPDATE loot_totals SET total_value = total_value + 1500000 WHERE playername = 'Swap';"
+      "VALUES ('Swap', 1500000, 'Whip', 1500000, 'Man'"
     );
-    expect(logMessage).toContain('(dropped drop: Whip (1.50M) from Man on');
+    expect(logMessage).toContain('total_value = total_value + 1500000');
     consoleSpy.mockRestore();
   });
 
@@ -258,7 +259,7 @@ describe('lootHandler', () => {
     );
 
     const [logMessage] = consoleSpy.mock.calls[0];
-    expect(logMessage).toContain("playername = 'O''Brien';");
+    expect(logMessage).toContain("VALUES ('O''Brien'");
     consoleSpy.mockRestore();
   });
 });

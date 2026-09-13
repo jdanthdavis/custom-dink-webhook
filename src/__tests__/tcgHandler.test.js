@@ -279,8 +279,9 @@ describe('tcgHandler', () => {
       '**Swap** has pulled a **Legendary Zulrah**'
     );
     const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain('recordTcgProgress FAILED after retry');
     expect(logMessage).toContain(
-      "INSERT INTO tcg_progress (playername, collection_score, unique_cards_owned, unique_cards_total, foil_cards_owned, foil_cards_total, opened_packs, last_card_name, last_updated) VALUES ('Swap', NULL, 320, 500, NULL, NULL, 150, 'Zulrah'"
+      "VALUES ('Swap', NULL, 320, 500, NULL, NULL, 150, 'Zulrah'"
     );
     consoleSpy.mockRestore();
   });

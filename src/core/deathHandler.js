@@ -1,9 +1,4 @@
-import {
-  formatValue,
-  formatLists,
-  runD1Write,
-  escapeSqlString,
-} from './helperFunctions';
+import { formatValue, formatLists, runD1Write } from './helperFunctions';
 import { DEATH_EMOJIS, DEATH } from '../constants';
 
 const FOOD_ARR = [
@@ -56,23 +51,15 @@ const GRUMBLER_REGION = 11330;
  * @param {number} valueLost
  */
 async function recordDeath(WEEKLY_RECAP_DB, playername, valueLost) {
-  await runD1Write(
-    () =>
-      WEEKLY_RECAP_DB.prepare(
-        `INSERT INTO deaths (playername, death_count, total_value_lost)
-         VALUES (?1, 1, ?2)
-         ON CONFLICT(playername) DO UPDATE SET
-           death_count = death_count + 1,
-           total_value_lost = total_value_lost + ?2`
-      )
-        .bind(playername, valueLost)
-        .run(),
-    {
-      label: 'recordDeath',
-      buildFixSql: () =>
-        `UPDATE deaths SET death_count = death_count + 1, total_value_lost = total_value_lost + ${valueLost} WHERE playername = '${escapeSqlString(playername)}';`,
-    }
-  );
+  await runD1Write(WEEKLY_RECAP_DB, {
+    label: 'recordDeath',
+    sql: `INSERT INTO deaths (playername, death_count, total_value_lost)
+          VALUES (?1, 1, ?2)
+          ON CONFLICT(playername) DO UPDATE SET
+            death_count = death_count + 1,
+            total_value_lost = total_value_lost + ?2`,
+    values: [playername, valueLost],
+  });
 }
 
 /**

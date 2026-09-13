@@ -26,7 +26,7 @@ describe('clueScrollHandler', () => {
     expect(msg).toContain('**5 Hard** clues!');
     expect(msg).toContain('Total Value: **1.50M**');
     expect(msg).toContain('- 1x Rune platebody **(1.50M)**');
-    expect(msg).toContain('- 1000x Coins **(1K)**');
+    expect(msg).toContain('- 1,000x Coins **(1K)**');
   });
 
   it('pluralizes "clue" only when more than one is completed', () => {

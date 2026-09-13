@@ -68,17 +68,24 @@ export default {
 
   /**
    * Posts the weekly recap on the configured Cron Trigger schedule.
+   *
+   * Guards against a misfire.
    * @param {*} event
    * @param {*} env
    * @param {*} ctx
    */
   async scheduled(event, env, ctx) {
+    const scheduledDate = new Date(event.scheduledTime);
+    if (scheduledDate.getUTCDay() !== 1) {
+      console.log(
+        `scheduled() fired on the wrong day (${scheduledDate.toISOString()}, cron: ${event.cron}) - skipping`
+      );
+      return;
+    }
+
     ctx.waitUntil(
       (async () => {
-        const recap = await buildWeeklyRecap(
-          env,
-          new Date(event.scheduledTime)
-        );
+        const recap = await buildWeeklyRecap(env, scheduledDate);
         if (recap) {
           await sendDiscordMessage(env.RECAP_URL, recap);
         }

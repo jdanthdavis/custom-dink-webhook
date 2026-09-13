@@ -171,4 +171,47 @@ describe('lootHandler', () => {
       expect.any(String)
     );
   });
+
+  it('retries once and still records the drop after one transient D1 failure', async () => {
+    const msgMap = new Map();
+    const run = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('D1 error'))
+      .mockResolvedValueOnce({ success: true });
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+
+    await lootHandler(
+      msgMap,
+      [{ name: 'Whip', quantity: 1, priceEach: 1_500_000 }],
+      'Swap',
+      'Man',
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain('has received **1x Whip');
+  });
+
+  it('does not crash when D1 write fails on both the original attempt and the retry', async () => {
+    const msgMap = new Map();
+    const run = vi.fn().mockRejectedValue(new Error('D1 error'));
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue({ bind: vi.fn().mockReturnThis(), run }),
+    };
+
+    await lootHandler(
+      msgMap,
+      [{ name: 'Whip', quantity: 1, priceEach: 1_500_000 }],
+      'Swap',
+      'Man',
+      WEEKLY_RECAP_DB,
+      'url'
+    );
+
+    expect(run).toHaveBeenCalledTimes(2);
+    expect(firstMessage(msgMap)).toContain('has received **1x Whip');
+  });
 });

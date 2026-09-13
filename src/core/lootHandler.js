@@ -3,6 +3,7 @@ import {
   formatValue,
   formatLists,
   formatDate,
+  retryOnce,
 } from './helperFunctions';
 import { LOOT } from '../constants';
 
@@ -10,7 +11,8 @@ const LOOT_THRESHOLD = 1_000_000;
 
 /**
  * Upserts a player's lifetime loot total and weekly-top drop (see lootRecap.js
- * for the weekly reset).
+ * for the weekly reset). Retries once on a transient D1 failure - the write
+ * is a single atomic UPSERT, so a retry can't double-count a drop.
  * @param {*} WEEKLY_RECAP_DB
  * @param {string} playername
  * @param {Array<{ name: string, quantity: number, priceEach: number, totalValue: number }>} qualifyingItems
@@ -31,33 +33,35 @@ async function recordLoot(
   );
 
   try {
-    await WEEKLY_RECAP_DB.prepare(
-      `INSERT INTO loot_totals (playername, total_value, last_item_name, last_item_value, last_source, last_drop_date, weekly_top_item_name, weekly_top_item_value)
-       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?3, ?4)
-       ON CONFLICT(playername) DO UPDATE SET
-         total_value = total_value + ?2,
-         last_item_name = ?3,
-         last_item_value = ?4,
-         last_source = ?5,
-         last_drop_date = ?6,
-         weekly_top_item_name = CASE
-           WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?3
-           ELSE weekly_top_item_name
-         END,
-         weekly_top_item_value = CASE
-           WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?4
-           ELSE weekly_top_item_value
-         END`
-    )
-      .bind(
-        playername,
-        totalQualifyingValue,
-        biggestItem.name,
-        biggestItem.totalValue,
-        source,
-        formatDate()
+    await retryOnce(() =>
+      WEEKLY_RECAP_DB.prepare(
+        `INSERT INTO loot_totals (playername, total_value, last_item_name, last_item_value, last_source, last_drop_date, weekly_top_item_name, weekly_top_item_value)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?3, ?4)
+         ON CONFLICT(playername) DO UPDATE SET
+           total_value = total_value + ?2,
+           last_item_name = ?3,
+           last_item_value = ?4,
+           last_source = ?5,
+           last_drop_date = ?6,
+           weekly_top_item_name = CASE
+             WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?3
+             ELSE weekly_top_item_name
+           END,
+           weekly_top_item_value = CASE
+             WHEN weekly_top_item_value IS NULL OR ?4 > weekly_top_item_value THEN ?4
+             ELSE weekly_top_item_value
+           END`
       )
-      .run();
+        .bind(
+          playername,
+          totalQualifyingValue,
+          biggestItem.name,
+          biggestItem.totalValue,
+          source,
+          formatDate()
+        )
+        .run()
+    );
   } catch (error) {
     console.log('recordLoot ', error instanceof Error ? error.message : error);
   }

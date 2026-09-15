@@ -45,6 +45,14 @@ const FOOD_NAMES = [
   'Silk dressing',
   'Cooked bream',
   'Cooked moss lizard',
+  'Marlin',
+  'Bluefin',
+  'Halibut',
+  'Yellowfin',
+  'Haddock',
+  'Giant krill',
+  'Tuna',
+  'Potato with cheese',
 ];
 
 const FOOD_LOOKUP = new Map(

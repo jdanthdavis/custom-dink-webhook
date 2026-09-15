@@ -1,7 +1,15 @@
 import { formatValue, formatLists, runD1Write } from './helperFunctions';
-import { DEATH_EMOJIS, DEATH } from '../constants';
+import { DEATH } from '../constants';
 
-const FOOD_ARR = [
+const DEATH_EMOJIS = [
+  '<:giggle:1024050755017130016>',
+  '<:bozo:1364661207960780800>',
+  '<a:itswill_bozo:1365315318318366770>',
+  '<:sludge:1387592695341387938> ',
+  '<:pick_ass:1535385109685870703> ',
+];
+
+const FOOD_NAMES = [
   'Shark',
   'Anglerfish',
   'Peach',
@@ -29,6 +37,7 @@ const FOOD_ARR = [
   'Blighted anglerfish',
   'Crystal paddlefish',
   'Corrupted paddlefish',
+  'Paddlefish',
   "Xeric's aid",
   'Nectar',
   'Ambrosia',
@@ -38,7 +47,25 @@ const FOOD_ARR = [
   'Cooked moss lizard',
 ];
 
-const INVALID_FOOD_ARR = ['Shark lure'];
+const FOOD_LOOKUP = new Map(
+  FOOD_NAMES.map((name) => [name.toLowerCase(), name])
+);
+
+// Potion-style doses (e.g. "Saradomin brew(4)") still need to match their
+// base name; stripping the suffix before an exact match handles that without
+// a startsWith scan, so unrelated items like "Shark lure" can't false-match
+// "Shark" and don't need an exclusion list.
+const DOSE_SUFFIX = /\(\d\)$/;
+
+/**
+ * Matches an inventory item name to its canonical food name, if any.
+ * @param {string} itemName
+ * @returns {string | undefined}
+ */
+function matchFood(itemName) {
+  const key = itemName.toLowerCase().replace(DOSE_SUFFIX, '');
+  return FOOD_LOOKUP.get(key);
+}
 
 const GRUMBLER_REGION = 11330;
 
@@ -92,11 +119,7 @@ async function deathHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
   /** @type {Record<string, number>} */
   const emptyFoodCount = {};
   const countFood = combinedFoods.reduce((acc, item) => {
-    const matched = FOOD_ARR.find(
-      (kw) =>
-        item.name.toLowerCase().startsWith(kw.toLowerCase()) &&
-        !INVALID_FOOD_ARR.includes(item.name)
-    );
+    const matched = matchFood(item.name);
     if (matched) {
       acc[matched] = (acc[matched] || 0) + item.quantity;
     }

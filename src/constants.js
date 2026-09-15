@@ -104,13 +104,6 @@ export const RANK_MAP = {
 
 // deaths
 export const DEATH = 'DEATH';
-export const DEATH_EMOJIS = [
-  '<:giggle:1024050755017130016>',
-  '<:bozo:1364661207960780800>',
-  '<a:itswill_bozo:1365315318318366770>',
-  '<:sludge:1387592695341387938> ',
-  '<:pick_ass:1535385109685870703> ',
-];
 
 // chat
 export const PERSONAL_BEST = 'PERSONAL_BEST';

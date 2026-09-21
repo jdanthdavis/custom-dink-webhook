@@ -67,21 +67,27 @@ export default {
   },
 
   /**
-   * Posts the weekly recap on the configured Cron Trigger schedule.
-   *
-   * Guards against a misfire.
+   * Posts the weekly recap once a week, on the hourly Cron Trigger tick that
+   * lands at 9am America/New_York on a Monday (see wrangler.toml - the trigger
+   * itself just fires hourly since Cron Triggers have no DST awareness).
    * @param {*} event
    * @param {*} env
    * @param {*} ctx
    */
   async scheduled(event, env, ctx) {
     const scheduledDate = new Date(event.scheduledTime);
-    if (scheduledDate.getUTCDay() !== 1) {
-      console.log(
-        `scheduled() fired on the wrong day (${scheduledDate.toISOString()}, cron: ${event.cron}) - skipping`
-      );
-      return;
-    }
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/New_York',
+      weekday: 'short',
+      hour: 'numeric',
+      hour12: false,
+    }).formatToParts(scheduledDate);
+    const weekday = parts.find((p) => p.type === 'weekday').value;
+    const hour = Number(parts.find((p) => p.type === 'hour').value);
+
+    // Almost every hourly tick lands here and returns immediately - only the
+    // one Monday 9am America/New_York tick per week proceeds.
+    if (weekday !== 'Mon' || hour !== 9) return;
 
     ctx.waitUntil(
       (async () => {

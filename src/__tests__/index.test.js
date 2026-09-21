@@ -201,14 +201,13 @@ describe('worker.scheduled', () => {
     return { pending, waitUntil: (p) => pending.push(p) };
   }
 
-  it('skips without posting when the event lands on a day other than Monday', async () => {
+  it('skips without posting on the hourly ticks that land on the wrong weekday', async () => {
     const fetchMock = vi.fn();
     vi.stubGlobal('fetch', fetchMock);
-    // 2026-09-13 is a Sunday - simulates the observed Cron Trigger misfire,
-    // where event.cron still reads "0 14 * * 1" despite firing on the wrong day.
+    // 2026-09-13 09:00 America/New_York is a Sunday.
     const event = {
-      cron: '0 14 * * 1',
-      scheduledTime: new Date('2026-09-13T14:00:58Z').getTime(),
+      cron: '0 * * * *',
+      scheduledTime: new Date('2026-09-13T13:00:00Z').getTime(),
     };
     const ctx = makeCtx();
 
@@ -218,7 +217,24 @@ describe('worker.scheduled', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it('proceeds normally when the event actually lands on Monday', async () => {
+  it('skips without posting on the hourly ticks that land on the right day but wrong hour', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    // 2026-09-14 10:00 America/New_York (EDT) - a Monday, but not 9am.
+    const event = {
+      cron: '0 * * * *',
+      scheduledTime: new Date('2026-09-14T14:00:00Z').getTime(),
+    };
+    const ctx = makeCtx();
+
+    await worker.scheduled(event, makeEnv(), ctx);
+    await Promise.all(ctx.pending);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  /** @param {string} isoUtc */
+  async function expectRecapPosted(isoUtc) {
     // Generic response shape covers both the Hiscores polls (which read
     // .json()) and the Discord webhook post (which doesn't).
     const fetchMock = vi.fn().mockResolvedValue({
@@ -238,8 +254,8 @@ describe('worker.scheduled', () => {
       }),
     };
     const event = {
-      cron: '0 14 * * 1',
-      scheduledTime: new Date('2026-09-14T14:00:00Z').getTime(),
+      cron: '0 * * * *',
+      scheduledTime: new Date(isoUtc).getTime(),
     };
     const ctx = makeCtx();
 
@@ -254,5 +270,15 @@ describe('worker.scheduled', () => {
         ([url]) => url === 'https://discord.example/recap'
       )
     ).toBe(true);
+  }
+
+  it('posts when the tick lands at 9am America/New_York during EDT', async () => {
+    // 2026-09-14 is EDT (UTC-4), so 13:00 UTC is 9am Eastern.
+    await expectRecapPosted('2026-09-14T13:00:00Z');
+  });
+
+  it('posts when the tick lands at 9am America/New_York during EST', async () => {
+    // 2026-01-12 is EST (UTC-5), so 14:00 UTC is 9am Eastern.
+    await expectRecapPosted('2026-01-12T14:00:00Z');
   });
 });

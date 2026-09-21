@@ -5,10 +5,12 @@ compatibility_date = "2024-11-22"
 enabled = true
 
 [triggers]
-# Cron Triggers run in UTC only, no DST awareness — 14:00 UTC is a fixed 9am EST
-# (UTC-5) year-round. During EDT (UTC-4, roughly Mar-Nov) this lands at 10am
-# Eastern local time instead of 9am.
-crons = ["0 14 * * 1"] # Monday 9am EST / 14:00 UTC
+# Cron Triggers run in fixed UTC with no DST awareness, so no single UTC time
+# lands on 9am America/New_York year-round. Firing hourly and having
+# scheduled() (src/index.js) check the actual Eastern-local day/hour at fire
+# time is simpler than juggling separate EST/EDT cron entries - every other
+# firing is a no-op that returns immediately.
+crons = ["0 * * * *"] # hourly; scheduled() only acts at 9am America/New_York on Mondays
 
 [[kv_namespaces]]
 binding = "CA_PROGRESS"

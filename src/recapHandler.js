@@ -25,8 +25,8 @@ const RECAP_SECTIONS = [
 
 /**
  * Formats a date as `MM/DD/YY` (zero-padded, two-digit year), in UTC -
- * matching the Cron Trigger's fixed UTC firing time (see wrangler.toml's
- * DST note).
+ * matching the Cron Trigger's fixed UTC firing time (the schedule itself is
+ * configured in the Cloudflare dashboard, not wrangler.toml).
  * @param {Date} date
  * @returns {string}
  */

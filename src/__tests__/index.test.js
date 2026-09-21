@@ -237,9 +237,11 @@ describe('worker.scheduled', () => {
         run: vi.fn().mockResolvedValue({ success: true }),
       }),
     };
+    // 2026-09-14 is EDT (UTC-4), so the 13:00 UTC cron entry is the one
+    // that actually lands at 9am America/New_York.
     const event = {
-      cron: '0 14 * * 1',
-      scheduledTime: new Date('2026-09-14T14:00:00Z').getTime(),
+      cron: '0 13 * * 1',
+      scheduledTime: new Date('2026-09-14T13:00:00Z').getTime(),
     };
     const ctx = makeCtx();
 
@@ -249,6 +251,59 @@ describe('worker.scheduled', () => {
     // The pets section has a real delta, so the recap builds and posts -
     // the Hiscores poll calls fetch too, so just check the Discord webhook
     // was one of the calls made, not an exact count.
+    expect(
+      fetchMock.mock.calls.some(
+        ([url]) => url === 'https://discord.example/recap'
+      )
+    ).toBe(true);
+  });
+
+  it('skips the DST-shadow cron entry that lands outside 9am America/New_York', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    // 2026-09-14 is EDT, so the 14:00 UTC entry (the EST-timed one) lands at
+    // 10am Eastern that week - it's the shadow entry and must be skipped so
+    // the recap doesn't post twice.
+    const event = {
+      cron: '0 14 * * 1',
+      scheduledTime: new Date('2026-09-14T14:00:00Z').getTime(),
+    };
+    const ctx = makeCtx();
+
+    await worker.scheduled(event, makeEnv(), ctx);
+    await Promise.all(ctx.pending);
+
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('proceeds when the EST-timed entry is the real one (winter, no DST)', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ skills: [] }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    const db = {
+      prepare: vi.fn().mockReturnValue({
+        all: vi.fn().mockResolvedValue({
+          results: [
+            { playername: 'Swap', total_pets: 5, total_pets_baseline: 3 },
+          ],
+        }),
+        run: vi.fn().mockResolvedValue({ success: true }),
+      }),
+    };
+    // 2026-01-12 is EST (UTC-5), so 14:00 UTC is the entry that lands at
+    // 9am America/New_York that week.
+    const event = {
+      cron: '0 14 * * 1',
+      scheduledTime: new Date('2026-01-12T14:00:00Z').getTime(),
+    };
+    const ctx = makeCtx();
+
+    await worker.scheduled(event, makeEnv(db), ctx);
+    await Promise.all(ctx.pending);
+
     expect(
       fetchMock.mock.calls.some(
         ([url]) => url === 'https://discord.example/recap'

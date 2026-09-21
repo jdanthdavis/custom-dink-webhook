@@ -69,7 +69,8 @@ export default {
   /**
    * Posts the weekly recap on the configured Cron Trigger schedule.
    *
-   * Guards against a misfire.
+   * Guards against a misfire and against the DST-shadow cron entry (see
+   * wrangler.toml) firing on the same Monday as the real one.
    * @param {*} event
    * @param {*} env
    * @param {*} ctx
@@ -79,6 +80,23 @@ export default {
     if (scheduledDate.getUTCDay() !== 1) {
       console.log(
         `scheduled() fired on the wrong day (${scheduledDate.toISOString()}, cron: ${event.cron}) - skipping`
+      );
+      return;
+    }
+
+    // Two cron entries bracket EST/EDT (see wrangler.toml) - only the one that
+    // actually lands at 9am America/New_York this week should fire; the other
+    // is a same-day duplicate.
+    const easternHour = Number(
+      new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        hour: 'numeric',
+        hour12: false,
+      }).format(scheduledDate)
+    );
+    if (easternHour !== 9) {
+      console.log(
+        `scheduled() fired outside the 9am America/New_York window (${scheduledDate.toISOString()}, cron: ${event.cron}) - skipping`
       );
       return;
     }

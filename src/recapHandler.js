@@ -15,12 +15,12 @@ import { buildLevelsWeeklyChangeSection } from './core/recap/levelsRecap';
 //
 // New domain: a file in src/core/recap/ plus one entry here.
 const RECAP_SECTIONS = [
-  (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
   (env) => buildLootWeeklyChangeSection(env.WEEKLY_RECAP_DB),
-  (env) => buildTcgWeeklyChangeSection(env.WEEKLY_RECAP_DB),
-  (env) => buildDeathsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
+  (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
   (env) => buildCollectionLogWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildLevelsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
+  (env) => buildTcgWeeklyChangeSection(env.WEEKLY_RECAP_DB),
+  (env) => buildDeathsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
 ];
 
 /**

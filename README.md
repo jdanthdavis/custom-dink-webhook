@@ -24,7 +24,7 @@ Per-boss intervals are matched case-insensitively against `bossMap` in [constant
 | Corporeal Beast                   | 50       |
 | Herbiboar                         | 150      |
 
-A first kill of **Sol Heredit, TzKal-Zuk, TzTok-Jad, Doom of Mokhaiotl, Demonic Brutus, Brutus** always notifies regardless of interval.
+A first kill of **Sol Heredit, TzKal-Zuk, TzTok-Jad, Demonic Brutus** always notifies regardless of interval.
 
 ## [petHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/petHandler.js)
 

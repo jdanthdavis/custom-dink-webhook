@@ -85,7 +85,22 @@ describe('killCountHandler', () => {
     expect(msgMap.size).toBe(1);
   });
 
-  it('notifies on the first Brutus kill for any player (BRUTUS is in specialKills)', () => {
+  it('notifies on the first Demonic Brutus kill (DEMONIC BRUTUS is in specialKills)', () => {
+    const msgMap = new Map();
+    killCountHandler(
+      msgMap,
+      'AnyPlayer',
+      {
+        boss: 'Demonic Brutus',
+        count: 1,
+        gameMessage: 'Your Demonic Brutus kill count is: 1',
+      },
+      'url'
+    );
+    expect(msgMap.size).toBe(1);
+  });
+
+  it('does not notify on a first bare-Brutus kill (only DEMONIC BRUTUS is in specialKills)', () => {
     const msgMap = new Map();
     killCountHandler(
       msgMap,
@@ -93,6 +108,6 @@ describe('killCountHandler', () => {
       { boss: 'BRUTUS', count: 1, gameMessage: 'Your Brutus kill count is: 1' },
       'url'
     );
-    expect(msgMap.size).toBe(1);
+    expect(msgMap.size).toBe(0);
   });
 });

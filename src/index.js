@@ -67,9 +67,14 @@ export default {
   },
 
   /**
-   * Posts the weekly recap on the configured Cron Trigger schedule.
+   * Posts the weekly recap on the Cron Trigger schedule configured in the
+   * Cloudflare dashboard (not wrangler.toml - see its comment).
    *
-   * Guards against a misfire.
+   * Skips if the trigger ever fires on a day other than Monday - cheap
+   * insurance against a misconfigured schedule (e.g. a numeric weekday field
+   * mistakenly using standard cron's Sunday=0 convention instead of
+   * Cloudflare's own Sunday=1, which happened in 2026-09 and silently
+   * consumed a week's D1 baselines on the wrong day) firing again.
    * @param {*} event
    * @param {*} env
    * @param {*} ctx

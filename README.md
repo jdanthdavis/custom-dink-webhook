@@ -191,7 +191,7 @@ Dupes count: `unique_cards_owned`/`foil_cards_owned` track every pull, not just 
 
 ## [Weekly Recap](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/recapHandler.js)
 
-Posts a combined recap to Discord on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/) (`[triggers]` in `wrangler.toml`, Monday 9am EST / 14:00 UTC). `src/index.js`'s `scheduled()` handler builds the recap and posts it to the `RECAP_URL` webhook (`wrangler secret put RECAP_URL`).
+Posts a combined recap to Discord on a Cloudflare [Cron Trigger](https://developers.cloudflare.com/workers/configuration/cron-triggers/), configured directly in the Cloudflare dashboard rather than `wrangler.toml` (currently Monday 14:00 UTC / 9am EST-10am EDT - Cron Triggers have no DST awareness, so this drifts an hour depending on the time of year). `src/index.js`'s `scheduled()` handler builds the recap and posts it to the `RECAP_URL` webhook (`wrangler secret put RECAP_URL`).
 
 None of the tracked domains have a chat command — the recap is the only place this data surfaces. Section builders live in `src/core/recap/`:
 

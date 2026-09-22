@@ -41,15 +41,4 @@ describe('barracudaTrialHandler', () => {
     barracudaTrialHandler('unrelated message', 'Pigeon Cam', msgMap, 'url');
     expect(msgMap.size).toBe(0);
   });
-
-  it('drops a clan chat broadcast about a non-tracked player, even relayed by a tracked player', () => {
-    const msgMap = new Map();
-    barracudaTrialHandler(
-      'Random Clanmate has achieved a new Tempor Tantrum Marlin personal best: 4:18.60',
-      'Pigeon Cam',
-      msgMap,
-      'url'
-    );
-    expect(msgMap.size).toBe(0);
-  });
 });

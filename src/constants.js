@@ -153,6 +153,17 @@ export const CHAT_REGEX = {
   BARRACUDA_TRIAL_TIME_TEXT:
     /^(.+?) has achieved a new (Tempor Tantrum|Jubbly Jive|Gwenith Glide) (Swordfish|Marlin|Shark) personal best: (\d{1,2}:\d{2}(?:\.\d{2})?)/,
 };
+// Chat lines that name a *third party* (clan/public broadcasts - drop
+// notifications, TOB kit finds, trial PBs), as opposed to private game
+// messages like "You catch..." or Sepulchre's "(new personal best)" that
+// never mention a name and are always about the local player. Used to drop
+// anything not from theBoys before it reaches any chat sub-handler, since
+// any tracked player's client can relay a broadcast about someone else.
+export const CHAT_BROADCAST_ACHIEVER_PATTERNS = [
+  /^(.+?) received a drop: /,
+  /^(.+?) found something special: /,
+  CHAT_REGEX.BARRACUDA_TRIAL_TIME_TEXT,
+];
 export const bigFishArr = [
   '[PLAYER] just wrangled a [FISH] bigger’n a damn johnboat—y’all better bring the grill and a tall tale ‘cause this one’s a whopper!',
   "Y’all ain't gonna believe this shit, but [PLAYER] just hauled in a [FISH] so big, I reckon it’s got its own zip code!",

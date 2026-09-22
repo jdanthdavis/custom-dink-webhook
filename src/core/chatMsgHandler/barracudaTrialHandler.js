@@ -1,10 +1,9 @@
-import { CHAT_REGEX, CHAT_MESSAGE_TYPES, theBoys } from '../../constants';
+import { CHAT_REGEX, CHAT_MESSAGE_TYPES } from '../../constants';
 
 /**
- * Handles Barracuda Trial "personal best" chat messages. These broadcast in clan
- * chat, so any tracked player online can relay a clanmate's PB - the message's own
- * leading name (the actual achiever) is checked against theBoys and used to drop
- * anything not from a tracked player, regardless of whose client relayed it.
+ * Handles Barracuda Trial "personal best" chat messages. Whether this
+ * broadcast is actually from a tracked player is already gated upstream in
+ * chatHandler (via getChatBroadcastAchiever), so this just formats it.
  * @param {string} message
  * @param {string} playerName
  * @param {Map<{ ID: string, URL: string }, string>} msgMap
@@ -17,12 +16,7 @@ export function barracudaTrialHandler(message, playerName, msgMap, URL) {
     return;
   }
 
-  const [, achiever, trial, level, time] = match;
-
-  if (!theBoys.includes(achiever.toUpperCase())) {
-    return;
-  }
-
+  const [, , trial, level, time] = match;
   const msg = `**${playerName}** has achieved a new **${trial} ${level}** personal best of **${time}!**`;
 
   msgMap.set({ ID: CHAT_MESSAGE_TYPES.BARRACUDA_TRIAL_PB, URL }, msg);

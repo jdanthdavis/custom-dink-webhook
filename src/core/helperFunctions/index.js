@@ -10,3 +10,4 @@ export { default as getSingleColumn } from './getSingleColumn';
 export { default as retryOnce } from './retryOnce';
 export { default as runD1Write } from './runD1Write';
 export { default as escapeSqlString } from './escapeSqlString';
+export { default as getChatBroadcastAchiever } from './getChatBroadcastAchiever';

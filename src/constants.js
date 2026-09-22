@@ -118,6 +118,7 @@ export const CHAT_MESSAGE_TYPES = {
   UNTRADEABLE_DROP: 'UNTRADEABLE_DROP',
   PURIFYING_SIGIL: 'PURIFYING_SIGIL',
   MAGGOT_EGG: 'MAGGOT_EGG',
+  BARRACUDA_TRIAL_PB: 'BARRACUDA_TRIAL_PB',
 };
 export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',
@@ -149,6 +150,8 @@ export const CHAT_REGEX = {
   TOB_KITS:
     /.+ found something special: (Holy ornament kit|Sanguine ornament kit|Sanguine dust)/,
   MAGGOT_EGG: /.+ received a drop: (Maggot egg).*/,
+  BARRACUDA_TRIAL_TIME_TEXT:
+    /^(.+?) has achieved a new (Tempor Tantrum|Jubbly Jive|Gwenith Glide) (Swordfish|Marlin|Shark) personal best: (\d{1,2}:\d{2}(?:\.\d{2})?)/,
 };
 export const bigFishArr = [
   '[PLAYER] just wrangled a [FISH] bigger’n a damn johnboat—y’all better bring the grill and a tall tale ‘cause this one’s a whopper!',

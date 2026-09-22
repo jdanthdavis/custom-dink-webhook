@@ -7,13 +7,19 @@ import {
   DELVE_KC,
   GEMSTONE_CRAB,
   UNTRADEABLE_ITEMS,
+  theBoys,
 } from '../../constants';
 import { delveHandler } from './delveHandler';
 import { crabHandler } from './crabHandler';
 import { barracudaTrialHandler } from './barracudaTrialHandler';
+import { getChatBroadcastAchiever } from '../helperFunctions';
 
 /**
  * Delegates a chat message to the appropriate sub-handler based on its content.
+ * Chat lines that broadcast a third party's name (clan/public chat) are
+ * dropped up front if that name isn't a tracked player - any tracked
+ * player's client can relay a broadcast about someone else. Message types
+ * that never embed a name (private game messages) pass through unaffected.
  * @param {Map<{ ID: string, URL: string }, string>} msgMap
  * @param {string} playerName
  * @param {string} message
@@ -31,6 +37,12 @@ async function chatHandler(
   KC_URL,
   CRAB_DB
 ) {
+  const achiever = getChatBroadcastAchiever(message);
+  if (achiever && !theBoys.includes(achiever.toUpperCase())) {
+    console.log(`chatHandler: ignoring broadcast not from theBoys: ${message}`);
+    return;
+  }
+
   const messageChecks = [
     {
       check: () => message.includes('(new personal best)'),

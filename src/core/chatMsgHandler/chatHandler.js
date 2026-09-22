@@ -3,12 +3,14 @@ import { sepulchreHandler } from './sepulchreHandler';
 import { untradeableDropHandler } from './untradeableDropHandler';
 import {
   CHAT_MESSAGE_TYPES,
+  CHAT_REGEX,
   DELVE_KC,
   GEMSTONE_CRAB,
   UNTRADEABLE_ITEMS,
 } from '../../constants';
 import { delveHandler } from './delveHandler';
 import { crabHandler } from './crabHandler';
+import { barracudaTrialHandler } from './barracudaTrialHandler';
 
 /**
  * Delegates a chat message to the appropriate sub-handler based on its content.
@@ -50,6 +52,10 @@ async function chatHandler(
       check: () => message.includes('enormous'),
       type: CHAT_MESSAGE_TYPES.BIG_FISH,
     },
+    {
+      check: () => CHAT_REGEX.BARRACUDA_TRIAL_TIME_TEXT.test(message),
+      type: CHAT_MESSAGE_TYPES.BARRACUDA_TRIAL_PB,
+    },
   ];
 
   const typeOfChat = messageChecks.find((entry) => entry.check())?.type;
@@ -69,6 +75,9 @@ async function chatHandler(
       break;
     case DELVE_KC:
       delveHandler(message, playerName, msgMap, KC_URL);
+      break;
+    case CHAT_MESSAGE_TYPES.BARRACUDA_TRIAL_PB:
+      barracudaTrialHandler(message, playerName, msgMap, PB_URL);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

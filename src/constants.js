@@ -84,6 +84,7 @@ export const bossMap = new Map([
   ['GEMSTONE CRAB', 10],
   ['DEMONIC BRUTUS', 10],
   ['MOONS OF PERIL', 10],
+  ['CORRUPTED HUNLLEF', 10],
   ['TEST', 1],
 ]);
 

@@ -98,8 +98,9 @@ async function aggregatePerSkillDeltas(WEEKLY_RECAP_DB, { table, metrics }) {
  * the skill that drove the most. Both totals come from the delta on
  * Hiscores' own "Overall" row rather than summing individual skills, since a
  * player can have a real level/XP in a skill they aren't ranked in yet
- * (filtered out of the per-skill rows entirely). A player appears if they
- * gained either levels or XP.
+ * (filtered out of the per-skill rows entirely). A player appears only if
+ * they gained at least one level - XP gained without a level-up isn't
+ * enough on its own.
  *
  * Doesn't use the shared computeAndResetDeltas helper since `skill_xp` has
  * one row per player *per skill* - see aggregatePerSkillDeltas above.
@@ -142,7 +143,7 @@ export async function buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB) {
   });
 
   const changes = [...byPlayer.values()].filter(
-    (row) => (row.levelsDelta ?? 0) > 0 || (row.xpDelta ?? 0) > 0
+    (row) => (row.levelsDelta ?? 0) > 0
   );
   if (changes.length === 0) return null;
 

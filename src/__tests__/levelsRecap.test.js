@@ -278,7 +278,7 @@ describe('buildLevelsWeeklyChangeSection', () => {
     ]);
   });
 
-  it('includes a player with XP gained but no level-ups (a maxed skill)', async () => {
+  it('omits a player with XP gained but no level-ups (a maxed skill)', async () => {
     const WEEKLY_RECAP_DB = makeDb([
       {
         playername: 'MaxedOut',
@@ -296,15 +296,7 @@ describe('buildLevelsWeeklyChangeSection', () => {
 
     const result = await buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    expect(result).toContain('MaxedOut');
-    const line = result.split('\n').find((l) => l.includes('MaxedOut'));
-    expect(line.trim().split(/\s{2,}/)).toEqual([
-      'MaxedOut',
-      '0',
-      '-',
-      '3M',
-      'Attack (1.97M)',
-    ]);
+    expect(result).toBeNull();
   });
 
   it("does not let Overall's own delta double-count toward the top skill", async () => {
@@ -314,12 +306,16 @@ describe('buildLevelsWeeklyChangeSection', () => {
         skill_name: 'Overall',
         // Overall's delta is bigger than any individual skill's - it must
         // never win "top skill", since it isn't a real skill.
+        level: 1500,
+        level_baseline: 1499,
         xp: 10_000_000,
         xp_baseline: 5_000_000,
       },
       {
         playername: 'LSx Swap',
         skill_name: 'Attack',
+        level: 80,
+        level_baseline: 79,
         xp: 2_000_000,
         xp_baseline: 1_000_000,
       },
@@ -348,12 +344,16 @@ describe('buildLevelsWeeklyChangeSection', () => {
       {
         playername: 'PIGEON CAM',
         skill_name: 'Overall',
+        level: 1002,
+        level_baseline: 1000,
         xp: 6_000_000,
         xp_baseline: 1_000_000,
       },
       {
         playername: 'PIGEON CAM',
         skill_name: 'Attack',
+        level: 80,
+        level_baseline: 78,
         xp: 5_000_000,
         xp_baseline: 1_000_000,
       },
@@ -398,6 +398,8 @@ describe('buildLevelsWeeklyChangeSection', () => {
       {
         playername: 'FROSTY DAD',
         skill_name: 'Overall',
+        level: 1001,
+        level_baseline: 1000,
         xp: 5_000_000,
         xp_baseline: 4_000_000,
       },
@@ -414,6 +416,8 @@ describe('buildLevelsWeeklyChangeSection', () => {
       {
         playername: 'SOME RANDOM PLAYER',
         skill_name: 'Overall',
+        level: 1001,
+        level_baseline: 1000,
         xp: 5_000_000,
         xp_baseline: 4_000_000,
       },

@@ -30,7 +30,22 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
   });
   if (!changes || changes.length === 0) return null;
 
-  const sorted = changes.sort((a, b) => b.scoreDelta - a.scoreDelta);
+  // Any of these can drop (e.g. "Total cards" counts dupes, so selling them
+  // lowers it) - report a drop as 0 gained rather than a negative, and leave
+  // out a player with nothing gained at all.
+  const gains = changes
+    .map((row) => ({
+      ...row,
+      scoreDelta: Math.max(0, row.scoreDelta),
+      cardsDelta: Math.max(0, row.cardsDelta),
+      foilsDelta: Math.max(0, row.foilsDelta),
+    }))
+    .filter(
+      (row) => row.scoreDelta > 0 || row.cardsDelta > 0 || row.foilsDelta > 0
+    );
+  if (gains.length === 0) return null;
+
+  const sorted = gains.sort((a, b) => b.scoreDelta - a.scoreDelta);
 
   const headers = ['Name', 'Score Gained', 'Cards Gained', 'Foils Gained'];
   const tableRows = sorted.map((row) => [

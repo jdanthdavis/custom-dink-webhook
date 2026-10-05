@@ -35,6 +35,7 @@ async function createFormData(extra, content, payloadType, playerName, env) {
     LOOT_URL,
     DEATH_URL,
     EXTERNAL_URL,
+    MISCELLANIA_URL,
     PETS_DB,
     CRAB_DB,
     WEEKLY_RECAP_DB,
@@ -100,7 +101,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         PB_URL,
         LOOT_URL,
         KC_URL,
-        CRAB_DB
+        CRAB_DB,
+        MISCELLANIA_URL
       );
       break;
     default:

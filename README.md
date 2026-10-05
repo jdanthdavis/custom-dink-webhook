@@ -122,6 +122,7 @@ Routes chat-message payloads to the appropriate sub-handler by message type:
 - [untradeableDropHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/untradeableDropHandler.js) — untradeable item drops, mapped to their source boss.
 - [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) — Gemstone Crab kill count via `CRAB_DB` -> `dink_crab_kc`, formatted through [killCountHandler](#killcounthandler).
 - [delveHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/delveHandler.js) — Doom of Mokhaiotl kill count through [killCountHandler](#killcounthandler).
+- [kingdomHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/kingdomHandler.js) — Kingdom of Miscellania approval and coffer, posted to the `MISCELLANIA_URL` webhook (`wrangler secret put MISCELLANIA_URL`).
 
 ## [levelUpHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/levelUpHandler.js)
 

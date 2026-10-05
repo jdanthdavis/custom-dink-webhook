@@ -31,13 +31,13 @@ describe('kingdomHandler', () => {
     }
   );
 
-  it('fires just below the threshold', () => {
+  it('fires at exactly the threshold', () => {
     const msgMap = new Map();
-    kingdomHandler(kingdomMessage(98), 'Pigeon Cam', msgMap, 'url', discordIds);
+    kingdomHandler(kingdomMessage(90), 'Pigeon Cam', msgMap, 'url', discordIds);
     expect(msgMap.size).toBe(1);
   });
 
-  it.each([99, 100])('does not fire at %i%% approval', (approval) => {
+  it.each([91, 98, 100])('does not fire at %i%% approval', (approval) => {
     const msgMap = new Map();
     kingdomHandler(
       kingdomMessage(approval),

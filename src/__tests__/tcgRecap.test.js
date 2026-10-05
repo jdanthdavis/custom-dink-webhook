@@ -98,6 +98,63 @@ describe('buildTcgWeeklyChangeSection', () => {
     expect(swapLine.trim().split(/\s{2,}/)).toEqual(['Swap', '100', '0', '50']);
   });
 
+  it('reports a drop (e.g. selling dupes) as 0 gained, not a negative', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Frosty Dad',
+                collection_score: 1000,
+                unique_cards_owned: 1134,
+                foil_cards_owned: 12,
+                collection_score_baseline: 900,
+                unique_cards_owned_baseline: 1209,
+                foil_cards_owned_baseline: 11,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    const line = result.split('\n').find((l) => l.includes('Frosty Dad'));
+    expect(line.trim().split(/\s{2,}/)).toEqual([
+      'Frosty Dad',
+      '100',
+      '0',
+      '1',
+    ]);
+    expect(result).not.toContain('-75');
+  });
+
+  it('omits a player whose only changes were drops', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Frosty Dad',
+                collection_score: 800,
+                unique_cards_owned: 1134,
+                foil_cards_owned: 12,
+                collection_score_baseline: 900,
+                unique_cards_owned_baseline: 1209,
+                foil_cards_owned_baseline: 12,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    expect(await buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB)).toBeNull();
+  });
+
   it('omits a player with no change since the last recap', async () => {
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(

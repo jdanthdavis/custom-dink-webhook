@@ -45,6 +45,22 @@ describe('chatHandler', () => {
     expect([...msgMap.values()][0]).toContain('Tempor Tantrum Marlin');
   });
 
+  it('dispatches a Kingdom of Miscellania message to MISCELLANIA_URL', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'Your Kingdom of Miscellania approval is 98%, and your coffer has 1.00M coins.',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {},
+      'miscUrl'
+    );
+    expect(msgMap.size).toBe(1);
+    expect([...msgMap.keys()][0].URL).toBe('miscUrl');
+  });
+
   it('does not block message types that never embed a name', async () => {
     const msgMap = new Map();
     await chatHandler(

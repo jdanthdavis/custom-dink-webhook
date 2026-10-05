@@ -120,6 +120,7 @@ export const CHAT_MESSAGE_TYPES = {
   PURIFYING_SIGIL: 'PURIFYING_SIGIL',
   MAGGOT_EGG: 'MAGGOT_EGG',
   BARRACUDA_TRIAL_PB: 'BARRACUDA_TRIAL_PB',
+  KINGDOM: 'KINGDOM',
 };
 export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',
@@ -153,6 +154,8 @@ export const CHAT_REGEX = {
   MAGGOT_EGG: /.+ received a drop: (Maggot egg).*/,
   BARRACUDA_TRIAL_TIME_TEXT:
     /^(.+?) has achieved a new (Tempor Tantrum|Jubbly Jive|Gwenith Glide) (Swordfish|Marlin|Shark) personal best: (\d{1,2}:\d{2}(?:\.\d{2})?)/,
+  KINGDOM_TEXT:
+    /Your Kingdom of Miscellania approval is (\d{1,3})%, and your coffer has ([\d,.]+[KMB]?) coins\./,
 };
 // Chat lines that name a *third party* (clan/public broadcasts - drop
 // notifications, TOB kit finds, trial PBs), as opposed to private game

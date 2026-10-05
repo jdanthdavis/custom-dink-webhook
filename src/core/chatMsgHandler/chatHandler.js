@@ -12,6 +12,7 @@ import {
 import { delveHandler } from './delveHandler';
 import { crabHandler } from './crabHandler';
 import { barracudaTrialHandler } from './barracudaTrialHandler';
+import { kingdomHandler } from './kingdomHandler';
 import { getChatBroadcastAchiever } from '../helperFunctions';
 
 /**
@@ -27,6 +28,7 @@ import { getChatBroadcastAchiever } from '../helperFunctions';
  * @param {string} LOOT_URL
  * @param {string} KC_URL
  * @param {*} CRAB_DB
+ * @param {string} MISCELLANIA_URL
  */
 async function chatHandler(
   msgMap,
@@ -35,7 +37,8 @@ async function chatHandler(
   PB_URL,
   LOOT_URL,
   KC_URL,
-  CRAB_DB
+  CRAB_DB,
+  MISCELLANIA_URL
 ) {
   const achiever = getChatBroadcastAchiever(message);
   if (achiever && !theBoys.includes(achiever.toUpperCase())) {
@@ -68,6 +71,10 @@ async function chatHandler(
       check: () => CHAT_REGEX.BARRACUDA_TRIAL_TIME_TEXT.test(message),
       type: CHAT_MESSAGE_TYPES.BARRACUDA_TRIAL_PB,
     },
+    {
+      check: () => CHAT_REGEX.KINGDOM_TEXT.test(message),
+      type: CHAT_MESSAGE_TYPES.KINGDOM,
+    },
   ];
 
   const typeOfChat = messageChecks.find((entry) => entry.check())?.type;
@@ -90,6 +97,9 @@ async function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.BARRACUDA_TRIAL_PB:
       barracudaTrialHandler(message, playerName, msgMap, PB_URL);
+      break;
+    case CHAT_MESSAGE_TYPES.KINGDOM:
+      kingdomHandler(message, playerName, msgMap, MISCELLANIA_URL);
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

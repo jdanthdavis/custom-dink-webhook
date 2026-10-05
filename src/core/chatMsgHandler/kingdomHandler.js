@@ -30,7 +30,7 @@ function getDiscordId(discordIdsJson, playerName) {
 
 /**
  * Pings a player on Discord to remind them their Kingdom of Miscellania
- * approval is low. Only fires at or below KINGDOM_APPROVAL_THRESHOLD, and only
+ * approval is low. Only fires below KINGDOM_APPROVAL_THRESHOLD, and only
  * for players with an ID in the PLAYER_DISCORD_IDS secret. This is a private game message ("Your
  * Kingdom...") so it's always about the local player.
  * @param {string} message
@@ -54,7 +54,7 @@ export function kingdomHandler(
 
   const [, approval, coffer] = match;
 
-  if (Number(approval) > KINGDOM_APPROVAL_THRESHOLD) {
+  if (Number(approval) >= KINGDOM_APPROVAL_THRESHOLD) {
     return;
   }
 

@@ -140,8 +140,8 @@ export const UNTRADEABLE_ITEMS = [
   'Sanguine ornament kit',
   'Sanguine dust',
 ];
-// Approval (%) at or below which the Kingdom of Miscellania reminder fires.
-export const KINGDOM_APPROVAL_THRESHOLD = 90;
+// Approval (%) below which the Kingdom of Miscellania reminder fires.
+export const KINGDOM_APPROVAL_THRESHOLD = 99;
 export const CHAT_REGEX = {
   UNTRADEABLE_TEXT: /(?:Untradeable drop: |.+ received a drop: )(.+?)$/,
   VESTIGE_TEXT:

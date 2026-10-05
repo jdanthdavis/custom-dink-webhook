@@ -50,12 +50,13 @@ describe('chatHandler', () => {
     await chatHandler(
       msgMap,
       'Pigeon Cam',
-      'Your Kingdom of Miscellania approval is 98%, and your coffer has 1.00M coins.',
+      'Your Kingdom of Miscellania approval is 72%, and your coffer has 1.00M coins.',
       'pbUrl',
       'lootUrl',
       'kcUrl',
       {},
-      'miscUrl'
+      'miscUrl',
+      JSON.stringify({ 'Pigeon Cam': '123456789012345678' })
     );
     expect(msgMap.size).toBe(1);
     expect([...msgMap.keys()][0].URL).toBe('miscUrl');

@@ -29,6 +29,7 @@ import { getChatBroadcastAchiever } from '../helperFunctions';
  * @param {string} KC_URL
  * @param {*} CRAB_DB
  * @param {string} MISCELLANIA_URL
+ * @param {string} [PLAYER_DISCORD_IDS]
  */
 async function chatHandler(
   msgMap,
@@ -38,7 +39,8 @@ async function chatHandler(
   LOOT_URL,
   KC_URL,
   CRAB_DB,
-  MISCELLANIA_URL
+  MISCELLANIA_URL,
+  PLAYER_DISCORD_IDS
 ) {
   const achiever = getChatBroadcastAchiever(message);
   if (achiever && !theBoys.includes(achiever.toUpperCase())) {
@@ -99,7 +101,13 @@ async function chatHandler(
       barracudaTrialHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.KINGDOM:
-      kingdomHandler(message, playerName, msgMap, MISCELLANIA_URL);
+      kingdomHandler(
+        message,
+        playerName,
+        msgMap,
+        MISCELLANIA_URL,
+        PLAYER_DISCORD_IDS
+      );
       break;
     default:
       console.log(`Unknown type of chat: ${typeOfChat}`);

@@ -1,9 +1,8 @@
 import { CHAT_REGEX, CHAT_MESSAGE_TYPES } from '../../constants';
 
 /**
- * Handles Barracuda Trial "personal best" chat messages. Whether this
- * broadcast is actually from a tracked player is already gated upstream in
- * chatHandler (via getChatBroadcastAchiever), so this just formats it.
+ * Handles Barracuda Trial "personal best" chat messages. Only formats the
+ * broadcast when the achiever named in it is the reporting player.
  * @param {string} message
  * @param {string} playerName
  * @param {Map<{ ID: string, URL: string }, string>} msgMap
@@ -12,7 +11,7 @@ import { CHAT_REGEX, CHAT_MESSAGE_TYPES } from '../../constants';
 export function barracudaTrialHandler(message, playerName, msgMap, URL) {
   const match = message.match(CHAT_REGEX.BARRACUDA_TRIAL_TIME_TEXT);
 
-  if (!match) {
+  if (!match || match[1] !== playerName) {
     return;
   }
 

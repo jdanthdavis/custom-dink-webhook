@@ -34,7 +34,7 @@ describe('combatTaskHandler', () => {
       'url'
     );
     expect(firstMessage(msgMap)).toBe(
-      '**Swap** has completed the **Easy combat achievements**, by completing combat task: **Kill 10 goblins!**'
+      '-# @everyone\n**Swap** has completed the **Easy combat achievements**, by completing combat task: **Kill 10 goblins!**'
     );
   });
 

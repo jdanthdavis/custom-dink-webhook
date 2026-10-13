@@ -79,7 +79,7 @@ async function combatTaskHandler(msgMap, playerName, extra, CA_PROGRESS, URL) {
   if (justCompletedTier) {
     msgMap.set(
       { ID: COMBAT_ACHIEVEMENT, URL },
-      `**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**`
+      `-# @everyone\n**${playerName}** has completed the **${formattedJustCompleted} combat achievements**, by completing combat task: **${task}!**`
     );
   } else {
     // Only reconcile progress here: this is the only branch that displays

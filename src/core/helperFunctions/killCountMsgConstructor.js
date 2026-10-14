@@ -17,17 +17,20 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
 
   /** @type {Record<string, string>} */
   const TYPE_MAP = {
-    [Constants.THE_GRUMBLER]: 'grumble',
-    [Constants.MOONS_OF_PERIL]: 'chest',
+    [Constants.THE_GRUMBLER.toUpperCase()]: 'grumble',
+    [Constants.MOONS_OF_PERIL.toUpperCase()]: 'chest',
+    [Constants.BRUTUS]: 'moo',
+    [Constants.DEMONIC_BRUTUS]: 'moo',
   };
 
-  const specialType = TYPE_MAP[bossName];
-  if (specialType) {
-    return `**${playerName}** has defeated **${bossName}** with a ${specialType} count of **${killCount.toLocaleString()}!**`;
-  }
+  const specialType = TYPE_MAP[bossName.toUpperCase()];
 
   if (killCount === 1 && specialKills.includes(bossName.toUpperCase())) {
-    return `-# @everyone\n${Constants.DANSE} **${playerName}** has defeated **${bossName}** with a kill count of **${killCount.toLocaleString()}!** ${Constants.DANSE}`;
+    return `-# @everyone\n${Constants.DANSE} **${playerName}** has defeated **${bossName}** with a ${specialType ?? 'kill'} count of **${killCount.toLocaleString()}!** ${Constants.DANSE}`;
+  }
+
+  if (specialType) {
+    return `**${playerName}** has defeated **${bossName}** with a ${specialType} count of **${killCount.toLocaleString()}!**`;
   }
 
   const primaryMatch = gameMessage.match(primary_regex);

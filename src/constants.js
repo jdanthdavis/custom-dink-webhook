@@ -5,6 +5,7 @@ export const MUPHIN = 'MUPHIN';
 export const GG = 'Grotesque Guardians';
 export const DUSK = 'DUSK';
 export const BRUTUS = 'BRUTUS';
+export const DEMONIC_BRUTUS = 'DEMONIC BRUTUS';
 export const TZKAL_ZUK = 'TZKAL-ZUK';
 export const TZTOK_JAD = 'TZTOK-JAD';
 export const GEMSTONE_CRAB = 'Gemstone Crab';

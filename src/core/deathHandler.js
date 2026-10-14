@@ -76,6 +76,7 @@ function matchFood(itemName) {
 }
 
 const GRUMBLER_REGION = 11330;
+const BRUTUS_REGION = 12851;
 
 /**
  * Upserts a player's death count and cumulative GP lost for the weekly recap.
@@ -144,6 +145,10 @@ async function deathHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
 
   if (regionId === GRUMBLER_REGION) {
     msg = `**${playerName}** has been grumbled ${DEATH_EMOJIS[randomIndex]}${
+      lostFood ? `\n-# ${foodLostString}` : ''
+    }`;
+  } else if (regionId === BRUTUS_REGION) {
+    msg = `**${playerName}** has been moo'd ${DEATH_EMOJIS[randomIndex]}${
       lostFood ? `\n-# ${foodLostString}` : ''
     }`;
   } else {

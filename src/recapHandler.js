@@ -4,6 +4,7 @@ import { buildTcgWeeklyChangeSection } from './core/recap/tcgRecap';
 import { buildDeathsWeeklyChangeSection } from './core/recap/deathsRecap';
 import { buildCollectionLogWeeklyChangeSection } from './core/recap/collectionLogRecap';
 import { buildLevelsWeeklyChangeSection } from './core/recap/levelsRecap';
+import { buildBigAchievementsWeeklyChangeSection } from './core/recap/bigAchievementsRecap';
 
 // Each entry builds one section of the recap, all living in src/core/recap/.
 // Every section reports the change since the last run, mostly via the
@@ -15,6 +16,7 @@ import { buildLevelsWeeklyChangeSection } from './core/recap/levelsRecap';
 //
 // New domain: a file in src/core/recap/ plus one entry here.
 const RECAP_SECTIONS = [
+  (env) => buildBigAchievementsWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildLootWeeklyChangeSection(env.WEEKLY_RECAP_DB),
   (env) => buildPetsWeeklyChangeSection(env.PETS_DB),
   (env) => buildCollectionLogWeeklyChangeSection(env.WEEKLY_RECAP_DB),

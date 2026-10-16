@@ -61,6 +61,33 @@ export const ALL_PETS = 71;
 // levels
 export const LEVEL = 'LEVEL';
 export const MAX_TOTAL_LEVEL = 2376;
+// Skill names exactly as Dink reports them in levelledSkills (24 x 99 = 2376)
+export const SKILL_NAMES = [
+  'Attack',
+  'Defence',
+  'Strength',
+  'Hitpoints',
+  'Ranged',
+  'Prayer',
+  'Magic',
+  'Cooking',
+  'Woodcutting',
+  'Fletching',
+  'Fishing',
+  'Firemaking',
+  'Crafting',
+  'Smithing',
+  'Mining',
+  'Herblore',
+  'Agility',
+  'Thieving',
+  'Slayer',
+  'Farming',
+  'Runecraft',
+  'Hunter',
+  'Construction',
+  'Sailing',
+];
 
 // kill count
 export const KILL_COUNT = 'KILL_COUNT';

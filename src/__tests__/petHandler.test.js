@@ -153,4 +153,46 @@ describe('petHandler', () => {
     expect(msg).toContain("they're being followed by **Baby mole**");
     expect(msg).not.toContain('undefined');
   });
+
+  describe('pet-total big achievements', () => {
+    /** @param {number} total @param {boolean} duplicate */
+    async function run(total, duplicate) {
+      const PETS_DB = {
+        prepare: vi
+          .fn()
+          .mockReturnValueOnce(makeStatement())
+          .mockReturnValueOnce(makeStatement({ first: { total_pets: total } })),
+      };
+      const statement = makeStatement();
+      const WEEKLY_RECAP_DB = { prepare: vi.fn().mockReturnValue(statement) };
+      if (duplicate)
+        PETS_DB.prepare
+          .mockReset()
+          .mockReturnValue(makeStatement({ first: { total_pets: total } }));
+      await petHandler(
+        new Map(),
+        'Swap',
+        { milestone: '500 kills', duplicate, petName: 'Baby mole' },
+        PETS_DB,
+        'url',
+        WEEKLY_RECAP_DB
+      );
+      return { WEEKLY_RECAP_DB, statement };
+    }
+
+    it('records the 5th pet', async () => {
+      const { statement } = await run(5, false);
+      expect(statement.bind).toHaveBeenCalledWith('Swap', 'total_pets_5');
+    });
+
+    it('records nothing off the interval', async () => {
+      const { WEEKLY_RECAP_DB } = await run(4, false);
+      expect(WEEKLY_RECAP_DB.prepare).not.toHaveBeenCalled();
+    });
+
+    it('records nothing for a duplicate, even at a multiple of 5', async () => {
+      const { WEEKLY_RECAP_DB } = await run(5, true);
+      expect(WEEKLY_RECAP_DB.prepare).not.toHaveBeenCalled();
+    });
+  });
 });

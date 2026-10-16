@@ -6,6 +6,7 @@ import {
   runD1Write,
 } from './helperFunctions';
 import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
+import { PET_TOTAL, recordBigAchievements } from './bigAchievements';
 
 /**
  * Formats a pet-drop notification and increments the player's pet count.
@@ -14,8 +15,16 @@ import { ALL_PETS, PET, THE_GRUMBLER } from '../constants';
  * @param {*} extra - see {@link https://github.com/pajlads/DinkPlugin/blob/master/docs/json-examples.md#pets}
  * @param {*} PETS_DB
  * @param {*} URL
+ * @param {*} [WEEKLY_RECAP_DB] - where pet-total big achievements are recorded
  */
-async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
+async function petHandler(
+  msgMap,
+  playerName,
+  extra,
+  PETS_DB,
+  URL,
+  WEEKLY_RECAP_DB
+) {
   const {
     milestone: initialMilestone,
     duplicate: isDuplicate,
@@ -59,6 +68,16 @@ async function petHandler(msgMap, playerName, extra, PETS_DB, URL) {
       await incrementPetCount(playerName, validatedPetName);
     }
     const totalPets = await getTotalPets(playerName);
+    // Only a new (non-duplicate) pet can move the total onto a milestone.
+    if (WEEKLY_RECAP_DB && !isDuplicate && totalPets) {
+      await recordBigAchievements(
+        WEEKLY_RECAP_DB,
+        PET_TOTAL,
+        playerName,
+        { totalPets },
+        undefined
+      );
+    }
     const totalPetsPercentage = totalPets
       ? formatAsPercentage(totalPets, ALL_PETS)
       : '';

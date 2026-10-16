@@ -10,6 +10,7 @@ import {
   deathHandler,
   tcgHandler,
 } from './core';
+import { recordBigAchievements } from './core/bigAchievements';
 import chatHandler from './core/chatMsgHandler/chatHandler';
 import * as Constants from './constants';
 
@@ -45,9 +46,26 @@ async function createFormData(extra, content, payloadType, playerName, env) {
 
   let msgMap = new Map();
 
+  // Before any handler, so an achievement is recorded even if the event
+  // doesn't qualify for a Discord notification.
+  await recordBigAchievements(
+    WEEKLY_RECAP_DB,
+    payloadType,
+    playerName,
+    extra,
+    content
+  );
+
   switch (payloadType) {
     case Constants.PET:
-      await petHandler(msgMap, playerName, extra, PETS_DB, PET_URL);
+      await petHandler(
+        msgMap,
+        playerName,
+        extra,
+        PETS_DB,
+        PET_URL,
+        WEEKLY_RECAP_DB
+      );
       break;
     case Constants.COLLECTION:
       await collectionLogHandler(

@@ -170,6 +170,11 @@ export const UNTRADEABLE_ITEMS = [
 ];
 // Approval (%) at or below which the Kingdom of Miscellania reminder fires.
 export const KINGDOM_APPROVAL_THRESHOLD = 90;
+// Coffer (coins) below which the reminder fires, regardless of approval.
+export const KINGDOM_COFFER_THRESHOLD = 750_000;
+// The game prints the approval line on every login/world hop, so a player is
+// only re-pinged after this long (seconds). KV's minimum TTL is 60.
+export const KINGDOM_REMINDER_COOLDOWN_SECONDS = 24 * 60 * 60;
 export const CHAT_REGEX = {
   UNTRADEABLE_TEXT: /(?:Untradeable drop: |.+ received a drop: )(.+?)$/,
   VESTIGE_TEXT:

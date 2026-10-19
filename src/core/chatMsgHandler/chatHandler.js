@@ -30,6 +30,7 @@ import { getChatBroadcastAchiever } from '../helperFunctions';
  * @param {*} CRAB_DB
  * @param {string} MISCELLANIA_URL
  * @param {string} [PLAYER_DISCORD_IDS]
+ * @param {*} [CA_PROGRESS] - KV namespace, reused for the Kingdom ping cooldown
  */
 async function chatHandler(
   msgMap,
@@ -40,7 +41,8 @@ async function chatHandler(
   KC_URL,
   CRAB_DB,
   MISCELLANIA_URL,
-  PLAYER_DISCORD_IDS
+  PLAYER_DISCORD_IDS,
+  CA_PROGRESS
 ) {
   const achiever = getChatBroadcastAchiever(message);
   if (achiever && !theBoys.includes(achiever.toUpperCase())) {
@@ -101,12 +103,13 @@ async function chatHandler(
       barracudaTrialHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.KINGDOM:
-      kingdomHandler(
+      await kingdomHandler(
         message,
         playerName,
         msgMap,
         MISCELLANIA_URL,
-        PLAYER_DISCORD_IDS
+        PLAYER_DISCORD_IDS,
+        CA_PROGRESS
       );
       break;
     default:

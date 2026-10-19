@@ -79,22 +79,20 @@ const GRUMBLER_REGION = 11330;
 const BRUTUS_REGION = 12851;
 
 /**
- * Upserts a player's death count and cumulative GP lost for the weekly recap.
- * Retries once on a transient D1 failure - the write is a single atomic
- * UPSERT, so a retry can't double-count a death.
+ * Upserts a player's death count for the weekly recap. Retries once on a
+ * transient D1 failure - the write is a single atomic UPSERT, so a retry
+ * can't double-count a death.
  * @param {*} WEEKLY_RECAP_DB
  * @param {string} playername
- * @param {number} valueLost
  */
-async function recordDeath(WEEKLY_RECAP_DB, playername, valueLost) {
+async function recordDeath(WEEKLY_RECAP_DB, playername) {
   await runD1Write(WEEKLY_RECAP_DB, {
     label: 'recordDeath',
-    sql: `INSERT INTO deaths (playername, death_count, total_value_lost)
-          VALUES (?1, 1, ?2)
+    sql: `INSERT INTO deaths (playername, death_count)
+          VALUES (?1, 1)
           ON CONFLICT(playername) DO UPDATE SET
-            death_count = death_count + 1,
-            total_value_lost = total_value_lost + ?2`,
-    values: [playername, valueLost],
+            death_count = death_count + 1`,
+    values: [playername],
   });
 }
 
@@ -118,7 +116,7 @@ async function deathHandler(msgMap, playerName, extra, WEEKLY_RECAP_DB, URL) {
   } = extra;
   const regionId = location?.regionId;
 
-  await recordDeath(WEEKLY_RECAP_DB, playerName, valueLost ?? 0);
+  await recordDeath(WEEKLY_RECAP_DB, playerName);
 
   const formattedValueLost = formatValue(valueLost ?? 0);
   const randomIndex = Math.floor(Math.random() * DEATH_EMOJIS.length);

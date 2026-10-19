@@ -159,13 +159,11 @@ Every death upserts a counter into the shared `dink_weekly_recap` D1 database (`
 CREATE TABLE deaths (
   playername TEXT PRIMARY KEY COLLATE NOCASE,
   death_count INTEGER NOT NULL DEFAULT 0,
-  total_value_lost INTEGER NOT NULL DEFAULT 0,
-  death_count_baseline INTEGER,
-  total_value_lost_baseline INTEGER
+  death_count_baseline INTEGER
 );
 ```
 
-A pure counter (like pets/loot/crab), not a snapshot. Recap-only. The recap's Deaths Board shows deaths only; `total_value_lost` is still recorded, and its baseline still resets each run, but it isn't displayed.
+A pure counter (like pets/loot/crab), not a snapshot. Recap-only.
 
 ## [tcgHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/tcgHandler.js)
 

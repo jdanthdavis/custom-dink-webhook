@@ -37,6 +37,10 @@ describe('petHandler', () => {
 
     expect(PETS_DB.prepare).toHaveBeenCalledTimes(2);
     expect(PETS_DB.prepare.mock.calls[0][0]).toContain('INSERT INTO pets');
+    // Appends the pet to this week's "Pets Got" list for the recap.
+    expect(PETS_DB.prepare.mock.calls[0][0]).toContain(
+      "weekly_pet_names || ', ' || ?2"
+    );
     expect(PETS_DB.prepare.mock.calls[1][0]).toContain(
       'SELECT total_pets FROM pets'
     );

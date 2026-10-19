@@ -40,11 +40,12 @@ CREATE TABLE pets (
   total_pets INTEGER NOT NULL DEFAULT 0,
   most_recent_pet_name TEXT,
   most_recent_pet_date TEXT,
-  total_pets_baseline INTEGER
+  total_pets_baseline INTEGER,
+  weekly_pet_names TEXT
 );
 ```
 
-`total_pets_baseline` backs the pets section of the [Weekly Recap](#weekly-recap) — it's the total as of the last recap run, so the recap can report pets gained since then. Recap-only; no chat command.
+`total_pets_baseline` backs the pets section of the [Weekly Recap](#weekly-recap) — it's the total as of the last recap run, so the recap can report pets gained since then. `weekly_pet_names` is a comma-separated list of the (non-duplicate, named) pets each player got since the last recap, oldest to newest, shown in the recap's "Pets Got" column and reset to `NULL` (not diffed) each run. Recap-only; no chat command.
 
 [crabHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/chatMsgHandler/crabHandler.js) uses the separate `CRAB_DB` binding:
 
@@ -158,9 +159,7 @@ Every death upserts a counter into the shared `dink_weekly_recap` D1 database (`
 CREATE TABLE deaths (
   playername TEXT PRIMARY KEY COLLATE NOCASE,
   death_count INTEGER NOT NULL DEFAULT 0,
-  total_value_lost INTEGER NOT NULL DEFAULT 0,
-  death_count_baseline INTEGER,
-  total_value_lost_baseline INTEGER
+  death_count_baseline INTEGER
 );
 ```
 

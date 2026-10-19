@@ -102,7 +102,7 @@ describe('deathHandler', () => {
     expect(firstMessage(msgMap)).toContain('**Swap** has been grumbled');
   });
 
-  it('records the death count and value lost in D1', async () => {
+  it('records the death count (but not value lost) in D1', async () => {
     const msgMap = new Map();
     const WEEKLY_RECAP_DB = makeWeeklyRecapDb();
     await deathHandler(
@@ -125,7 +125,7 @@ describe('deathHandler', () => {
       'INSERT INTO deaths'
     );
     const statement = WEEKLY_RECAP_DB.prepare.mock.results[0].value;
-    expect(statement.bind).toHaveBeenCalledWith('Swap', 5_000_000);
+    expect(statement.bind).toHaveBeenCalledWith('Swap');
   });
 
   it('retries once and still records the death after one transient D1 failure', async () => {
@@ -177,8 +177,9 @@ describe('deathHandler', () => {
     expect(firstMessage(msgMap)).toContain('**Swap** has died');
     const [logMessage] = consoleSpy.mock.calls[0];
     expect(logMessage).toContain('recordDeath FAILED after retry');
-    expect(logMessage).toContain("VALUES ('Swap', 1, 50000)");
-    expect(logMessage).toContain('total_value_lost = total_value_lost + 50000');
+    expect(logMessage).toContain("VALUES ('Swap', 1)");
+    expect(logMessage).toContain('death_count = death_count + 1');
+    expect(logMessage).not.toContain('total_value_lost');
     consoleSpy.mockRestore();
   });
 });

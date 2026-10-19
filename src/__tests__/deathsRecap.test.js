@@ -11,7 +11,7 @@ function makeStatement(resolves = {}) {
 }
 
 describe('buildDeathsWeeklyChangeSection', () => {
-  it('shows only deaths/gp lost since the baseline, not the lifetime total', async () => {
+  it('shows only deaths since the baseline, not the lifetime total', async () => {
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(
         makeStatement({
@@ -20,9 +20,7 @@ describe('buildDeathsWeeklyChangeSection', () => {
               {
                 playername: 'Gout Haver',
                 death_count: 12,
-                total_value_lost: 20_000_000,
                 death_count_baseline: 10,
-                total_value_lost_baseline: 15_000_000,
               },
             ],
           },
@@ -34,7 +32,32 @@ describe('buildDeathsWeeklyChangeSection', () => {
 
     expect(result).toContain('Deaths Board');
     const line = result.split('\n').find((l) => l.includes('Gout Haver'));
-    expect(line.trim().split(/\s{2,}/)).toEqual(['Gout Haver', '2', '5M']);
+    expect(line.trim().split(/\s{2,}/)).toEqual(['Gout Haver', '2']);
+    expect(result).not.toContain('GP Lost');
+  });
+
+  it('no longer reads or resets GP lost', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Gout Haver',
+                death_count: 12,
+                death_count_baseline: 10,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    await buildDeathsWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    for (const [sql] of WEEKLY_RECAP_DB.prepare.mock.calls) {
+      expect(sql).not.toContain('total_value_lost');
+    }
   });
 
   it('shows the full count for a brand-new player with no baseline yet', async () => {
@@ -46,9 +69,7 @@ describe('buildDeathsWeeklyChangeSection', () => {
               {
                 playername: 'Frosty Dad',
                 death_count: 1,
-                total_value_lost: 500_000,
                 death_count_baseline: null,
-                total_value_lost_baseline: null,
               },
             ],
           },
@@ -59,7 +80,7 @@ describe('buildDeathsWeeklyChangeSection', () => {
     const result = await buildDeathsWeeklyChangeSection(WEEKLY_RECAP_DB);
 
     const line = result.split('\n').find((l) => l.includes('Frosty Dad'));
-    expect(line.trim().split(/\s{2,}/)).toEqual(['Frosty Dad', '1', '500K']);
+    expect(line.trim().split(/\s{2,}/)).toEqual(['Frosty Dad', '1']);
   });
 
   it('omits a player with no deaths since the last recap', async () => {
@@ -71,16 +92,12 @@ describe('buildDeathsWeeklyChangeSection', () => {
               {
                 playername: 'Idle',
                 death_count: 5,
-                total_value_lost: 1_000_000,
                 death_count_baseline: 5,
-                total_value_lost_baseline: 1_000_000,
               },
               {
                 playername: 'Active',
                 death_count: 6,
-                total_value_lost: 1_000_000,
                 death_count_baseline: 5,
-                total_value_lost_baseline: 1_000_000,
               },
             ],
           },
@@ -103,16 +120,12 @@ describe('buildDeathsWeeklyChangeSection', () => {
               {
                 playername: 'SmallGain',
                 death_count: 1,
-                total_value_lost: 0,
                 death_count_baseline: 0,
-                total_value_lost_baseline: 0,
               },
               {
                 playername: 'BigGain',
                 death_count: 10,
-                total_value_lost: 0,
                 death_count_baseline: 0,
-                total_value_lost_baseline: 0,
               },
             ],
           },
@@ -134,9 +147,7 @@ describe('buildDeathsWeeklyChangeSection', () => {
               {
                 playername: 'Gout Haver',
                 death_count: 12,
-                total_value_lost: 20_000_000,
                 death_count_baseline: 10,
-                total_value_lost_baseline: 15_000_000,
               },
             ],
           },
@@ -162,9 +173,7 @@ describe('buildDeathsWeeklyChangeSection', () => {
               {
                 playername: 'Idle',
                 death_count: 5,
-                total_value_lost: 1_000_000,
                 death_count_baseline: 5,
-                total_value_lost_baseline: 1_000_000,
               },
             ],
           },

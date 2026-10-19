@@ -22,6 +22,7 @@ describe('buildPetsWeeklyChangeSection', () => {
                 playername: 'LSx Swap',
                 total_pets: 33,
                 most_recent_pet_name: 'Herbi',
+                weekly_pet_names: 'Baby mole, Herbi',
                 total_pets_baseline: 31, // backfilled lifetime total as of shipping
               },
             ],
@@ -34,7 +35,13 @@ describe('buildPetsWeeklyChangeSection', () => {
 
     expect(result).toContain('Pet Board');
     const line = result.split('\n').find((l) => l.includes('LSx Swap'));
-    expect(line.trim().split(/\s{2,}/)).toEqual(['LSx Swap', '2', 'Herbi']);
+    // Pets Got lists oldest to newest - the order they were appended.
+    expect(line.trim().split(/\s{2,}/)).toEqual([
+      'LSx Swap',
+      '2',
+      'Baby mole, Herbi',
+    ]);
+    expect(result).not.toContain('Recent Pet');
   });
 
   it('shows the full total for a brand-new player with no baseline yet', async () => {
@@ -47,6 +54,7 @@ describe('buildPetsWeeklyChangeSection', () => {
                 playername: 'Frosty Dad',
                 total_pets: 1,
                 most_recent_pet_name: 'Beef',
+                weekly_pet_names: 'Beef',
                 total_pets_baseline: null,
               },
             ],
@@ -59,6 +67,58 @@ describe('buildPetsWeeklyChangeSection', () => {
 
     const line = result.split('\n').find((l) => l.includes('Frosty Dad'));
     expect(line.trim().split(/\s{2,}/)).toEqual(['Frosty Dad', '1', 'Beef']);
+  });
+
+  it('shows "-" for Pets Got when no names were recorded this week', async () => {
+    const PETS_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Swap',
+                total_pets: 32,
+                most_recent_pet_name: 'Herbi',
+                weekly_pet_names: null, // e.g. a pet drop missing its name
+                total_pets_baseline: 31,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildPetsWeeklyChangeSection(PETS_DB);
+
+    const line = result.split('\n').find((l) => l.includes('Swap'));
+    expect(line.trim().split(/\s{2,}/)).toEqual(['Swap', '1', '-']);
+  });
+
+  it('clears the weekly pet names after building the section', async () => {
+    const PETS_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'Swap',
+                total_pets: 33,
+                most_recent_pet_name: 'Herbi',
+                weekly_pet_names: 'Baby mole, Herbi',
+                total_pets_baseline: 31,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    await buildPetsWeeklyChangeSection(PETS_DB);
+
+    const resetCall = PETS_DB.prepare.mock.calls.find(([sql]) =>
+      sql.includes('weekly_pet_names = NULL')
+    );
+    expect(resetCall).toBeDefined();
   });
 
   it('omits a player with no pets gained since the last recap', async () => {

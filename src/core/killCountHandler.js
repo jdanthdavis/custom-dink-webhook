@@ -1,5 +1,11 @@
 import { customBossNames, killCountMsgConstructor } from './helperFunctions';
-import { bossMap, specialKills, KILL_COUNT, BRUTUS } from '../constants';
+import {
+  bossMap,
+  specialKills,
+  quietFirstKills,
+  KILL_COUNT,
+  BRUTUS,
+} from '../constants';
 
 /**
  * Notifies on a kill-count milestone (every 100, a boss-specific interval, or a special first kill).
@@ -18,7 +24,9 @@ function killCountHandler(msgMap, playerName, extra, URL) {
   if (
     killCount % bossInterval === 0 ||
     killCount % 100 === 0 ||
-    (killCount === 1 && specialKills.includes(validatedBossName?.toUpperCase()))
+    (killCount === 1 &&
+      (specialKills.includes(validatedBossName?.toUpperCase()) ||
+        quietFirstKills.includes(validatedBossName?.toUpperCase())))
   ) {
     msgMap.set(
       { ID: KILL_COUNT, URL },

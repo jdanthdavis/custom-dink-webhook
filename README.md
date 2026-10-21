@@ -21,10 +21,11 @@ Per-boss intervals are matched case-insensitively against `bossMap` in [constant
 | The Nightmare                     | 25       |
 | Yama                              | 25       |
 | Doom of Mokhaiotl                 | 25       |
+| Fractured Archive                 | 5        |
 | Corporeal Beast                   | 50       |
 | Herbiboar                         | 150      |
 
-A first kill of **Sol Heredit, TzKal-Zuk, TzTok-Jad, Demonic Brutus** always notifies regardless of interval.
+A first kill of **Sol Heredit, TzKal-Zuk, TzTok-Jad, Demonic Brutus** always notifies regardless of interval (with an `@everyone` ping). A first completion of **Fractured Archive** also always notifies, but without the ping.
 
 ## [petHandler](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/core/petHandler.js)
 

@@ -97,6 +97,8 @@ export const specialKills = [
   'TZTOK-JAD',
   'DEMONIC BRUTUS',
 ];
+// First kills that always notify, but without the @everyone ping
+export const quietFirstKills = ['FRACTURED ARCHIVE'];
 export const bossMap = new Map([
   ['TZKAL-ZUK', 5],
   ['SOL HEREDIT', 5],
@@ -109,6 +111,7 @@ export const bossMap = new Map([
   ['YAMA', 25],
   ['SKOTIZO', 5],
   ['DOOM OF MOKHAIOTL', 25],
+  ['FRACTURED ARCHIVE', 5],
   ['GEMSTONE CRAB', 10],
   ['DEMONIC BRUTUS', 10],
   ['MOONS OF PERIL', 10],
@@ -149,6 +152,7 @@ export const CHAT_MESSAGE_TYPES = {
   MAGGOT_EGG: 'MAGGOT_EGG',
   BARRACUDA_TRIAL_PB: 'BARRACUDA_TRIAL_PB',
   KINGDOM: 'KINGDOM',
+  FRACTURED_ARCHIVE_KC: 'FRACTURED_ARCHIVE_KC',
 };
 export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',
@@ -184,6 +188,7 @@ export const CHAT_REGEX = {
   FLOOR_TIME_TEXT:
     /Floor ([1-5]) time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   BIG_FISH: /You catch an enormous (.+)!/,
+  FRACTURED_ARCHIVE_KC: /Your completed Fractured Archive count is:\s*([\d,]+)/,
   TOB_KITS:
     /.+ found something special: (Holy ornament kit|Sanguine ornament kit|Sanguine dust)/,
   MAGGOT_EGG: /.+ received a drop: (Maggot egg).*/,

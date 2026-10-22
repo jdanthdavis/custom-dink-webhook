@@ -46,6 +46,10 @@ function killCountMsgConstructor(playerName, gameMessage, bossName, killCount) {
     fallBackType = secondaryMatch.groups.type;
   }
 
+  if (fallBackType.toLowerCase() === 'completed') {
+    fallBackType = 'completion';
+  }
+
   return `**${playerName}** has defeated **${bossName}** with a ${fallBackType.toLowerCase()} count of **${killCount.toLocaleString()}!**`;
 }
 

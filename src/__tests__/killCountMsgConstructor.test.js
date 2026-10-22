@@ -36,14 +36,15 @@ describe('killCountMsgConstructor', () => {
     expect(msg).toContain('with a chest count of **10!**');
   });
 
-  it('extracts the type from the secondary "completed" phrasing', () => {
+  it('maps the secondary "completed" phrasing to "completion"', () => {
     const msg = killCountMsgConstructor(
       'Swap',
       'Your completed Wintertodt count is: 20',
       'Wintertodt',
       20
     );
-    expect(msg).toContain('with a completed count of **20!**');
+    expect(msg).toContain('with a completion count of **20!**');
+    expect(msg).not.toContain('completed count');
   });
 
   it('falls back to "completion" when the game message does not match', () => {

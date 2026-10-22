@@ -2,6 +2,52 @@ import { describe, expect, it } from 'vitest';
 import chatHandler from '../core/chatMsgHandler/chatHandler';
 
 describe('chatHandler', () => {
+  it('formats a Fractured Archive personal best when the message ends in (new personal best)', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'The Fractured Archive: Total completion time: 12:34.56 (new personal best)',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {}
+    );
+    const [[key, msg]] = [...msgMap.entries()];
+    expect(key.URL).toBe('pbUrl');
+    expect(msg).toBe(
+      '**Pigeon Cam** has achieved a new **Fractured Archive** personal best of **12:34.56!**'
+    );
+  });
+
+  it('does not report a Fractured Archive time that is not a personal best', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'The Fractured Archive: Total completion time: 12:34.56',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {}
+    );
+    expect(msgMap.size).toBe(0);
+  });
+
+  it('does not report a Fractured Archive time when (new personal best) is not at the end', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'The Fractured Archive: Total completion time: 12:34.56 (new personal best) extra',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {}
+    );
+    expect(msgMap.size).toBe(0);
+  });
+
   it('drops a drop broadcast from a non-tracked player before dispatching', async () => {
     const msgMap = new Map();
     await chatHandler(

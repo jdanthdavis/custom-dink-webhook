@@ -153,6 +153,7 @@ export const CHAT_MESSAGE_TYPES = {
   BARRACUDA_TRIAL_PB: 'BARRACUDA_TRIAL_PB',
   KINGDOM: 'KINGDOM',
   FRACTURED_ARCHIVE_KC: 'FRACTURED_ARCHIVE_KC',
+  FRACTURED_ARCHIVE_PB: 'FRACTURED_ARCHIVE_PB',
 };
 export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',
@@ -189,6 +190,9 @@ export const CHAT_REGEX = {
     /Floor ([1-5]) time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)/,
   BIG_FISH: /You catch an enormous (.+)!/,
   FRACTURED_ARCHIVE_KC: /Your completed Fractured Archive count is:\s*([\d,]+)/,
+  // "(new personal best)" must end the message, otherwise it isn't a new PB
+  FRACTURED_ARCHIVE_PB:
+    /The Fractured Archive: Total completion time: (\d{1,2}:\d{2}\.\d{2}) \(new personal best\)\s*$/,
   TOB_KITS:
     /.+ found something special: (Holy ornament kit|Sanguine ornament kit|Sanguine dust)/,
   MAGGOT_EGG: /.+ received a drop: (Maggot egg).*/,

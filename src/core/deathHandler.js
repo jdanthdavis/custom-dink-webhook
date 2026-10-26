@@ -7,6 +7,7 @@ const DEATH_EMOJIS = [
   '<a:itswill_bozo:1365315318318366770>',
   '<:sludge:1387592695341387938> ',
   '<:pick_ass:1535385109685870703> ',
+  '<:pot_of_greed:1564354054325403659>',
 ];
 
 const FOOD_NAMES = [

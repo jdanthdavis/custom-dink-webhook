@@ -32,9 +32,9 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
         key: 'godlies',
       },
       {
-        current: 'mythic_pulls',
-        baseline: 'mythic_pulls_baseline',
-        key: 'mythics',
+        current: 'legendary_pulls',
+        baseline: 'legendary_pulls_baseline',
+        key: 'legendaries',
       },
     ],
   });
@@ -50,7 +50,7 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
       cardsDelta: Math.max(0, row.cardsDelta),
       foilsDelta: Math.max(0, row.foilsDelta),
       godliesDelta: Math.max(0, row.godliesDelta),
-      mythicsDelta: Math.max(0, row.mythicsDelta),
+      legendariesDelta: Math.max(0, row.legendariesDelta),
     }))
     .filter(
       (row) =>
@@ -58,7 +58,7 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
         row.cardsDelta > 0 ||
         row.foilsDelta > 0 ||
         row.godliesDelta > 0 ||
-        row.mythicsDelta > 0
+        row.legendariesDelta > 0
     );
   if (gains.length === 0) return null;
 
@@ -70,7 +70,7 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
     'Cards Pulled',
     'Foils Pulled',
     'Godlies Pulled',
-    'Mythics Pulled',
+    'Legendaries Pulled',
   ];
   const tableRows = sorted.map((row) => [
     row.playername,
@@ -78,7 +78,7 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
     row.cardsDelta.toLocaleString('en-US'),
     row.foilsDelta.toLocaleString('en-US'),
     row.godliesDelta.toLocaleString('en-US'),
-    row.mythicsDelta.toLocaleString('en-US'),
+    row.legendariesDelta.toLocaleString('en-US'),
   ]);
 
   return formatLeaderboardTable('TCG Board', headers, tableRows);

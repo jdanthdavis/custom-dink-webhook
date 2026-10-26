@@ -220,7 +220,7 @@ describe('tcgHandler', () => {
       'Bronze chainbody',
       expect.any(String),
       0, // godly pull
-      0 // mythic pull
+      0 // legendary pull
     );
   });
 

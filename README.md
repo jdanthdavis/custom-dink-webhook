@@ -188,7 +188,7 @@ CREATE TABLE tcg_progress (
 );
 ```
 
-Dupes count: `unique_cards_owned`/`foil_cards_owned` track every pull, not just new cards. A stat missing from a pull's `content` leaves the stored value untouched. Recap-only.
+Dupes count: `unique_cards_owned`/`foil_cards_owned` track every pull, not just new cards. `godly_pulls`/`mythic_pulls` are pure counters (+1 per Godly/Mythic pull, dupes included) that feed the recap's Godlies Pulled / Mythics Pulled columns. A stat missing from a pull's `content` leaves the stored value untouched. Recap-only.
 
 ## [Weekly Recap](https://github.com/jdanthdavis/custom-dink-webhook/blob/main/src/recapHandler.js)
 

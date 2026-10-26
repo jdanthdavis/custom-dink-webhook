@@ -207,13 +207,17 @@ function buildPullLine({
  * @param {string} playername
  * @param {string} content
  * @param {string} cardName
+ * @param {string} rarityTier - Godly/Mythic pulls bump their running counters
  */
 async function recordTcgProgress(
   WEEKLY_RECAP_DB,
   playername,
   content,
-  cardName
+  cardName,
+  rarityTier
 ) {
+  const godlyPull = rarityTier === 'Godly' ? 1 : 0;
+  const mythicPull = rarityTier === 'Mythic' ? 1 : 0;
   const collectionScore = extractCollectionScoreValue(content);
   const uniqueCardsOwned = extractUniqueCardOwnedCount(content);
   const uniqueCardsTotal = extractUniqueCardsTotal(content);
@@ -224,8 +228,8 @@ async function recordTcgProgress(
 
   await runD1Write(WEEKLY_RECAP_DB, {
     label: 'recordTcgProgress',
-    sql: `INSERT INTO tcg_progress (playername, collection_score, unique_cards_owned, unique_cards_total, foil_cards_owned, foil_cards_total, opened_packs, last_card_name, last_updated)
-          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
+    sql: `INSERT INTO tcg_progress (playername, collection_score, unique_cards_owned, unique_cards_total, foil_cards_owned, foil_cards_total, opened_packs, last_card_name, last_updated, godly_pulls, mythic_pulls)
+          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
           ON CONFLICT(playername) DO UPDATE SET
             collection_score = COALESCE(?2, collection_score),
             unique_cards_owned = COALESCE(?3, unique_cards_owned),
@@ -234,7 +238,9 @@ async function recordTcgProgress(
             foil_cards_total = COALESCE(?6, foil_cards_total),
             opened_packs = COALESCE(?7, opened_packs),
             last_card_name = ?8,
-            last_updated = ?9`,
+            last_updated = ?9,
+            godly_pulls = godly_pulls + ?10,
+            mythic_pulls = mythic_pulls + ?11`,
     values: [
       playername,
       collectionScore,
@@ -245,6 +251,8 @@ async function recordTcgProgress(
       openedPacks,
       cardName,
       lastUpdated,
+      godlyPull,
+      mythicPull,
     ],
   });
 }
@@ -271,7 +279,7 @@ async function tcgHandler(
   const { cardName, rarityTier, newForCollection, foil, inspectUrl } =
     extra.metadata;
 
-  await recordTcgProgress(WEEKLY_RECAP_DB, playerName, content, cardName);
+  await recordTcgProgress(WEEKLY_RECAP_DB, playerName, content, cardName, rarityTier);
 
   if (!newForCollection) return;
   if (!foil && !ACCEPTED_RARITIES.includes(rarityTier)) return;

@@ -95,7 +95,14 @@ describe('buildTcgWeeklyChangeSection', () => {
     expect(swapLine).toContain('100'); // score gained: 1000 - 900
     expect(swapLine).toContain('50'); // foils gained: 150 - 100
     // cards gained: 200 - 200 = 0
-    expect(swapLine.trim().split(/\s{2,}/)).toEqual(['Swap', '100', '0', '50']);
+    expect(swapLine.trim().split(/\s{2,}/)).toEqual([
+      'Swap',
+      '100',
+      '0',
+      '50',
+      '0',
+      '0',
+    ]);
   });
 
   it('reports a drop (e.g. selling dupes) as 0 gained, not a negative', async () => {
@@ -127,6 +134,8 @@ describe('buildTcgWeeklyChangeSection', () => {
       '100',
       '0',
       '1',
+      '0',
+      '0',
     ]);
     expect(result).not.toContain('-75');
   });

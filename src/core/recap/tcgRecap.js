@@ -26,6 +26,16 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
         baseline: 'foil_cards_owned_baseline',
         key: 'foils',
       },
+      {
+        current: 'godly_pulls',
+        baseline: 'godly_pulls_baseline',
+        key: 'godlies',
+      },
+      {
+        current: 'mythic_pulls',
+        baseline: 'mythic_pulls_baseline',
+        key: 'mythics',
+      },
     ],
   });
   if (!changes || changes.length === 0) return null;
@@ -39,20 +49,36 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
       scoreDelta: Math.max(0, row.scoreDelta),
       cardsDelta: Math.max(0, row.cardsDelta),
       foilsDelta: Math.max(0, row.foilsDelta),
+      godliesDelta: Math.max(0, row.godliesDelta),
+      mythicsDelta: Math.max(0, row.mythicsDelta),
     }))
     .filter(
-      (row) => row.scoreDelta > 0 || row.cardsDelta > 0 || row.foilsDelta > 0
+      (row) =>
+        row.scoreDelta > 0 ||
+        row.cardsDelta > 0 ||
+        row.foilsDelta > 0 ||
+        row.godliesDelta > 0 ||
+        row.mythicsDelta > 0
     );
   if (gains.length === 0) return null;
 
   const sorted = gains.sort((a, b) => b.scoreDelta - a.scoreDelta);
 
-  const headers = ['Name', 'Score Gained', 'Cards Gained', 'Foils Gained'];
+  const headers = [
+    'Name',
+    'Score Gained',
+    'Cards Pulled',
+    'Foils Pulled',
+    'Godlies Pulled',
+    'Mythics Pulled',
+  ];
   const tableRows = sorted.map((row) => [
     row.playername,
     row.scoreDelta.toLocaleString('en-US'),
     row.cardsDelta.toLocaleString('en-US'),
     row.foilsDelta.toLocaleString('en-US'),
+    row.godliesDelta.toLocaleString('en-US'),
+    row.mythicsDelta.toLocaleString('en-US'),
   ]);
 
   return formatLeaderboardTable('TCG Board', headers, tableRows);

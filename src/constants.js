@@ -111,7 +111,7 @@ export const bossMap = new Map([
   ['YAMA', 25],
   ['SKOTIZO', 5],
   ['DOOM OF MOKHAIOTL', 25],
-  ['FRACTURED ARCHIVE', 5],
+  ['FRACTURED ARCHIVE', 10],
   ['GEMSTONE CRAB', 10],
   ['DEMONIC BRUTUS', 10],
   ['MOONS OF PERIL', 10],

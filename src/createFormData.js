@@ -123,7 +123,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         CRAB_DB,
         MISCELLANIA_URL,
         PLAYER_DISCORD_IDS,
-        CA_PROGRESS
+        CA_PROGRESS,
+        extra.type
       );
       break;
     default:

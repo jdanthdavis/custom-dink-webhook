@@ -139,6 +139,8 @@ export const DEATH = 'DEATH';
 
 // chat
 export const PERSONAL_BEST = 'PERSONAL_BEST';
+// extra.type of a CHAT payload sent from clan chat
+export const CLAN_CHAT = 'CLAN_CHAT';
 export const HALLOWED_SEPULCHRE = 'Hallowed Sepulchre';
 export const GRAND_HALLOWED_COFFIN = 'Grand Hallowed Coffin';
 export const THEATRE_OF_BLOOD_HM = 'Theatre of Blood: Hard Mode';
@@ -150,6 +152,7 @@ export const CHAT_MESSAGE_TYPES = {
   UNTRADEABLE_DROP: 'UNTRADEABLE_DROP',
   PURIFYING_SIGIL: 'PURIFYING_SIGIL',
   MAGGOT_EGG: 'MAGGOT_EGG',
+  RAID_SPECIAL_LOOT: 'RAID_SPECIAL_LOOT',
   BARRACUDA_TRIAL_PB: 'BARRACUDA_TRIAL_PB',
   KINGDOM: 'KINGDOM',
   FRACTURED_ARCHIVE_KC: 'FRACTURED_ARCHIVE_KC',
@@ -165,6 +168,7 @@ export const ITEM_BOSS_MAP = {
   Sanguine: 'Theatre of Blood: Hard Mode',
   Dust: 'Theatre of Blood: Hard Mode',
   Maggot: 'Maggot King',
+  Cabbage: 'Fractured Archive',
 };
 export const UNTRADEABLE_ITEMS = [
   'vestige',
@@ -196,6 +200,7 @@ export const CHAT_REGEX = {
   TOB_KITS:
     /.+ found something special: (Holy ornament kit|Sanguine ornament kit|Sanguine dust)/,
   MAGGOT_EGG: /.+ received a drop: (Maggot egg).*/,
+  RAID_SPECIAL_LOOT: /^(.+?) received special loot from a raid: (.+?)\.?$/,
   BARRACUDA_TRIAL_TIME_TEXT:
     /^(.+?) has achieved a new (Tempor Tantrum|Jubbly Jive|Gwenith Glide) (Swordfish|Marlin|Shark) personal best: (\d{1,2}:\d{2}(?:\.\d{2})?)/,
   KINGDOM_TEXT:
@@ -210,6 +215,7 @@ export const CHAT_REGEX = {
 export const CHAT_BROADCAST_ACHIEVER_PATTERNS = [
   /^(.+?) received a drop: /,
   /^(.+?) found something special: /,
+  /^(.+?) received special loot from a raid: /,
   CHAT_REGEX.BARRACUDA_TRIAL_TIME_TEXT,
 ];
 export const bigFishArr = [

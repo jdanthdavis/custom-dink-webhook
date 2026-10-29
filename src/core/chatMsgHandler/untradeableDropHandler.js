@@ -12,8 +12,18 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
   const untradeableMatch = message?.match(CHAT_REGEX.UNTRADEABLE_TEXT);
   const tobKitMatch = message?.match(CHAT_REGEX.TOB_KITS);
   const maggotEggMatch = message?.match(CHAT_REGEX.MAGGOT_EGG);
+  const raidLootMatch = message?.match(CHAT_REGEX.RAID_SPECIAL_LOOT);
 
-  if (!vestigeMatch && !untradeableMatch && !tobKitMatch && !maggotEggMatch)
+  // Only fire when the achiever named in the broadcast is the reporting player
+  if (raidLootMatch && raidLootMatch[1] !== playerName) return;
+
+  if (
+    !vestigeMatch &&
+    !untradeableMatch &&
+    !tobKitMatch &&
+    !maggotEggMatch &&
+    !raidLootMatch
+  )
     return;
 
   /** @param {string} message */
@@ -47,12 +57,15 @@ export function untradeableDropHandler(message, playerName, msgMap, URL) {
     },
     { match: tobKitMatch, id: CHAT_MESSAGE_TYPES.TOB_KIT },
     { match: maggotEggMatch, id: CHAT_MESSAGE_TYPES.MAGGOT_EGG },
+    { match: raidLootMatch, id: CHAT_MESSAGE_TYPES.RAID_SPECIAL_LOOT },
     { match: untradeableMatch, id: CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP },
   ];
 
   for (const { match, id, kind } of matchers) {
     if (match) {
-      const msg = buildMessage(playerName, match[1], kind);
+      // RAID_SPECIAL_LOOT captures the player name first, then the item
+      const item = id === CHAT_MESSAGE_TYPES.RAID_SPECIAL_LOOT ? match[2] : match[1];
+      const msg = buildMessage(playerName, item, kind);
       return msgMap.set({ ID: id, URL }, msg);
     }
   }

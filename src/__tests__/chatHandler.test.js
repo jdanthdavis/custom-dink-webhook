@@ -108,6 +108,43 @@ describe('chatHandler', () => {
     expect([...msgMap.keys()][0].URL).toBe('miscUrl');
   });
 
+  it('dispatches raid special loot from clan chat', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'Pigeon Cam received special loot from a raid: Cabbage.',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {},
+      'miscUrl',
+      undefined,
+      undefined,
+      'CLAN_CHAT'
+    );
+    expect(msgMap.size).toBe(1);
+    expect([...msgMap.values()][0]).toContain('Cabbage');
+  });
+
+  it('ignores raid special loot that did not come from clan chat', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'Pigeon Cam received special loot from a raid: Cabbage.',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {},
+      'miscUrl',
+      undefined,
+      undefined,
+      'PUBLICCHAT'
+    );
+    expect(msgMap.size).toBe(0);
+  });
+
   it('does not block message types that never embed a name', async () => {
     const msgMap = new Map();
     await chatHandler(

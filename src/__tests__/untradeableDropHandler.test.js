@@ -61,6 +61,33 @@ describe('untradeableDropHandler', () => {
     expect(key.ID).toBe(CHAT_MESSAGE_TYPES.MAGGOT_EGG);
   });
 
+  it('ignores raid special loot when the name differs from the payload player', () => {
+    const msgMap = new Map();
+    untradeableDropHandler(
+      'LSx Swap received special loot from a raid: Cabbage.',
+      'Swap',
+      msgMap,
+      'url'
+    );
+    expect(msgMap.size).toBe(0);
+  });
+
+  it('formats a raid special loot drop', () => {
+    const msgMap = new Map();
+    untradeableDropHandler(
+      'LSx Swap received special loot from a raid: Cabbage.',
+      'LSx Swap',
+      msgMap,
+      'url'
+    );
+    const msg = [...msgMap.values()][0];
+    expect(msg).toContain('**LSx Swap** has received **x1 Cabbage**');
+    expect(msg).toContain('from **Fractured Archive!**');
+
+    const [key] = [...msgMap.keys()];
+    expect(key.ID).toBe(CHAT_MESSAGE_TYPES.RAID_SPECIAL_LOOT);
+  });
+
   it('does not set a message when nothing matches', () => {
     const msgMap = new Map();
     untradeableDropHandler('unrelated message', 'Swap', msgMap, 'url');

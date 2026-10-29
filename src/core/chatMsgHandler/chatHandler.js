@@ -4,6 +4,7 @@ import { untradeableDropHandler } from './untradeableDropHandler';
 import {
   CHAT_MESSAGE_TYPES,
   CHAT_REGEX,
+  CLAN_CHAT,
   DELVE_KC,
   GEMSTONE_CRAB,
   UNTRADEABLE_ITEMS,
@@ -33,6 +34,7 @@ import { getChatBroadcastAchiever } from '../helperFunctions';
  * @param {string} MISCELLANIA_URL
  * @param {string} [PLAYER_DISCORD_IDS]
  * @param {*} [CA_PROGRESS] - KV namespace, reused for the Kingdom ping cooldown
+ * @param {string} [chatType] - the payload's extra.type (e.g. CLAN_CHAT)
  */
 async function chatHandler(
   msgMap,
@@ -44,7 +46,8 @@ async function chatHandler(
   CRAB_DB,
   MISCELLANIA_URL,
   PLAYER_DISCORD_IDS,
-  CA_PROGRESS
+  CA_PROGRESS,
+  chatType
 ) {
   const achiever = getChatBroadcastAchiever(message);
   if (achiever && !theBoys.includes(achiever.toUpperCase())) {
@@ -72,6 +75,12 @@ async function chatHandler(
     },
     {
       check: () => UNTRADEABLE_ITEMS.some((item) => message.includes(item)),
+      type: CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP,
+    },
+    {
+      // Only trust the broadcast when it actually came through clan chat
+      check: () =>
+        chatType === CLAN_CHAT && CHAT_REGEX.RAID_SPECIAL_LOOT.test(message),
       type: CHAT_MESSAGE_TYPES.UNTRADEABLE_DROP,
     },
     {

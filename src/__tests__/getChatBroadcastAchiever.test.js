@@ -16,6 +16,14 @@ describe('getChatBroadcastAchiever', () => {
     ).toBe('Random Clanmate');
   });
 
+  it('extracts the name from a raid special loot broadcast', () => {
+    expect(
+      getChatBroadcastAchiever(
+        'Random Clanmate received special loot from a raid: Cabbage.'
+      )
+    ).toBe('Random Clanmate');
+  });
+
   it('extracts the name from a Barracuda Trial personal best broadcast', () => {
     expect(
       getChatBroadcastAchiever(

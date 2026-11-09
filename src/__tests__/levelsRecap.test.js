@@ -278,7 +278,7 @@ describe('buildLevelsWeeklyChangeSection', () => {
     ]);
   });
 
-  it('omits a player with XP gained but no level-ups (a maxed skill)', async () => {
+  it('includes a player with XP gained but no level-ups (a maxed skill)', async () => {
     const WEEKLY_RECAP_DB = makeDb([
       {
         playername: 'MaxedOut',
@@ -296,7 +296,14 @@ describe('buildLevelsWeeklyChangeSection', () => {
 
     const result = await buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    expect(result).toBeNull();
+    const line = result.split('\n').find((l) => l.startsWith('MaxedOut'));
+    expect(line.trim().split(/\s{2,}/)).toEqual([
+      'MaxedOut',
+      '-',
+      '-',
+      '3M',
+      'Attack (1.97M)',
+    ]);
   });
 
   it("does not let Overall's own delta double-count toward the top skill", async () => {

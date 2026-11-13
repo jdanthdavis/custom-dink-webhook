@@ -36,7 +36,7 @@ export const PLAYER_DISPLAY_NAMES = {
   Z4M: 'Z4M',
   'Z4M I': 'Z4M I',
   THEMILDEST1: 'themildest1',
-  'CAN IT WORM': 'Can It Worm',
+  'FROSTYDAD': 'FrostyDad',
   'FROSTY DAD': 'Frosty Dad',
 };
 export const theBoys = Object.keys(PLAYER_DISPLAY_NAMES);

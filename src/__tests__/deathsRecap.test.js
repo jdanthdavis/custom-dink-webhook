@@ -36,6 +36,29 @@ describe('buildDeathsWeeklyChangeSection', () => {
     expect(result).not.toContain('GP Lost');
   });
 
+  it('shows the configured display name, whatever casing is stored', async () => {
+    const WEEKLY_RECAP_DB = {
+      prepare: vi.fn().mockReturnValue(
+        makeStatement({
+          all: {
+            results: [
+              {
+                playername: 'FROSTYDAD',
+                death_count: 5,
+                death_count_baseline: 3,
+              },
+            ],
+          },
+        })
+      ),
+    };
+
+    const result = await buildDeathsWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    const line = result.split('\n').find((l) => l.includes('Frosty'));
+    expect(line.trim().split(/\s{2,}/)).toEqual(['FrostyDad', '2']);
+  });
+
   it('no longer reads or resets GP lost', async () => {
     const WEEKLY_RECAP_DB = {
       prepare: vi.fn().mockReturnValue(

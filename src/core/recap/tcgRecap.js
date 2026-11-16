@@ -1,4 +1,7 @@
-import { formatLeaderboardTable } from '../helperFunctions';
+import {
+  formatLeaderboardTable,
+  getPlayerDisplayName,
+} from '../helperFunctions';
 import { computeAndResetDeltas } from './deltaTracking';
 
 /**
@@ -73,7 +76,7 @@ export async function buildTcgWeeklyChangeSection(WEEKLY_RECAP_DB) {
     'Legendaries Pulled',
   ];
   const tableRows = sorted.map((row) => [
-    row.playername,
+    getPlayerDisplayName(row.playername),
     row.scoreDelta.toLocaleString('en-US'),
     row.cardsDelta.toLocaleString('en-US'),
     row.foilsDelta.toLocaleString('en-US'),

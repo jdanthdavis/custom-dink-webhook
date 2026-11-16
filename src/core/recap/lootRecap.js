@@ -1,4 +1,8 @@
-import { formatValue, formatLeaderboardTable } from '../helperFunctions';
+import {
+  formatValue,
+  formatLeaderboardTable,
+  getPlayerDisplayName,
+} from '../helperFunctions';
 import { computeAndResetDeltas } from './deltaTracking';
 
 /**
@@ -38,7 +42,7 @@ export async function buildLootWeeklyChangeSection(WEEKLY_RECAP_DB) {
 
   const headers = ['Name', 'Total Value Gained', 'Most Valuable Drop'];
   const tableRows = sorted.map((row) => [
-    row.playername,
+    getPlayerDisplayName(row.playername),
     formatValue(row.valueDelta, true),
     row.weekly_top_item_name
       ? `${row.weekly_top_item_name} ${formatValue(row.weekly_top_item_value)}`

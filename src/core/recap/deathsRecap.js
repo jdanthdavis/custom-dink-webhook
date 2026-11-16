@@ -1,4 +1,7 @@
-import { formatLeaderboardTable } from '../helperFunctions';
+import {
+  formatLeaderboardTable,
+  getPlayerDisplayName,
+} from '../helperFunctions';
 import { computeAndResetDeltas } from './deltaTracking';
 
 /**
@@ -24,7 +27,7 @@ export async function buildDeathsWeeklyChangeSection(WEEKLY_RECAP_DB) {
 
   const headers = ['Name', 'Deaths'];
   const tableRows = sorted.map((row) => [
-    row.playername,
+    getPlayerDisplayName(row.playername),
     row.deathsDelta.toLocaleString('en-US'),
   ]);
 

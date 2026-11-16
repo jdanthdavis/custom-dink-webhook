@@ -98,32 +98,59 @@ describe('buildLevelsWeeklyChangeSection', () => {
     ]);
   });
 
-  it('shows the full level for a player with no prior baseline yet', async () => {
+  it('skips a player with no prior baseline yet instead of counting their whole lifetime', async () => {
     const WEEKLY_RECAP_DB = makeDb([
       {
         playername: 'Frosty Dad',
         skill_name: 'Overall',
-        level: 50,
+        level: 2274,
         level_baseline: null,
+        xp: 400_000_000,
+        xp_baseline: null,
       },
       {
         playername: 'Frosty Dad',
         skill_name: 'Fishing',
-        level: 50,
+        level: 99,
         level_baseline: null,
+        xp: 13_034_431,
+        xp_baseline: null,
       },
     ]);
 
     const result = await buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB);
 
-    const line = result.split('\n').find((l) => l.includes('Frosty Dad'));
-    expect(line.trim().split(/\s{2,}/)).toEqual([
-      'Frosty Dad',
-      '50',
-      'Fishing',
-      '0',
-      '-',
+    expect(result).toBeNull();
+    // ...but the baseline is still seeded so next week's delta is real.
+    expect(WEEKLY_RECAP_DB.prepare).toHaveBeenCalledWith(
+      expect.stringContaining('UPDATE skill_xp SET')
+    );
+  });
+
+  it('still reports other players when one has no baseline yet', async () => {
+    const WEEKLY_RECAP_DB = makeDb([
+      {
+        playername: 'Frosty Dad',
+        skill_name: 'Overall',
+        level: 2274,
+        level_baseline: null,
+        xp: 400_000_000,
+        xp_baseline: null,
+      },
+      {
+        playername: 'LSx Swap',
+        skill_name: 'Overall',
+        level: 2000,
+        level_baseline: 1995,
+        xp: 300_000_000,
+        xp_baseline: 299_000_000,
+      },
     ]);
+
+    const result = await buildLevelsWeeklyChangeSection(WEEKLY_RECAP_DB);
+
+    expect(result).toContain('LSx Swap');
+    expect(result).not.toContain('Frosty Dad');
   });
 
   it('omits a player with no levels or XP gained since the last recap', async () => {

@@ -11,6 +11,11 @@ import { fetchAndRecordAllHiscoresXp } from './hiscoresXp';
  * "Overall") whose own delta is used directly as that metric's total
  * instead of summing every row - that row is also excluded from that
  * metric's "top skill" comparison, since it isn't a real skill.
+ *
+ * A row with a NULL baseline (a player's first poll) is skipped rather than
+ * diffed against 0, so a new or renamed player doesn't report their entire
+ * lifetime as one week's gain; its baseline is still reset to the current
+ * value so they count from the following recap.
  * @param {*} WEEKLY_RECAP_DB
  * @param {object} options
  * @param {string} options.table
@@ -44,6 +49,10 @@ async function aggregatePerSkillDeltas(WEEKLY_RECAP_DB, { table, metrics }) {
 
   for (const row of rows ?? []) {
     for (const { current, baseline, key, totalSkillName } of metrics) {
+      // A NULL baseline means this row was just inserted (a new or renamed
+      // player), so its whole lifetime value would otherwise count as one
+      // week's gain. Skip it - the reset below seeds the baseline.
+      if (row[baseline] == null) continue;
       const delta = (Number(row[current]) || 0) - (Number(row[baseline]) || 0);
       if (delta <= 0) continue;
 

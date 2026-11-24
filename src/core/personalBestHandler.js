@@ -14,7 +14,7 @@ function personalBestHandler(msgMap, playerName, extra, URL) {
   const bossName = customBossNames(boss);
   const formattedTime = formatPbTime(time);
   const partyLabel =
-    Array.isArray(party) && party.length > 1 ? ` (${party.length})` : '';
+    Array.isArray(party) && party.length > 1 ? ` (team size: ${party.length})`: '';
 
   const message = formattedTime
     ? `**${playerName}** has defeated **${bossName}${partyLabel}** with a new personal best of **${formattedTime}!**`

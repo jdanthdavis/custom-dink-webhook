@@ -33,7 +33,7 @@ describe('personalBestHandler', () => {
       'url'
     );
     expect(firstMessage(msgMap)).toBe(
-      '**Swap** has defeated **Fractured Archive (6)** with a new personal best of **16:28.2!**'
+      '**Swap** has defeated **Fractured Archive (team size: 6)** with a new personal best of **16:28.2!**'
     );
   });
 

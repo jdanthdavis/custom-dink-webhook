@@ -10,13 +10,15 @@ import { PERSONAL_BEST } from '../constants';
  * @returns {Map<{ ID: string, URL: string }, string>}
  */
 function personalBestHandler(msgMap, playerName, extra, URL) {
-  const { boss, time } = extra || {};
+  const { boss, time, party } = extra || {};
   const bossName = customBossNames(boss);
   const formattedTime = formatPbTime(time);
+  const partyLabel =
+    Array.isArray(party) && party.length > 1 ? ` (${party.length})` : '';
 
   const message = formattedTime
-    ? `**${playerName}** has defeated **${bossName}** with a new personal best of **${formattedTime}!**`
-    : `**${playerName}** has defeated **${bossName}** with a new personal best**!**`;
+    ? `**${playerName}** has defeated **${bossName}${partyLabel}** with a new personal best of **${formattedTime}!**`
+    : `**${playerName}** has defeated **${bossName}${partyLabel}** with a new personal best**!**`;
 
   msgMap.set({ ID: PERSONAL_BEST, URL }, message);
 

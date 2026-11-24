@@ -12,8 +12,6 @@ import {
 } from '../../constants';
 import { delveHandler } from './delveHandler';
 import { crabHandler } from './crabHandler';
-import { fracturedArchiveHandler } from './fracturedArchiveHandler';
-import { fracturedArchivePbHandler } from './fracturedArchivePbHandler';
 import { barracudaTrialHandler } from './barracudaTrialHandler';
 import { kingdomHandler } from './kingdomHandler';
 import { getChatBroadcastAchiever } from '../helperFunctions';
@@ -56,11 +54,6 @@ async function chatHandler(
   }
 
   const messageChecks = [
-    // Must precede the generic "(new personal best)" check below
-    {
-      check: () => CHAT_REGEX.FRACTURED_ARCHIVE_PB.test(message),
-      type: CHAT_MESSAGE_TYPES.FRACTURED_ARCHIVE_PB,
-    },
     {
       check: () => message.includes('(new personal best)'),
       type: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST,
@@ -95,10 +88,6 @@ async function chatHandler(
       check: () => CHAT_REGEX.KINGDOM_TEXT.test(message),
       type: CHAT_MESSAGE_TYPES.KINGDOM,
     },
-    {
-      check: () => CHAT_REGEX.FRACTURED_ARCHIVE_KC.test(message),
-      type: CHAT_MESSAGE_TYPES.FRACTURED_ARCHIVE_KC,
-    },
   ];
 
   const typeOfChat = messageChecks.find((entry) => entry.check())?.type;
@@ -121,12 +110,6 @@ async function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.BARRACUDA_TRIAL_PB:
       barracudaTrialHandler(message, playerName, msgMap, PB_URL);
-      break;
-    case CHAT_MESSAGE_TYPES.FRACTURED_ARCHIVE_KC:
-      fracturedArchiveHandler(message, playerName, msgMap, KC_URL);
-      break;
-    case CHAT_MESSAGE_TYPES.FRACTURED_ARCHIVE_PB:
-      fracturedArchivePbHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.KINGDOM:
       await kingdomHandler(

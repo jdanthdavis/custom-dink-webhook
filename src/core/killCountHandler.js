@@ -2,7 +2,6 @@ import { customBossNames, killCountMsgConstructor } from './helperFunctions';
 import {
   bossMap,
   specialKills,
-  quietFirstKills,
   KILL_COUNT,
   BRUTUS,
 } from '../constants';
@@ -25,8 +24,7 @@ function killCountHandler(msgMap, playerName, extra, URL) {
     killCount % bossInterval === 0 ||
     killCount % 100 === 0 ||
     (killCount === 1 &&
-      (specialKills.includes(validatedBossName?.toUpperCase()) ||
-        quietFirstKills.includes(validatedBossName?.toUpperCase())))
+      specialKills.includes(validatedBossName?.toUpperCase()))
   ) {
     msgMap.set(
       { ID: KILL_COUNT, URL },

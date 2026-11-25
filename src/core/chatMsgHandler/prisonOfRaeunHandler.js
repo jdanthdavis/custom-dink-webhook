@@ -15,7 +15,7 @@ export function prisonOfRaeunHandler(message, playerName, msgMap, URL) {
   }
 
   const time = match[1];
-  const msg = `**${playerName}** has achieved a new Prison of Ræun personal best of **${time}!**`;
+  const msg = `**${playerName}** has achieved a new **Prison of Ræun** personal best of **${time}!**`;
 
   msgMap.set({ ID: CHAT_MESSAGE_TYPES.PRISON_OF_RAEUN_PB, URL }, msg);
 }

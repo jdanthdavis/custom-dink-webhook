@@ -7,6 +7,7 @@ import {
   CLAN_CHAT,
   DELVE_KC,
   GEMSTONE_CRAB,
+  PRISON_OF_RAEUN_REGION,
   UNTRADEABLE_ITEMS,
   theBoys,
 } from '../../constants';
@@ -14,6 +15,7 @@ import { delveHandler } from './delveHandler';
 import { crabHandler } from './crabHandler';
 import { barracudaTrialHandler } from './barracudaTrialHandler';
 import { kingdomHandler } from './kingdomHandler';
+import { prisonOfRaeunHandler } from './prisonOfRaeunHandler';
 import { getChatBroadcastAchiever } from '../helperFunctions';
 
 /**
@@ -33,6 +35,7 @@ import { getChatBroadcastAchiever } from '../helperFunctions';
  * @param {string} [PLAYER_DISCORD_IDS]
  * @param {*} [CA_PROGRESS] - KV namespace, reused for the Kingdom ping cooldown
  * @param {string} [chatType] - the payload's extra.type (e.g. CLAN_CHAT)
+ * @param {number} [regionId] - the payload's top-level regionId
  */
 async function chatHandler(
   msgMap,
@@ -45,7 +48,8 @@ async function chatHandler(
   MISCELLANIA_URL,
   PLAYER_DISCORD_IDS,
   CA_PROGRESS,
-  chatType
+  chatType,
+  regionId
 ) {
   const achiever = getChatBroadcastAchiever(message);
   if (achiever && !theBoys.includes(achiever.toUpperCase())) {
@@ -54,6 +58,13 @@ async function chatHandler(
   }
 
   const messageChecks = [
+    {
+      // Must precede the generic "(new personal best)" (Sepulchre) check
+      check: () =>
+        regionId === PRISON_OF_RAEUN_REGION &&
+        CHAT_REGEX.PRISON_OF_RAEUN_TIME_TEXT.test(message),
+      type: CHAT_MESSAGE_TYPES.PRISON_OF_RAEUN_PB,
+    },
     {
       check: () => message.includes('(new personal best)'),
       type: CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST,
@@ -98,6 +109,9 @@ async function chatHandler(
       break;
     case CHAT_MESSAGE_TYPES.BIG_FISH:
       bigFishHandler(message, playerName, msgMap, LOOT_URL);
+      break;
+    case CHAT_MESSAGE_TYPES.PRISON_OF_RAEUN_PB:
+      prisonOfRaeunHandler(message, playerName, msgMap, PB_URL);
       break;
     case CHAT_MESSAGE_TYPES.NEW_PERSONAL_BEST:
       sepulchreHandler(message, playerName, msgMap, PB_URL);

@@ -45,6 +45,46 @@ describe('chatHandler', () => {
     expect([...msgMap.values()][0]).toContain('Tempor Tantrum Marlin');
   });
 
+  it('announces a Prison of Ræun PB when in region 10915', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'Lap duration: 1:53.40 (new personal best)',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {},
+      undefined,
+      undefined,
+      undefined,
+      'GAMEMESSAGE',
+      10915
+    );
+    expect([...msgMap.values()]).toEqual([
+      '**Pigeon Cam** has achieved a new Prison of Ræun personal best of **1:53.40!**',
+    ]);
+  });
+
+  it('ignores the Lap duration PB outside region 10915', async () => {
+    const msgMap = new Map();
+    await chatHandler(
+      msgMap,
+      'Pigeon Cam',
+      'Lap duration: 1:53.40 (new personal best)',
+      'pbUrl',
+      'lootUrl',
+      'kcUrl',
+      {},
+      undefined,
+      undefined,
+      undefined,
+      'GAMEMESSAGE',
+      12345
+    );
+    expect(msgMap.size).toBe(0);
+  });
+
   it('dispatches a Kingdom of Miscellania message to MISCELLANIA_URL', async () => {
     const msgMap = new Map();
     await chatHandler(

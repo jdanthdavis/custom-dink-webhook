@@ -54,7 +54,8 @@ export default {
         content,
         payloadType,
         playerName,
-        env
+        env,
+        payload.regionId
       );
 
       for (const [url, msg] of msgMap.entries()) {

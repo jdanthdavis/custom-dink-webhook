@@ -22,9 +22,17 @@ import * as Constants from './constants';
  * @param {*} payloadType
  * @param {string} playerName
  * @param {*} env
+ * @param {number} [regionId] - the payload's top-level regionId
  * @returns {Promise<Map<{ ID: string, URL: string }, string>>}
  */
-async function createFormData(extra, content, payloadType, playerName, env) {
+async function createFormData(
+  extra,
+  content,
+  payloadType,
+  playerName,
+  env,
+  regionId
+) {
   const {
     KC_URL,
     PB_URL,
@@ -124,7 +132,8 @@ async function createFormData(extra, content, payloadType, playerName, env) {
         MISCELLANIA_URL,
         PLAYER_DISCORD_IDS,
         CA_PROGRESS,
-        extra.type
+        extra.type,
+        regionId
       );
       break;
     default:

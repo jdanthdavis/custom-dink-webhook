@@ -153,7 +153,10 @@ export const CHAT_MESSAGE_TYPES = {
   RAID_SPECIAL_LOOT: 'RAID_SPECIAL_LOOT',
   BARRACUDA_TRIAL_PB: 'BARRACUDA_TRIAL_PB',
   KINGDOM: 'KINGDOM',
+  PRISON_OF_RAEUN_PB: 'PRISON_OF_RAEUN_PB',
 };
+// Region the "Lap duration" PB message must come from to count as Prison of Ræun
+export const PRISON_OF_RAEUN_REGION = 10915;
 export const ITEM_BOSS_MAP = {
   Ultor: 'Vardorvis',
   Bellator: 'The Whisperer',
@@ -195,6 +198,8 @@ export const CHAT_REGEX = {
   RAID_SPECIAL_LOOT: /^(.+?) received special loot from a raid: (.+?)\.?$/,
   BARRACUDA_TRIAL_TIME_TEXT:
     /^(.+?) has achieved a new (Tempor Tantrum|Jubbly Jive|Gwenith Glide) (Swordfish|Marlin|Shark) personal best: (\d{1,2}:\d{2}(?:\.\d{2})?)/,
+  PRISON_OF_RAEUN_TIME_TEXT:
+    /Lap duration: (\d{1,2}:\d{2}(?:\.\d{2})?) \(new personal best\)/,
   KINGDOM_TEXT:
     /Your Kingdom of Miscellania approval is (\d{1,3})%, and your coffer has ([\d,.]+[KMB]?) coins\./,
 };

@@ -62,7 +62,7 @@ describe('chatHandler', () => {
       10915
     );
     expect([...msgMap.values()]).toEqual([
-      '**Pigeon Cam** has achieved a new Prison of Ræun personal best of **1:53.40!**',
+      '**Pigeon Cam** has achieved a new **Prison of Ræun** personal best of **1:53.40!**',
     ]);
   });
 
